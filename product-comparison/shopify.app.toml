@@ -3,11 +3,12 @@
 client_id = "92e5966503baef9a8237c021f369ade7"
 name = "product-comparison"
 handle = "product-comparison-13"
-application_url = "https://example.com/"
+application_url = "https://dame-lcd-constitutional-theoretical.trycloudflare.com"
 embedded = true
 
 [build]
 include_config_on_deploy = true
+automatically_update_urls_on_dev = true
 
 [webhooks]
 api_version = "2025-04"
@@ -25,7 +26,11 @@ api_version = "2025-04"
 scopes = "write_products"
 
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [
+  "https://dame-lcd-constitutional-theoretical.trycloudflare.com/auth/callback",
+  "https://dame-lcd-constitutional-theoretical.trycloudflare.com/auth/shopify/callback",
+  "https://dame-lcd-constitutional-theoretical.trycloudflare.com/api/auth/callback"
+]
 
 [pos]
 embedded = false
