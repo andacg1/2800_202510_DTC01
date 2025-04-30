@@ -30,3 +30,8 @@ model Session {
   collaborator  Boolean?  @default(false)
   emailVerified Boolean?  @default(false)
 }
+
+model User {
+  id String @id
+  shop String
+}
