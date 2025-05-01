@@ -3,7 +3,7 @@
 client_id = "92e5966503baef9a8237c021f369ade7"
 name = "product-comparison"
 handle = "product-comparison-13"
-application_url = "https://class-nevada-dubai-therefore.trycloudflare.com"
+application_url = "https://execute-peripheral-quotes-packs.trycloudflare.com"
 embedded = true
 
 [environments.storename]
@@ -30,9 +30,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://class-nevada-dubai-therefore.trycloudflare.com/auth/callback",
-  "https://class-nevada-dubai-therefore.trycloudflare.com/auth/shopify/callback",
-  "https://class-nevada-dubai-therefore.trycloudflare.com/api/auth/callback"
+  "https://execute-peripheral-quotes-packs.trycloudflare.com/auth/callback",
+  "https://execute-peripheral-quotes-packs.trycloudflare.com/auth/shopify/callback",
+  "https://execute-peripheral-quotes-packs.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
