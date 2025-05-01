@@ -35,3 +35,17 @@ model User {
   id String @id
   shop String
 }
+
+model Metafields {
+  id String @id
+  boolean Boolean
+  date String
+  dimension Json?
+  money Json
+  rating Json
+  url String?
+  volume Json?
+  weight Json?
+}
+
+
