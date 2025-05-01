@@ -42,10 +42,24 @@ model Metafields {
   date String
   dimension Json?
   money Json
+  multi_line_text_field String
   rating Json
   url String?
   volume Json?
   weight Json?
 }
 
+model Subscription {
+  id Int @id
+  displayName String
+  tier Tier
+  cost Json
+  benefits String
+}
 
+enum Tier {
+  freeTrial
+  launch
+  growth
+  enterprise
+}
