@@ -14,7 +14,6 @@ import {
   BlockStack,
 } from "@shopify/polaris";
 import { Form, useFetcher, useNavigation } from "@remix-run/react";
-import { iif } from "rxjs";
 
 interface Metafield {
   id?: string;
@@ -29,22 +28,30 @@ interface Product {
   title: string;
 }
 
+interface FetcherData {
+  metafields?: Metafield[];
+  metafield?: Metafield;
+  deletedId?: string;
+  error?: string;
+}
+
 interface ProductMetafieldManagerProps {
-  actionData:
-    | {
-        metafields?: Metafield[];
-        metafield?: Metafield;
-        deletedId?: string;
-        error?: string;
-      }
-    | undefined;
+  actionData: FetcherData | undefined;
+  initialProduct?: Product;
+  initialMetafields?: Metafield[];
 }
 
 export default function ProductMetafieldManager({
   actionData,
+  initialProduct,
+  initialMetafields,
 }: ProductMetafieldManagerProps) {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [metafields, setMetafields] = useState<Metafield[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(
+    initialProduct || null,
+  );
+  const [metafields, setMetafields] = useState<Metafield[]>(
+    initialMetafields || [],
+  );
   const [showAddModal, setShowAddModal] = useState(false);
   const [newMetafield, setNewMetafield] = useState<Metafield>({
     namespace: "",
@@ -52,37 +59,28 @@ export default function ProductMetafieldManager({
     value: "",
     type: "string",
   });
-  const refreshFetcher = useFetcher();
+  const refreshFetcher = useFetcher<FetcherData>();
 
   const navigation = useNavigation();
   const isLoading = navigation.state === "submitting";
 
   // Update metafields when actionData changes
-  if (actionData?.metafields) {
-    setMetafields(actionData.metafields);
-  } else if (actionData?.metafield) {
-    setMetafields([...metafields, actionData.metafield]);
-    setShowAddModal(false);
-    setNewMetafield({ namespace: "", key: "", value: "", type: "string" });
-  } else if (actionData?.deletedId) {
-    setMetafields(metafields.filter((m) => m.id !== actionData.deletedId));
-  }
+  useEffect(() => {
+    if (actionData?.metafields) {
+      setMetafields(actionData.metafields);
+    } else if (actionData?.metafield) {
+      setMetafields([...metafields, actionData.metafield]);
+      setShowAddModal(false);
+      setNewMetafield({ namespace: "", key: "", value: "", type: "string" });
+    } else if (actionData?.deletedId) {
+      setMetafields(metafields.filter((m) => m.id !== actionData.deletedId));
+    }
+  }, [actionData]);
 
   useEffect(() => {
-    console.log({ metafields: refreshFetcher?.data?.metafields });
-  }, [refreshFetcher.data]);
+    console.log({ initialProduct });
+  }, [initialProduct]);
 
-  useEffect(() => {
-    (async () => {
-      refreshFetcher.submit(
-        {
-          action: "fetchMetafields",
-          productId: selectedProduct?.id || null,
-        },
-        { method: "post" },
-      );
-    })();
-  }, [selectedProduct?.id]);
   useEffect(() => {
     if (refreshFetcher?.data?.metafields) {
       setMetafields([...refreshFetcher.data.metafields]);
