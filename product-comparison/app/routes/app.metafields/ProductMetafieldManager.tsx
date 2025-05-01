@@ -14,6 +14,7 @@ import {
   BlockStack,
 } from "@shopify/polaris";
 import { Form, useFetcher, useNavigation } from "@remix-run/react";
+import { iif } from "rxjs";
 
 interface Metafield {
   id?: string;
@@ -51,7 +52,7 @@ export default function ProductMetafieldManager({
     value: "",
     type: "string",
   });
-  const refreshFetcher = useFetcher({ key: "refresh-metafields" });
+  const refreshFetcher = useFetcher();
 
   const navigation = useNavigation();
   const isLoading = navigation.state === "submitting";
@@ -67,7 +68,21 @@ export default function ProductMetafieldManager({
     setMetafields(metafields.filter((m) => m.id !== actionData.deletedId));
   }
 
-  useEffect(() => {}, [selectedProduct]);
+  useEffect(() => {
+    console.log({ metafields: refreshFetcher?.data?.metafields });
+  }, [refreshFetcher.data]);
+
+  useEffect(() => {
+    (async () => {
+      refreshFetcher.submit(
+        {
+          action: "fetchMetafields",
+          productId: selectedProduct?.id || null,
+        },
+        { method: "post" },
+      );
+    })();
+  }, [selectedProduct?.id]);
   useEffect(() => {
     if (refreshFetcher?.data?.metafields) {
       setMetafields([...refreshFetcher.data.metafields]);
