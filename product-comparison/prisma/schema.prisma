@@ -38,15 +38,19 @@ model User {
 
 model Metafields {
   id String @id
-  boolean Boolean
-  date String
+  type Type
   dimension Json?
   money Json
   multi_line_text_field String
   rating Json
-  url String?
+  link String?
   volume Json?
   weight Json?
+}
+
+enum Type {
+  boolean
+  date
 }
 
 model Subscription {
