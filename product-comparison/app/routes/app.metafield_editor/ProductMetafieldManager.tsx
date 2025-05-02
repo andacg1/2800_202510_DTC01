@@ -231,11 +231,12 @@ export default function ProductMetafieldManager({
                 <TextField
                   label="Namespace"
                   name="metafieldNamespace"
-                  value={newMetafield.namespace}
+                  value={"product_specs"}
                   onChange={(value) =>
                     setNewMetafield({ ...newMetafield, namespace: value })
                   }
                   autoComplete="off"
+                  disabled
                 />
                 <TextField
                   label="Key"
