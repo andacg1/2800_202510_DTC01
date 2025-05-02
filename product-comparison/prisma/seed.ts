@@ -8,12 +8,38 @@ async function seedUsers(count: number) {
       data: {
         id: faker.string.uuid(),
         shop: `${faker.internet.domainWord()}.myshopify.com`,
-        userName: faker.internet.userName(),
+        userName: faker.internet.username(),
       },
     });
   }
 
   console.log(`${count} users created.`);
+}
+
+async function seedSessions(count: number) {
+  for (let i = 0; i < count; i++) {
+    await prisma.session.create({
+      data: {
+        id: faker.string.uuid(),
+        shop: `${faker.internet.domainWord()}.myshopify.com`,
+        state: faker.lorem.word(),
+        isOnline: faker.datatype.boolean(),
+        scope: faker.lorem.words(2),
+        expires: faker.date.future(),
+        accessToken: faker.string.alphanumeric(20),
+        userId: faker.number.int({ min: 1, max: 100 }),
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
+        email: faker.internet.email(),
+        accountOwner: faker.datatype.boolean(),
+        locale: faker.location.countryCode(),
+        collaborator: faker.datatype.boolean(),
+        emailVerified: faker.datatype.boolean(),
+      },
+    });
+  }
+
+  console.log(`${count} sessions created.`);
 }
 
 async function seedSubscriptions() {
@@ -65,9 +91,11 @@ async function seedSubscriptions() {
 
 async function main() {
   // Create some users
-  await seedUsers(20)
+  await seedUsers(10)
   // Create subscriptions
   await seedSubscriptions()
+  // Create some sessions
+  await seedSessions(10)
 }
 
 main()
