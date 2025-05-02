@@ -87,6 +87,7 @@ async function seedSubscriptions() {
       },
     ],
   });
+  console.log(`Subscriptions created.`);
 }
 
 async function main() {
