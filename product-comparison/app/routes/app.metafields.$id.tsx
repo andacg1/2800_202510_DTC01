@@ -85,11 +85,43 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return { metafields: edges.map((edge: any) => edge.node) };
     } else if (action === "addMetafield") {
       const productId = formData.get("productId") as string;
-      const fullProductId = `gid://shopify/Product/${productId}`
+      const fullProductId = `gid://shopify/Product/${productId}`;
       const metafieldNamespace = formData.get("metafieldNamespace") as string;
       const metafieldKey = formData.get("metafieldKey") as string;
       const metafieldValue = formData.get("metafieldValue") as string;
       const metafieldType = formData.get("metafieldType") as string;
+      //
+      // try {
+      //   const definitionResponse = await admin.graphql(
+      //     `
+      //       mutation metafieldsDefine($definition: MetafieldDefinitionInput!) {
+      //         metafieldDefinitionCreate(definition: $definition) {
+      //           createdDefinition {
+      //             name
+      //             namespace
+      //             key
+      //           }
+      //         }
+      //       }
+      //     `,
+      //     {
+      //       variables: {
+      //         definition: {
+      //           name: metafieldKey,
+      //           key: metafieldKey,
+      //           namespace: metafieldNamespace,
+      //           description: "Product Spec",
+      //           type: metafieldType,
+      //           ownerType: "PRODUCT",
+      //         },
+      //       },
+      //     },
+      //   );
+      //   const result = await definitionResponse.json();
+      //   console.log({ ...result.data.metafieldDefinitionCreate });
+      // } catch (e) {
+      //   console.error(e);
+      // }
 
       const response = await admin.graphql(
         `
@@ -152,11 +184,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       `,
         {
           variables: {
-            metafields: [{
-              ownerId: productId,
-              namespace: metafieldNamespace,
-              key: metafieldKey
-            }],
+            metafields: [
+              {
+                ownerId: productId,
+                namespace: metafieldNamespace,
+                key: metafieldKey,
+              },
+            ],
           },
         },
       );

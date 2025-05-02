@@ -3,7 +3,7 @@
 client_id = "92e5966503baef9a8237c021f369ade7"
 name = "product-comparison"
 handle = "product-comparison-13"
-application_url = "https://ae-usr-ebooks-lips.trycloudflare.com"
+application_url = "https://shall-dimensions-prescribed-gains.trycloudflare.com"
 embedded = true
 
 [environments.storename]
@@ -30,9 +30,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://ae-usr-ebooks-lips.trycloudflare.com/auth/callback",
-  "https://ae-usr-ebooks-lips.trycloudflare.com/auth/shopify/callback",
-  "https://ae-usr-ebooks-lips.trycloudflare.com/api/auth/callback"
+  "https://shall-dimensions-prescribed-gains.trycloudflare.com/auth/callback",
+  "https://shall-dimensions-prescribed-gains.trycloudflare.com/auth/shopify/callback",
+  "https://shall-dimensions-prescribed-gains.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

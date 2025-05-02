@@ -13,7 +13,13 @@ import {
   ButtonGroup,
   BlockStack,
 } from "@shopify/polaris";
-import { Form, useFetcher, useNavigate, useNavigation, useSubmit } from "@remix-run/react";
+import {
+  Form,
+  useFetcher,
+  useNavigate,
+  useNavigation,
+  useSubmit,
+} from "@remix-run/react";
 
 interface Metafield {
   id?: string;
@@ -83,14 +89,7 @@ export default function ProductMetafieldManager({
 
   useEffect(() => {
     console.log({ initialProduct, initialMetafields });
-
   }, [initialProduct, initialMetafields]);
-
-  // useEffect(() => {
-  //   if (refreshFetcher?.data?.metafields) {
-  //     setMetafields([...refreshFetcher.data.metafields]);
-  //   }
-  // }, [refreshFetcher.data]);
 
   const handleProductSelect = async () => {
     try {
@@ -105,9 +104,11 @@ export default function ProductMetafieldManager({
           id: selected.id,
           title: selected.title,
         });
-        const shortId = selected.id.split('/').at(-1)
-        navigate(`/app/metafields/${shortId}`, {replace: true, flushSync: true})
-
+        const shortId = selected.id.split("/").at(-1);
+        navigate(`/app/metafields/${shortId}`, {
+          replace: true,
+          flushSync: true,
+        });
       }
     } catch (error) {
       console.error("Failed to select product:", error);
@@ -141,18 +142,6 @@ export default function ProductMetafieldManager({
                     Add Metafield
                   </Button>
                 </BlockStack>
-
-                <refreshFetcher.Form method="post">
-                  <input type="hidden" name="action" value="fetchMetafields" />
-                  <input
-                    type="hidden"
-                    name="productId"
-                    value={selectedProduct.id}
-                  />
-                  <Button submit loading={isLoading}>
-                    Refresh Metafields
-                  </Button>
-                </refreshFetcher.Form>
 
                 {initialMetafields?.length === 0 ? (
                   <Text as="p">No metafields found for this product.</Text>
@@ -219,7 +208,7 @@ export default function ProductMetafieldManager({
                 "addMetafieldForm",
               ) as HTMLFormElement;
               //form?.submit();
-              submit(form, {flushSync: true, navigate: true})
+              submit(form, { flushSync: true, navigate: true });
             },
             loading: isLoading,
           }}
