@@ -1,10 +1,22 @@
 import { PrismaClient } from '@prisma/client';
+import { faker } from '@faker-js/faker';
 const prisma = new PrismaClient();
 
-async function main() {
-  // Create some users
-  await prisma.user.create({data: {id: 'user_3', shop: 'example.myshopify.com'}});
-  // Create subscriptions
+async function seedUsers(count: number) {
+  for (let i = 0; i < count; i++) {
+    await prisma.user.create({
+      data: {
+        id: faker.string.uuid(),
+        shop: `${faker.internet.domainWord()}.myshopify.com`,
+        userName: faker.internet.userName(),
+      },
+    });
+  }
+
+  console.log(`${count} users created.`);
+}
+
+async function seedSubscriptions() {
   await prisma.subscription.createMany({
     data: [
       {
@@ -49,7 +61,13 @@ async function main() {
       },
     ],
   });
+}
 
+async function main() {
+  // Create some users
+  await seedUsers(20)
+  // Create subscriptions
+  await seedSubscriptions()
 }
 
 main()

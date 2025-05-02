@@ -34,6 +34,7 @@ model Session {
 model User {
   id String @id
   shop String
+  userName String
 }
 
 model Metafields {
@@ -51,6 +52,7 @@ model Metafields {
 enum Type {
   boolean
   date
+  color
 }
 
 model Subscription {
