@@ -20,7 +20,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const productId = formData.get("productId") as string;
       const response = await admin.graphql(`
           query {
-            product(id: "${productId}") {
+            product(id: "gid://shopify/Product/${productId}") {
               metafields(first: 50) {
                 edges {
                   node {

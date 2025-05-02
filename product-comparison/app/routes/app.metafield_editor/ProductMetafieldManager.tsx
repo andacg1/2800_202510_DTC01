@@ -13,7 +13,7 @@ import {
   ButtonGroup,
   BlockStack,
 } from "@shopify/polaris";
-import { Form, useFetcher, useNavigation } from "@remix-run/react";
+import { Form, useFetcher, useNavigate, useNavigation, useSubmit } from "@remix-run/react";
 
 interface Metafield {
   id?: string;
@@ -50,7 +50,7 @@ export default function ProductMetafieldManager({
     initialProduct || null,
   );
   const [metafields, setMetafields] = useState<Metafield[]>(
-    initialMetafields || [],
+    initialMetafields ? initialMetafields : [],
   );
   const [showAddModal, setShowAddModal] = useState(false);
   const [newMetafield, setNewMetafield] = useState<Metafield>({
@@ -60,32 +60,37 @@ export default function ProductMetafieldManager({
     type: "string",
   });
   const refreshFetcher = useFetcher<FetcherData>();
+  const addMetafieldFetcher = useFetcher<FetcherData>();
 
   const navigation = useNavigation();
+  const navigate = useNavigate();
+  const submit = useSubmit();
   const isLoading = navigation.state === "submitting";
 
   // Update metafields when actionData changes
   useEffect(() => {
+    // FIXME
     if (actionData?.metafields) {
       setMetafields(actionData.metafields);
     } else if (actionData?.metafield) {
-      setMetafields([...metafields, actionData.metafield]);
+      //setMetafields([...metafields, actionData.metafield]);
       setShowAddModal(false);
       setNewMetafield({ namespace: "", key: "", value: "", type: "string" });
     } else if (actionData?.deletedId) {
       setMetafields(metafields.filter((m) => m.id !== actionData.deletedId));
     }
-  }, [actionData]);
+  }, [actionData?.metafields, initialMetafields, actionData]);
 
   useEffect(() => {
-    console.log({ initialProduct });
-  }, [initialProduct]);
+    console.log({ initialProduct, initialMetafields });
 
-  useEffect(() => {
-    if (refreshFetcher?.data?.metafields) {
-      setMetafields([...refreshFetcher.data.metafields]);
-    }
-  }, [refreshFetcher.data]);
+  }, [initialProduct, initialMetafields]);
+
+  // useEffect(() => {
+  //   if (refreshFetcher?.data?.metafields) {
+  //     setMetafields([...refreshFetcher.data.metafields]);
+  //   }
+  // }, [refreshFetcher.data]);
 
   const handleProductSelect = async () => {
     try {
@@ -100,6 +105,9 @@ export default function ProductMetafieldManager({
           id: selected.id,
           title: selected.title,
         });
+        const shortId = selected.id.split('/').at(-1)
+        navigate(`/app/metafields/${shortId}`, {replace: true, flushSync: true})
+
       }
     } catch (error) {
       console.error("Failed to select product:", error);
@@ -146,11 +154,11 @@ export default function ProductMetafieldManager({
                   </Button>
                 </refreshFetcher.Form>
 
-                {metafields.length === 0 ? (
+                {initialMetafields?.length === 0 ? (
                   <Text as="p">No metafields found for this product.</Text>
                 ) : (
                   <LegacyStack vertical spacing="loose">
-                    {metafields.map((metafield) => (
+                    {initialMetafields?.map((metafield) => (
                       <LegacyStack
                         key={metafield.id}
                         distribution="equalSpacing"
@@ -170,6 +178,21 @@ export default function ProductMetafieldManager({
                               type="hidden"
                               name="metafieldId"
                               value={metafield.id}
+                            />
+                            <input
+                              type="hidden"
+                              name="metafieldNamespace"
+                              value={metafield.namespace}
+                            />
+                            <input
+                              type="hidden"
+                              name="metafieldKey"
+                              value={metafield.key}
+                            />
+                            <input
+                              type="hidden"
+                              name="productId"
+                              value={selectedProduct.id}
                             />
                             <Button tone="critical" submit loading={isLoading}>
                               Delete
@@ -195,7 +218,8 @@ export default function ProductMetafieldManager({
               const form = document.getElementById(
                 "addMetafieldForm",
               ) as HTMLFormElement;
-              form?.submit();
+              //form?.submit();
+              submit(form, {flushSync: true, navigate: true})
             },
             loading: isLoading,
           }}
@@ -207,7 +231,7 @@ export default function ProductMetafieldManager({
           ]}
         >
           <Modal.Section>
-            <Form id="addMetafieldForm" method="post">
+            <addMetafieldFetcher.Form id="addMetafieldForm" method="post">
               <input type="hidden" name="action" value="addMetafield" />
               <input
                 type="hidden"
@@ -217,7 +241,7 @@ export default function ProductMetafieldManager({
               <BlockStack gap="400">
                 <TextField
                   label="Namespace"
-                  name="namespace"
+                  name="metafieldNamespace"
                   value={newMetafield.namespace}
                   onChange={(value) =>
                     setNewMetafield({ ...newMetafield, namespace: value })
@@ -226,7 +250,7 @@ export default function ProductMetafieldManager({
                 />
                 <TextField
                   label="Key"
-                  name="key"
+                  name="metafieldKey"
                   value={newMetafield.key}
                   onChange={(value) =>
                     setNewMetafield({ ...newMetafield, key: value })
@@ -235,7 +259,7 @@ export default function ProductMetafieldManager({
                 />
                 <TextField
                   label="Value"
-                  name="value"
+                  name="metafieldValue"
                   value={newMetafield.value}
                   onChange={(value) =>
                     setNewMetafield({ ...newMetafield, value: value })
@@ -244,7 +268,7 @@ export default function ProductMetafieldManager({
                 />
                 <Select
                   label="Type"
-                  name="type"
+                  name="metafieldType"
                   options={[
                     { label: "String", value: "string" },
                     { label: "Integer", value: "integer" },
@@ -256,7 +280,7 @@ export default function ProductMetafieldManager({
                   }
                 />
               </BlockStack>
-            </Form>
+            </addMetafieldFetcher.Form>
           </Modal.Section>
         </Modal>
       </Layout>
