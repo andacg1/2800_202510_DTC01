@@ -2,8 +2,9 @@
   "name": "product-comparison",
   "private": true,
   "scripts": {
-    "build": "remix vite:build",
+    "build": "tsc --project tsconfig.ext.json && remix vite:build",
     "dev": "shopify app dev",
+    "tsc:extension": "tsc --watch --project tsconfig.ext.json",
     "config:link": "shopify app config link",
     "generate": "shopify app generate",
     "deploy": "shopify app deploy",
