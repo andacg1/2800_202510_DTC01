@@ -1,10 +1,10 @@
+"use strict";
+//@ts-check
 console.log("product-comparison.js was loaded!");
-
 const getLocation = async () => {
   const ipResp = await fetch("https://ipapi.co/json/");
   return await ipResp.json();
 };
-
 const getMockLocation = async () => {
   const mockResponse = {
     ip: "8.8.8.8",
@@ -37,7 +37,6 @@ const getMockLocation = async () => {
   };
   return mockResponse;
 };
-
 window.addEventListener("load", async (e) => {
   const location = await getMockLocation();
 });
