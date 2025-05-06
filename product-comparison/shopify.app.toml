@@ -3,7 +3,7 @@
 client_id = "92e5966503baef9a8237c021f369ade7"
 name = "product-comparison"
 handle = "product-comparison-13"
-application_url = "https://fundamental-bought-federation-promote.trycloudflare.com"
+application_url = "https://8da86a337a73.ngrok.app"
 embedded = true
 
 [environments.storename]
@@ -30,9 +30,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://fundamental-bought-federation-promote.trycloudflare.com/auth/callback",
-  "https://fundamental-bought-federation-promote.trycloudflare.com/auth/shopify/callback",
-  "https://fundamental-bought-federation-promote.trycloudflare.com/api/auth/callback"
+  "https://8da86a337a73.ngrok.app/auth/callback",
+  "https://8da86a337a73.ngrok.app/auth/shopify/callback",
+  "https://8da86a337a73.ngrok.app/api/auth/callback"
 ]
 
 [pos]
