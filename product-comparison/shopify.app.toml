@@ -3,7 +3,7 @@
 client_id = "92e5966503baef9a8237c021f369ade7"
 name = "product-comparison"
 handle = "product-comparison-13"
-application_url = "https://stay-ministries-mitchell-emacs.trycloudflare.com"
+application_url = "https://discovery-separation-missed-f.trycloudflare.com"
 embedded = true
 
 [build]
@@ -27,9 +27,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://stay-ministries-mitchell-emacs.trycloudflare.com/auth/callback",
-  "https://stay-ministries-mitchell-emacs.trycloudflare.com/auth/shopify/callback",
-  "https://stay-ministries-mitchell-emacs.trycloudflare.com/api/auth/callback"
+  "https://discovery-separation-missed-f.trycloudflare.com/auth/callback",
+  "https://discovery-separation-missed-f.trycloudflare.com/auth/shopify/callback",
+  "https://discovery-separation-missed-f.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
