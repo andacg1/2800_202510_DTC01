@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 console.log("product-comparison.js was loaded!");
 const getLocation = async () => {
   const ipResp = await fetch("https://ipapi.co/json/");
@@ -40,4 +41,33 @@ window.addEventListener("load", async (e) => {
   const location = await getMockLocation();
   console.log({ location });
   console.log(window?.regions);
+  updateAvailableStatus(location, window?.regions);
 });
+
+function updateAvailableStatus(location, regions) {
+  if (!location) {
+    return console.error("Failed to get location data.");
+  }
+  if (!regions) {
+    return console.error("Failed to get country region data.");
+  }
+  const regionsRow = document.querySelector(".row-available_regions");
+  const specNameEl = regionsRow.querySelector(".spec-name");
+  const specValueEl = regionsRow.querySelector(".spec-value");
+  console.log({ specValue: specValueEl, specName: specNameEl });
+
+  const availableRegions = specValueEl.innerText
+    .split(",")
+    .map((region) => region.trim());
+  console.log({ availableRegions });
+  const userRegionData = regions.find(
+    (data) => data["alpha-2"] === location.country,
+  );
+  const isAvailableInUsersRegion = availableRegions.some(
+    (region) =>
+      region === userRegionData.region ||
+      region === userRegionData["sub-region"],
+  );
+  specNameEl.innerText = `Available in ${location.country_name}?`;
+  specValueEl.innerText = isAvailableInUsersRegion ? "YES" : "NO";
+}

@@ -1,0 +1,20 @@
+<span style="font-weight: bold">{{ 'compare.title' | t }}</span>
+
+<table>
+  <script>console.log({{ product | json }});</script>
+  {% for key in product.metafields.product_specs %}
+    <tr class="row{{ forloop.index }} row-{{ key.first }}">
+      <td class="spec-name" style="font-weight: bold">
+        {{ key.first | capitalize }}
+      </td>
+      <script>console.log({{ product.metafields.product_specs | json }});</script>
+      {% if key.last.size > 0 %}
+        <td class="spec-value">
+          {{ key.last | join: ", " }}
+        </td>
+      {% else %}
+        <td class="spec-value">{{ key.last | metafield_tag }}</td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+</table>
