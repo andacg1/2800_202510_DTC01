@@ -1,5 +1,4 @@
 "use strict";
-//@ts-check
 console.log("product-comparison.js was loaded!");
 const getLocation = async () => {
   const ipResp = await fetch("https://ipapi.co/json/");
@@ -39,4 +38,6 @@ const getMockLocation = async () => {
 };
 window.addEventListener("load", async (e) => {
   const location = await getMockLocation();
+  console.log({ location });
+  console.log(window?.regions);
 });
