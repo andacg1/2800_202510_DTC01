@@ -34,4 +34,52 @@ model Session {
 model User {
   id String @id
   shop String
+  userName String
+}
+
+model Metafields {
+  id String @id
+  type Type
+  dimension Json?
+  money Json
+  multi_line_text_field String
+  rating Json
+  link String?
+  volume Json?
+  weight Json?
+}
+
+enum Type {
+  boolean
+  date
+  color
+}
+
+model Subscription {
+  id Int @id
+  displayName String
+  tier Tier
+  cost Json
+  benefits String
+}
+
+enum Tier {
+  freeTrial
+  launch
+  growth
+  enterprise
+}
+
+model ProductComparison {
+  id           String   @id @default(uuid())
+  productAId   String
+  productBId   String
+  comparedAt   DateTime @default(now())
+  userId       String?  // Optional: can be null if not logged in
+  shop         String?  // Optional: for multi-shop support
+
+  @@index([productAId])
+  @@index([productBId])
+  @@index([userId])
+  @@index([shop])
 }
