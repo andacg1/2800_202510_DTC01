@@ -1,9 +1,9 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "92e5966503baef9a8237c021f369ade7"
+client_id = "b831b7881e5be1ce54c4f1a11c5af6ef"
 name = "product-comparison"
 handle = "product-comparison-13"
-application_url = "https://subdivision-nylon-manager-manufactured.trycloudflare.com"
+application_url = "https://logistics-guides-ur-late.trycloudflare.com"
 embedded = true
 
 [build]
@@ -27,9 +27,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://subdivision-nylon-manager-manufactured.trycloudflare.com/auth/callback",
-  "https://subdivision-nylon-manager-manufactured.trycloudflare.com/auth/shopify/callback",
-  "https://subdivision-nylon-manager-manufactured.trycloudflare.com/api/auth/callback"
+  "https://logistics-guides-ur-late.trycloudflare.com/auth/callback",
+  "https://logistics-guides-ur-late.trycloudflare.com/auth/shopify/callback",
+  "https://logistics-guides-ur-late.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

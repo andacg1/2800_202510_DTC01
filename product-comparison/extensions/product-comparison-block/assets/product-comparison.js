@@ -56,6 +56,13 @@ function updateAvailableStatus(location, regions) {
   const specValueEl = regionsRow.querySelector(".spec-value");
   console.log({ specValue: specValueEl, specName: specNameEl });
 
+  if (
+    specValueEl.innerText.toUpperCase() === "YES" ||
+    specValueEl.innerText.toUpperCase() === "NO"
+  ) {
+    return;
+  }
+
   const availableRegions = specValueEl.innerText
     .split(",")
     .map((region) => region.trim());
@@ -63,6 +70,7 @@ function updateAvailableStatus(location, regions) {
   const userRegionData = regions.find(
     (data) => data["alpha-2"] === location.country,
   );
+  console.log({ userRegionData });
   const isAvailableInUsersRegion = availableRegions.some(
     (region) =>
       region === userRegionData.region ||
