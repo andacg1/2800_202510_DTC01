@@ -3,11 +3,8 @@
 client_id = "92e5966503baef9a8237c021f369ade7"
 name = "product-comparison"
 handle = "product-comparison-13"
-application_url = "https://8da86a337a73.ngrok.app"
+application_url = "https://stay-ministries-mitchell-emacs.trycloudflare.com"
 embedded = true
-
-[environments.storename]
-store = "bcit-deniz"
 
 [build]
 include_config_on_deploy = true
@@ -30,9 +27,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://8da86a337a73.ngrok.app/auth/callback",
-  "https://8da86a337a73.ngrok.app/auth/shopify/callback",
-  "https://8da86a337a73.ngrok.app/api/auth/callback"
+  "https://stay-ministries-mitchell-emacs.trycloudflare.com/auth/callback",
+  "https://stay-ministries-mitchell-emacs.trycloudflare.com/auth/shopify/callback",
+  "https://stay-ministries-mitchell-emacs.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
