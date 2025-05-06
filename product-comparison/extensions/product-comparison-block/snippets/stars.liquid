@@ -1,12 +1,12 @@
 <span style="font-weight: bold">{{ 'compare.title' | t }}</span>
 
 <table>
-  {% for spec in product.metafields.information.specs.value %}
+  {% for key in product.metafields.product_specs %}
     <tr class="row{{ forloop.index }}">
       <td class="col1" style="font-weight: bold">
-        {{ spec.first | capitalize }}
+        {{ key.first | capitalize }}
       </td>
-      <td class="col2">{{ spec.last }}</td>
+      <td class="col2">{{ key.last }}</td>
     </tr>
   {% endfor %}
 </table>
