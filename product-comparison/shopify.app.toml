@@ -3,8 +3,11 @@
 client_id = "92e5966503baef9a8237c021f369ade7"
 name = "product-comparison"
 handle = "product-comparison-13"
-application_url = "https://discovery-separation-missed-f.trycloudflare.com"
+application_url = "https://bear-university-charlie-dump.trycloudflare.com"
 embedded = true
+
+[environments.storename]
+store = "bcit-stan"
 
 [build]
 include_config_on_deploy = true
@@ -27,9 +30,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://discovery-separation-missed-f.trycloudflare.com/auth/callback",
-  "https://discovery-separation-missed-f.trycloudflare.com/auth/shopify/callback",
-  "https://discovery-separation-missed-f.trycloudflare.com/api/auth/callback"
+  "https://bear-university-charlie-dump.trycloudflare.com/auth/callback",
+  "https://bear-university-charlie-dump.trycloudflare.com/auth/shopify/callback",
+  "https://bear-university-charlie-dump.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
