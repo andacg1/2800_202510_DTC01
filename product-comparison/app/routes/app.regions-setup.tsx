@@ -11,21 +11,26 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function RegionsSetup() {
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
+    const [data, setData] = useState<{ regionCount?: number; subRegionCount?: number } | null>(null);
 
     const setupRegions = async () => {
         setStatus('loading');
+        setMessage('');
+        setData(null);
+
         try {
             const response = await fetch('/api/regions/setup', {
                 method: 'POST',
             });
-            const data = await response.json();
+            const responseData = await response.json();
 
-            if (data.success) {
+            if (responseData.success) {
                 setStatus('success');
-                setMessage(data.message);
+                setMessage(responseData.message);
+                setData(responseData.data);
             } else {
                 setStatus('error');
-                setMessage(data.message);
+                setMessage(responseData.message || 'Failed to set up regions');
             }
         } catch (error) {
             setStatus('error');
@@ -34,7 +39,7 @@ export default function RegionsSetup() {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
+        <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
             <h1>Regions Setup</h1>
             <p>Click the button below to set up the regions data in your shop's metafields.</p>
             <button
@@ -46,18 +51,37 @@ export default function RegionsSetup() {
                     color: 'white',
                     border: 'none',
                     borderRadius: '4px',
-                    cursor: status === 'loading' ? 'not-allowed' : 'pointer'
+                    cursor: status === 'loading' ? 'not-allowed' : 'pointer',
+                    marginBottom: '20px'
                 }}
             >
                 {status === 'loading' ? 'Setting up...' : 'Set up Regions'}
             </button>
+
             {status !== 'idle' && (
-                <p style={{
-                    marginTop: '20px',
-                    color: status === 'error' ? '#d82c0d' : status === 'success' ? '#008060' : 'inherit'
+                <div style={{
+                    padding: '15px',
+                    borderRadius: '4px',
+                    backgroundColor: status === 'error' ? '#fef2f2' : status === 'success' ? '#f0fdf4' : '#f8fafc',
+                    border: `1px solid ${status === 'error' ? '#fecaca' : status === 'success' ? '#bbf7d0' : '#e2e8f0'}`,
+                    color: status === 'error' ? '#dc2626' : status === 'success' ? '#16a34a' : '#1e293b'
                 }}>
-                    {message}
-                </p>
+                    <p style={{ margin: '0 0 10px 0', fontWeight: 'bold' }}>
+                        {status === 'error' ? 'Error' : status === 'success' ? 'Success' : 'Status'}
+                    </p>
+                    <p style={{ margin: '0 0 10px 0' }}>{message}</p>
+
+                    {status === 'success' && data && (
+                        <div style={{ marginTop: '10px' }}>
+                            <p style={{ margin: '5px 0' }}>
+                                <strong>Regions:</strong> {data.regionCount}
+                            </p>
+                            <p style={{ margin: '5px 0' }}>
+                                <strong>Sub-regions:</strong> {data.subRegionCount}
+                            </p>
+                        </div>
+                    )}
+                </div>
             )}
         </div>
     );

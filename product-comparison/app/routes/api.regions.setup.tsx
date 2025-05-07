@@ -10,19 +10,28 @@ interface Country {
     "alpha-3": string;
     "country-code": string;
     "iso_3166-2": string;
-    region: string | null;
-    "sub-region": string | null;
-    "intermediate-region": string | null;
-    "region-code": string | null;
-    "sub-region-code": string | null;
-    "intermediate-region-code": string | null;
+    region: string;
+    "sub-region": string;
+    "intermediate-region": string;
+    "region-code": string;
+    "sub-region-code": string;
+    "intermediate-region-code": string;
+}
+
+interface RegionData {
+    regions: string[];
+    subRegions: string[];
 }
 
 export const action: ActionFunction = async ({ request }) => {
     await authenticate.admin(request);
     try {
-
         const regionsPath = path.join(process.cwd(), 'extensions', 'product-comparison-block', 'snippets', 'regions.liquid');
+
+        if (!fs.existsSync(regionsPath)) {
+            throw new Error('Regions data file not found');
+        }
+
         const regionsContent = fs.readFileSync(regionsPath, 'utf-8');
         const regionsMatch = regionsContent.match(/window\.regions = (\[[\s\S]*?\]);/);
 
@@ -30,8 +39,17 @@ export const action: ActionFunction = async ({ request }) => {
             throw new Error('Could not find regions data in the liquid file');
         }
 
-        const regions: Country[] = JSON.parse(regionsMatch[1]);
+        let regions: Country[];
+        try {
+            regions = JSON.parse(regionsMatch[1]);
+        } catch (error) {
+            throw new Error('Invalid JSON format in regions data');
+        }
 
+        // Validate region data structure
+        if (!Array.isArray(regions) || regions.length === 0) {
+            throw new Error('Regions data must be a non-empty array');
+        }
 
         const uniqueRegions = new Set<string>();
         const uniqueSubRegions = new Set<string>();
@@ -41,9 +59,10 @@ export const action: ActionFunction = async ({ request }) => {
             if (country["sub-region"]) uniqueSubRegions.add(country["sub-region"]);
         });
 
-
-        const allRegions = [...uniqueRegions, ...uniqueSubRegions];
-
+        const regionData: RegionData = {
+            regions: Array.from(uniqueRegions),
+            subRegions: Array.from(uniqueSubRegions)
+        };
 
         const response = await fetch(`/admin/api/2024-01/metafields.json`, {
             method: 'POST',
@@ -54,7 +73,7 @@ export const action: ActionFunction = async ({ request }) => {
                 metafield: {
                     namespace: "product_comparison",
                     key: "regions",
-                    value: JSON.stringify(allRegions),
+                    value: JSON.stringify(regionData),
                     type: "json",
                     owner_resource: "shop"
                 }
@@ -62,12 +81,24 @@ export const action: ActionFunction = async ({ request }) => {
         });
 
         if (!response.ok) {
-            throw new Error(`Failed to create metafield: ${response.statusText}`);
+            const errorData = await response.json().catch(() => null);
+            throw new Error(`Failed to create metafield: ${errorData?.message || response.statusText}`);
         }
 
-        return json({ success: true, message: "Regions data stored in metafields" });
+        return json({
+            success: true,
+            message: "Regions data stored in metafields",
+            data: {
+                regionCount: uniqueRegions.size,
+                subRegionCount: uniqueSubRegions.size
+            }
+        });
     } catch (error) {
         console.error("Error setting up regions:", error);
-        return json({ success: false, message: "Failed to set up regions" }, { status: 500 });
+        return json({
+            success: false,
+            message: error instanceof Error ? error.message : "Failed to set up regions",
+            error: error instanceof Error ? error.message : "Unknown error"
+        }, { status: 500 });
     }
 }; 
