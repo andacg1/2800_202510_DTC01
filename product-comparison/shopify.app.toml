@@ -6,9 +6,6 @@ handle = "product-comparison-13"
 application_url = "https://bear-university-charlie-dump.trycloudflare.com"
 embedded = true
 
-[environments.storename]
-store = "bcit-stan"
-
 [build]
 include_config_on_deploy = true
 automatically_update_urls_on_dev = true

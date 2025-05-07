@@ -3,7 +3,7 @@
 client_id = "ee5835d9d0f87901668dcc34ed5ca834"
 name = "Product Comparison Stan"
 handle = "product-comparison-stan-1"
-application_url = "https://per-insertion-surrounded-guarantee.trycloudflare.com"
+application_url = "https://pipe-protocols-roger-film.trycloudflare.com"
 embedded = true
 
 [build]
@@ -19,9 +19,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://per-insertion-surrounded-guarantee.trycloudflare.com/auth/callback",
-  "https://per-insertion-surrounded-guarantee.trycloudflare.com/auth/shopify/callback",
-  "https://per-insertion-surrounded-guarantee.trycloudflare.com/api/auth/callback"
+  "https://pipe-protocols-roger-film.trycloudflare.com/auth/callback",
+  "https://pipe-protocols-roger-film.trycloudflare.com/auth/shopify/callback",
+  "https://pipe-protocols-roger-film.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
