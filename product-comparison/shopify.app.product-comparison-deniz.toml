@@ -3,7 +3,7 @@
 client_id = "e6ffb18d3894daf11d0047bb6a8516b7"
 name = "Product Comparison Deniz"
 handle = "product-comparison-deniz-1"
-application_url = "https://indicators-mere-grid-purchase.trycloudflare.com"
+application_url = "https://compliance-less-risks-pp.trycloudflare.com"
 embedded = true
 
 [webhooks]
@@ -15,9 +15,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://indicators-mere-grid-purchase.trycloudflare.com/auth/callback",
-  "https://indicators-mere-grid-purchase.trycloudflare.com/auth/shopify/callback",
-  "https://indicators-mere-grid-purchase.trycloudflare.com/api/auth/callback"
+  "https://compliance-less-risks-pp.trycloudflare.com/auth/callback",
+  "https://compliance-less-risks-pp.trycloudflare.com/auth/shopify/callback",
+  "https://compliance-less-risks-pp.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
