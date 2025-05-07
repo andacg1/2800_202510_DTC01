@@ -1,0 +1,93 @@
+<script>console.log("All products", {{ block.settings.collection.products | json }});</script>
+
+{% for cmp_product in block.settings.collection.products %}
+  <script>console.log({{ cmp_product.metafields.product_specs | json }});</script>
+{% endfor %}
+
+{% assign allMetafields = "" | split: "," %}
+{% for product in block.settings.collection.products %}
+  {% for key in product.metafields.product_specs %}
+    {% assign tag_in_array = key.first | sort %}
+    {% assign allMetafields = allMetafields | concat: tag_in_array %}
+  {% endfor %}
+  {% assign allMetafields = allMetafields | uniq %}
+{% endfor %}
+
+<script>
+  const allMetafields = "{{ allMetafields | json }}"
+  const allProducts = {{ block.settings.collection.products | json }}
+  console.log({allProducts});
+</script>
+
+<label for="active-comparison">Compare to:</label>
+<select name="active-comparison" id="active-comparison" >
+  <option value="" disabled>--Please choose an option--</option>
+  {% for product in block.settings.collection.products %}
+    {% unless forloop.index == 1 %}
+      <option value="{{ product.handle }}">{{ product.title }}</option>
+    {% endunless %}
+  {% endfor %}
+</select>
+
+<style>
+  .hide {
+    display: none;
+  }
+  #comparison-dropdown-table td {
+    padding: 1em;
+    border: 1px solid black;
+  }
+
+  #comparison-dropdown-table.hide tr > *:nth-child(2) {
+    display: none;
+  }
+</style>
+
+<table id="comparison-dropdown-table">
+  {% if block.settings.collection != blank %}
+    <tr>
+      <th>Product</th>
+      {% for product in block.settings.collection.products %}
+        <th data-handle="{{ product.handle }}">{{ product.title }}</th>
+      {% endfor %}
+    </tr>
+  {% endif %}
+  {% for key in allMetafields %}
+    <tr class="row{{ forloop.index }} row-{{ key.first }}">
+      <td class="spec-name" style="font-weight: bold">
+        {{ key | capitalize }}
+      </td>
+      {% for product in block.settings.collection.products %}
+        <td class="spec-value" data-handle="{{ product.handle }}">
+          {% if product.metafields.product_specs[key].size > 0 %}
+            {{ product.metafields.product_specs[key] | join: ", " }}
+          {% else %}
+            {{ product.metafields.product_specs[key] | default: 'N/A', allow_false: true }}
+          {% endif %}
+
+        </td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</table>
+
+{% schema %}
+{
+  "name": "Comparison Dropdown Table",
+  "target": "section",
+  "javascript": "comparison-dropdown.js",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "product",
+      "autofill": true
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    }
+  ]
+}
+{% endschema %}
