@@ -1,0 +1,27 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "e6ffb18d3894daf11d0047bb6a8516b7"
+name = "Product Comparison Deniz"
+handle = "product-comparison-deniz-1"
+application_url = "https://indicators-mere-grid-purchase.trycloudflare.com"
+embedded = true
+
+[webhooks]
+api_version = "2025-04"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://indicators-mere-grid-purchase.trycloudflare.com/auth/callback",
+  "https://indicators-mere-grid-purchase.trycloudflare.com/auth/shopify/callback",
+  "https://indicators-mere-grid-purchase.trycloudflare.com/api/auth/callback"
+]
+
+[pos]
+embedded = false
+
+[build]
+automatically_update_urls_on_dev = true

@@ -23,7 +23,8 @@
 <select name="active-comparison" id="active-comparison" >
   <option value="" disabled>--Please choose an option--</option>
   {% for product in block.settings.collection.products %}
-    {% unless forloop.index == 1 %}
+    <script>console.log({{ current_product | json }});</script>
+    {% unless forloop.index == 1 or product.handle == block.settings.current_product.handle %}
       <option value="{{ product.handle }}">{{ product.title }}</option>
     {% endunless %}
   {% endfor %}
@@ -47,8 +48,12 @@
   {% if block.settings.collection != blank %}
     <tr>
       <th>Product</th>
+      <th>{{ product.title }}</th>
       {% for product in block.settings.collection.products %}
-        <th data-handle="{{ product.handle }}">{{ product.title }}</th>
+        {% if product.handle == current_product.handle %}
+          {% continue %}
+        {% endif %}
+        <th class="hide" data-handle="{{ product.handle }}">{{ product.title }}</th>
       {% endfor %}
     </tr>
   {% endif %}
@@ -57,8 +62,18 @@
       <td class="spec-name" style="font-weight: bold">
         {{ key | capitalize }}
       </td>
+      <td class="spec-value">
+        {% if current_product.metafields.product_specs[key].size > 0 %}
+          {{ current_product.metafields.product_specs[key] | join: ", " }}
+        {% else %}
+          {{ current_product.metafields.product_specs[key] | default: 'N/A', allow_false: true }}
+        {% endif %}
+      </td>
       {% for product in block.settings.collection.products %}
-        <td class="spec-value" data-handle="{{ product.handle }}">
+        {% if product.handle == current_product.handle %}
+          {% continue %}
+        {% endif %}
+        <td class="spec-value hide" data-handle="{{ product.handle }}">
           {% if product.metafields.product_specs[key].size > 0 %}
             {{ product.metafields.product_specs[key] | join: ", " }}
           {% else %}
@@ -79,7 +94,7 @@
   "settings": [
     {
       "type": "product",
-      "id": "product",
+      "id": "current_product",
       "label": "product",
       "autofill": true
     },
