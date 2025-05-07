@@ -1,0 +1,28 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "ee5835d9d0f87901668dcc34ed5ca834"
+name = "Product Comparison Stan"
+handle = "product-comparison-stan-1"
+application_url = "https://per-insertion-surrounded-guarantee.trycloudflare.com"
+embedded = true
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-04"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://per-insertion-surrounded-guarantee.trycloudflare.com/auth/callback",
+  "https://per-insertion-surrounded-guarantee.trycloudflare.com/auth/shopify/callback",
+  "https://per-insertion-surrounded-guarantee.trycloudflare.com/api/auth/callback"
+]
+
+[pos]
+embedded = false
