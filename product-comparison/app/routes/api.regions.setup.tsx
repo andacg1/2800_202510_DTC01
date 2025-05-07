@@ -24,7 +24,7 @@ interface RegionData {
 }
 
 export const action: ActionFunction = async ({ request }) => {
-    await authenticate.admin(request);
+    const { admin } = await authenticate.admin(request);
     try {
         const regionsPath = path.join(process.cwd(), 'extensions', 'product-comparison-block', 'snippets', 'regions.liquid');
 
@@ -46,7 +46,7 @@ export const action: ActionFunction = async ({ request }) => {
             throw new Error('Invalid JSON format in regions data');
         }
 
-        // Validate region data structure
+
         if (!Array.isArray(regions) || regions.length === 0) {
             throw new Error('Regions data must be a non-empty array');
         }
@@ -64,25 +64,49 @@ export const action: ActionFunction = async ({ request }) => {
             subRegions: Array.from(uniqueSubRegions)
         };
 
-        const response = await fetch(`/admin/api/2024-01/metafields.json`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                metafield: {
+
+        const shopQuery = await admin.graphql(`
+            query {
+                shop {
+                    id
+                }
+            }
+        `);
+
+        const shopData = await shopQuery.json();
+        const shopId = shopData.data.shop.id;
+
+        const response = await admin.graphql(`
+            mutation metafieldsSet($metafields: [MetafieldsSetInput!]!) {
+                metafieldsSet(metafields: $metafields) {
+                    metafields {
+                        id
+                        namespace
+                        key
+                        value
+                    }
+                    userErrors {
+                        field
+                        message
+                    }
+                }
+            }
+        `, {
+            variables: {
+                metafields: [{
                     namespace: "product_comparison",
                     key: "regions",
                     value: JSON.stringify(regionData),
                     type: "json",
-                    owner_resource: "shop"
-                }
-            })
+                    ownerId: shopId
+                }]
+            }
         });
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => null);
-            throw new Error(`Failed to create metafield: ${errorData?.message || response.statusText}`);
+        const responseJson = await response.json();
+
+        if (responseJson.data?.metafieldsSet?.userErrors?.length > 0) {
+            throw new Error(`Failed to create metafield: ${responseJson.data.metafieldsSet.userErrors[0].message}`);
         }
 
         return json({
