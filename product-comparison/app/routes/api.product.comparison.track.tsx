@@ -1,6 +1,6 @@
 import { json } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
-import prisma from "~/db.server";
+import prisma from "../db.server";
 import { authenticate } from "../shopify.server";
 
 export const action: ActionFunction = async ({ request }) => {
@@ -23,4 +23,4 @@ export const action: ActionFunction = async ({ request }) => {
         console.error("Error tracking comparison:", error);
         return json({ success: false, message: "Failed to track comparison" }, { status: 500 });
     }
-}; 
+};
