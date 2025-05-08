@@ -23,7 +23,7 @@ export function App() {
         const mockProducts = [
           {
             id: 'prod1',
-            title: 'Snowboard Alpha',
+            title: 'Snowboard Omega Test',
             specs: {
               length: '160 cm',
               width: '25 cm',
@@ -52,7 +52,7 @@ export function App() {
             }
           }
         ];
-        
+
         setProducts(mockProducts);
       } catch (err) {
         setError('Failed to load products');
@@ -83,13 +83,13 @@ export function App() {
   const getAllSpecKeys = () => {
     const selectedProductData = products.filter(p => selectedProducts.includes(p.id));
     const allKeys = new Set<string>();
-    
+
     selectedProductData.forEach(product => {
       Object.keys(product.specs).forEach(key => {
         allKeys.add(key);
       });
     });
-    
+
     return Array.from(allKeys);
   };
 
@@ -128,12 +128,12 @@ export function App() {
   return (
     <div className="product-comparison">
       <h2>Product Comparison</h2>
-      
+
       <div className="product-selection">
         <h3>Select Products to Compare (max 2)</h3>
         <div className="products-grid">
           {products.map(product => (
-            <div 
+            <div
               key={product.id}
               className={`product-card ${selectedProducts.includes(product.id) ? 'selected' : ''}`}
               onClick={() => toggleProductSelection(product.id)}
@@ -169,8 +169,8 @@ export function App() {
                     const specValue = product?.specs[specKey];
                     return (
                       <td key={`${productId}-${specKey}`}>
-                        {Array.isArray(specValue) 
-                          ? specValue.join(', ') 
+                        {Array.isArray(specValue)
+                          ? specValue.join(', ')
                           : specValue?.toString() || 'N/A'}
                       </td>
                     );

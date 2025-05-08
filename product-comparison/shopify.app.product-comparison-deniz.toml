@@ -3,7 +3,7 @@
 client_id = "e6ffb18d3894daf11d0047bb6a8516b7"
 name = "Product Comparison Deniz"
 handle = "product-comparison-deniz-1"
-application_url = "https://compliance-less-risks-pp.trycloudflare.com"
+application_url = "https://pr-factors-axis-cw.trycloudflare.com"
 embedded = true
 
 [webhooks]
@@ -15,13 +15,14 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://compliance-less-risks-pp.trycloudflare.com/auth/callback",
-  "https://compliance-less-risks-pp.trycloudflare.com/auth/shopify/callback",
-  "https://compliance-less-risks-pp.trycloudflare.com/api/auth/callback"
+  "https://pr-factors-axis-cw.trycloudflare.com/auth/callback",
+  "https://pr-factors-axis-cw.trycloudflare.com/auth/shopify/callback",
+  "https://pr-factors-axis-cw.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
 embedded = false
 
 [build]
+include_config_on_deploy = true
 automatically_update_urls_on_dev = true

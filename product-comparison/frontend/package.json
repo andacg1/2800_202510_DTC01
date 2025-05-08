@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "source": "src/index.html",
   "scripts": {
-    "start": "parcel",
+    "start": "parcel watch src/index.tsx --dist-dir ../extensions/product-comparison-block/assets --no-source-maps --no-content-hash --public-url ./",
     "build": "parcel build src/index.tsx --dist-dir ../extensions/product-comparison-block/assets --no-source-maps --no-content-hash --public-url ./",
     "build:webpack": "webpack"
   },
