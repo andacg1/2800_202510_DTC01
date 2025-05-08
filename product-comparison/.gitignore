@@ -20,6 +20,9 @@ database.sqlite
 
 /extensions/*/dist
 
+# extensions build output
+extensions/*/build
+
 # Ignore shopify files created during app dev
 .shopify/*
 .shopify.lock

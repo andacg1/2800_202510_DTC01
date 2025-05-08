@@ -2,6 +2,9 @@ import { vitePlugin as remix } from "@remix-run/dev";
 import { installGlobals } from "@remix-run/node";
 import { defineConfig, type UserConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import shopify from "vite-plugin-shopify";
+import react from "@vitejs/plugin-react";
+import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 installGlobals({ nativeFetch: true });
 
@@ -51,6 +54,11 @@ export default defineConfig({
     },
   },
   plugins: [
+    shopify({
+      themeRoot: "extensions/product-comparison-block",
+    }),
+    react(),
+    cssInjectedByJsPlugin(),
     remix({
       ignoredRouteFiles: ["**/.*"],
       future: {
