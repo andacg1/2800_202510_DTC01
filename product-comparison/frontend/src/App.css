@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html {
   color-scheme: light dark;
   font-family: system-ui;
@@ -111,7 +115,7 @@ tr:hover {
   .products-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
-  
+
   th, td {
     padding: 8px 10px;
     font-size: 0.9rem;
