@@ -5,7 +5,7 @@
   "source": "src/index.html",
   "scripts": {
     "start": "parcel",
-    "build": "parcel build"
+    "build": "parcel build src/index.tsx --dist-dir ../extensions/product-comparison-block/assets --no-source-maps --no-content-hash --public-url ./"
   },
   "dependencies": {
     "autoprefixer": "^10.4.21",
