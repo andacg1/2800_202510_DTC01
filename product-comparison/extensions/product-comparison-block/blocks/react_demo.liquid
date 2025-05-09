@@ -1,0 +1,53 @@
+<span>Product Comparison App</span>
+
+{% render 'regions' %}
+
+<script>
+  const allProducts = {{ block.settings.collection.products | json }}
+  window.allProducts = allProducts;
+  console.log({allProducts});
+  console.log('React Demo loaded', window.allProducts);
+</script>
+
+<script id="product-metafields" type="application/json">
+  {
+  "allProducts": {{ block.settings.collection.products | json }},
+  "allMetafieldValues": {{ block.settings.collection.products | map: "metafields" | map: "product_specs" | json }}
+  }
+</script>
+
+<script>
+  const productData = JSON.parse(document.getElementById('product-metafields').innerText)
+  const productMetafieldData = []
+  for (let i=0; i < productData.allProducts.length; i++) {
+    const product = productData.allProducts[i]
+    const metafield = productData.allMetafieldValues[i]
+    productMetafieldData.push({ ...product, specs: metafield })
+  }
+  console.log(productMetafieldData)
+  window.productMetafieldData = productMetafieldData
+</script>
+
+<div id="container"></div>
+
+{% schema %}
+{
+  "name": "React Product Comparison",
+  "target": "section",
+  "javascript": "index.js",
+  "stylesheet": "index.css",
+  "settings": [
+    {
+      "type": "product",
+      "id": "current_product",
+      "label": "product",
+      "autofill": true
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    }
+  ]
+}
+{% endschema %}

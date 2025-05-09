@@ -1,4 +1,5 @@
 <script>console.log("All products", {{ block.settings.collection.products | json }});</script>
+{% render 'regions' %}
 
 {% for cmp_product in block.settings.collection.products %}
   <script>console.log({{ cmp_product.metafields.product_specs | json }});</script>
@@ -58,7 +59,7 @@
     </tr>
   {% endif %}
   {% for key in allMetafields %}
-    <tr class="row{{ forloop.index }} row-{{ key.first }}">
+    <tr class="row{{ forloop.index }} row-{{ key }}">
       <td class="spec-name" style="font-weight: bold">
         {{ key | capitalize }}
       </td>
@@ -90,7 +91,7 @@
 {
   "name": "Comparison Dropdown Table",
   "target": "section",
-  "javascript": "comparison-dropdown.js",
+  "javascript": "product-comparison.js",
   "settings": [
     {
       "type": "product",

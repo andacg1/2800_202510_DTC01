@@ -1,5 +1,3 @@
-"use strict";
-console.log("product-comparison.js was loaded!");
 const getLocation = async () => {
   const ipResp = await fetch("https://ipapi.co/json/");
   return await ipResp.json();
@@ -36,8 +34,75 @@ const getMockLocation = async () => {
   };
   return mockResponse;
 };
+
 window.addEventListener("load", async (e) => {
   const location = await getMockLocation();
   console.log({ location });
   console.log(window?.regions);
+  updateAvailableStatus(location, window?.regions);
 });
+
+window.addEventListener("load", (event) => {
+  const dropdownEl = document.getElementById("active-comparison");
+  dropdownEl.addEventListener("change", (e) => {
+    console.log({ newValue: e.target.value });
+    const handle = e.target.value;
+    const tableEl = document.getElementById("comparison-dropdown-table");
+    const elementsToHide = tableEl.querySelectorAll(
+      `td:not([data-handle='${handle}']),th:not([data-handle='${handle}'])`,
+    );
+    const elementsToShow = tableEl.querySelectorAll(
+      `td[data-handle='${handle}'],th[data-handle='${handle}']`,
+    );
+
+    for (const element of elementsToShow) {
+      element.classList.remove("hide");
+    }
+
+    for (const element of elementsToHide) {
+      const isFirstColumn = !element.dataset.handle;
+      if (isFirstColumn) {
+        continue;
+      }
+      element.classList.add("hide");
+    }
+  });
+});
+
+function updateAvailableStatus(location, regions) {
+  if (!location) {
+    return console.error("Failed to get location data.");
+  }
+  if (!regions) {
+    return console.error("Failed to get country region data.");
+  }
+  const regionsRow = document.querySelector(".row-available_regions");
+  const specNameEl = regionsRow.querySelector(".spec-name");
+  const specValueEls = regionsRow.querySelectorAll(".spec-value");
+  console.log({ specValue: specValueEls, specName: specNameEl });
+
+  for (const specValueEl of specValueEls) {
+    if (
+      specValueEl.innerText.toUpperCase() === "YES" ||
+      specValueEl.innerText.toUpperCase() === "NO"
+    ) {
+      return;
+    }
+
+    const availableRegions = specValueEl.innerText
+      .split(",")
+      .map((region) => region.trim());
+    console.log({ availableRegions });
+    const userRegionData = regions.find(
+      (data) => data["alpha-2"] === location.country,
+    );
+    console.log({ userRegionData });
+    const isAvailableInUsersRegion = availableRegions.some(
+      (region) =>
+        region === userRegionData.region ||
+        region === userRegionData["sub-region"],
+    );
+    specNameEl.innerText = `Available in ${location.country_name}?`;
+    specValueEl.innerText = isAvailableInUsersRegion ? "YES" : "NO";
+  }
+}

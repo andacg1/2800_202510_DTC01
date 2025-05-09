@@ -1,0 +1,29 @@
+{
+  "name": "parcel-react-client-starter",
+  "private": true,
+  "version": "0.0.0",
+  "source": "src/index.html",
+  "scripts": {
+    "dev:frontend": "parcel watch src/index.tsx --dist-dir ../extensions/product-comparison-block/assets --no-source-maps --no-content-hash --public-url ./",
+    "build": "parcel build src/index.tsx --dist-dir ../extensions/product-comparison-block/assets --no-source-maps --no-content-hash --public-url ./",
+    "build:webpack": "webpack"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-regular-svg-icons": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@tailwindcss/postcss": "^4.1.5",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "parcel": "^2.14.0"
+  }
+}
