@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
 import {
@@ -12,6 +12,8 @@ import {
   Grid,
   LegacyCard,
   InlineStack,
+  Popover,
+  OptionList,
 } from "@shopify/polaris";
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
@@ -91,6 +93,46 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   };
 };
 
+// Add OptionListInPopoverExample component
+function OptionListInPopoverExample() {
+  const [selected, setSelected] = useState<string[]>([]);
+  const [popoverActive, setPopoverActive] = useState(false);
+
+  const togglePopoverActive = useCallback(
+    () => setPopoverActive((popoverActive) => !popoverActive),
+    [],
+  );
+
+  const activator = (
+    <Button onClick={togglePopoverActive} disclosure>
+      Options
+    </Button>
+  );
+
+  return (
+    <div>
+      <Popover
+        active={popoverActive}
+        activator={activator}
+        onClose={togglePopoverActive}
+      >
+        <OptionList
+          title="Selectable options"
+          onChange={setSelected}
+          options={[
+            { value: '1', label: 'Option 1' },
+            { value: '2', label: 'Option 2' },
+            { value: '3', label: 'Option 3' },
+            { value: '4', label: 'Option 4' },
+            { value: '5', label: 'Option 5' },
+          ]}
+          selected={selected}
+        />
+      </Popover>
+    </div>
+  );
+}
+
 export default function Index() {
   const fetcher = useFetcher<typeof action>();
 
@@ -123,41 +165,54 @@ export default function Index() {
           <Layout.Section>
             <Card>
               <BlockStack gap="500">
-
                 <BlockStack gap="200">
-
                   <Text as="h4" variant="headingMd">
-                    Admin Dashboard
+                    Admin Dashboard!!!
                   </Text>
 
                   <Page fullWidth>
                     <Grid>
-                      <Grid.Cell columnSpan={{xs: 3, sm: 3, md: 3, lg: 3, xl: 3}}>
+                      <Grid.Cell
+                        columnSpan={{ xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }}
+                      >
                         <LegacyCard title="PlaceHolder" sectioned>
                           <p>View a summary of your online store’s sales.</p>
                         </LegacyCard>
                       </Grid.Cell>
 
-                      <Grid.Cell columnSpan={{xs: 3, sm: 3, md: 3, lg: 3, xl: 3}}>
+                      <Grid.Cell
+                        columnSpan={{ xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }}
+                      >
                         <LegacyCard title="PlaceHolder" sectioned>
                           <p>View a summary of your online store’s orders.</p>
                         </LegacyCard>
                       </Grid.Cell>
 
-                      <Grid.Cell columnSpan={{xs: 3, sm: 3, md: 3, lg: 3, xl: 3}}>
+                      <Grid.Cell
+                        columnSpan={{ xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }}
+                      >
                         <LegacyCard title="PlaceHolder" sectioned>
                           <p>View a summary of your online store’s orders.</p>
                         </LegacyCard>
                       </Grid.Cell>
 
-                      <Grid.Cell columnSpan={{xs: 3, sm: 3, md: 3, lg: 3, xl: 3}}>
+                      <Grid.Cell
+                        columnSpan={{ xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }}
+                      >
                         <LegacyCard title="PlaceHolder" sectioned>
-                          <p>View a summary of your online store’s orders.</p>
+                          <p>View a summary of your online store's orders.</p>
+                        </LegacyCard>
+                      </Grid.Cell>
+
+                      <Grid.Cell columnSpan={{ xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }}>
+                        <LegacyCard title="Options Tab" sectioned>
+                          <div>
+                            <OptionListInPopoverExample />
+                          </div>
                         </LegacyCard>
                       </Grid.Cell>
                     </Grid>
                   </Page>
-
                 </BlockStack>
 
                 <BlockStack gap="200">
@@ -185,13 +240,13 @@ export default function Index() {
                           Summary
                         </Text>
                         <Text as="p" variant="bodyMd">
-                          View a summary of your online store’s performance, including sales,
-                          visitors, top products, and referrals.
+                          View a summary of your online store’s performance,
+                          including sales, visitors, top products, and
+                          referrals.
                         </Text>
                       </BlockStack>
                     </Box>
                   </Card>
-
                 </BlockStack>
                 <InlineStack gap="300">
                   <Button loading={isLoading} onClick={generateProduct}>
