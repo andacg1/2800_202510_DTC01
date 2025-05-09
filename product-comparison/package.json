@@ -9,6 +9,8 @@
     "config:link": "shopify app config link",
     "generate": "shopify app generate",
     "deploy": "shopify app deploy",
+    "deploy:fly": "fly deploy",
+    "launch:fly": "fly launch",
     "config:use": "shopify app config use",
     "env": "shopify app env",
     "start": "remix-serve ./build/server/index.js",
@@ -17,6 +19,8 @@
     "db:migrate": "npx prisma migrate dev",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "shopify": "shopify",
+    "shopify:build": "shopify build",
+    "shopify:deploy": "shopify deploy",
     "prisma": "prisma",
     "graphql-codegen": "graphql-codegen",
     "vite": "vite"
@@ -30,6 +34,7 @@
     "@babel/core": "^7.27.1",
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-react": "^7.27.1",
+    "@flydotio/litestream": "^1.0.1",
     "@prisma/client": "^6.2.1",
     "@remix-run/dev": "^2.16.1",
     "@remix-run/fs-routes": "^2.16.1",
@@ -54,6 +59,7 @@
     "webpack-cli": "^6.0.1"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.7.10",
     "@remix-run/eslint-config": "^2.16.1",
     "@remix-run/route-config": "^2.16.1",
     "@shopify/api-codegen-preset": "^1.1.1",
@@ -86,5 +92,8 @@
     "@graphql-codegen/typescript-operations": "4.5.0",
     "minimatch": "9.0.5"
   },
-  "author": "andac"
+  "author": "andac",
+  "dockerfile": {
+    "litestream": true
+  }
 }

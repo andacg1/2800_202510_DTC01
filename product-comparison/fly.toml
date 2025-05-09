@@ -1,0 +1,38 @@
+# fly.toml app configuration file generated for product-comparison on 2025-05-09T11:19:05-07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'product-comparison'
+primary_region = 'sea'
+
+[build]
+
+[env]
+  PORT = '3000'
+  SCOPES = 'write_products'
+  SHOPIFY_API_KEY = '92e5966503baef9a8237c021f369ade7'
+  SHOPIFY_APP_URL = 'https://product-comparison.fly.dev'
+
+[processes]
+  app = 'node ./dbsetup.js npm run docker-start'
+
+[[mounts]]
+  source = 'data'
+  destination = '/data'
+  auto_extend_size_threshold = 80
+  auto_extend_size_increment = '1GB'
+  auto_extend_size_limit = '10GB'
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

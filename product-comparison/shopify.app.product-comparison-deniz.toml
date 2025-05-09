@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "e6ffb18d3894daf11d0047bb6a8516b7"
-name = "Product Comparison Deniz"
+name = "Comparify Deniz"
 handle = "product-comparison-deniz-1"
 application_url = "https://nicholas-wn-highly-expressions.trycloudflare.com"
 embedded = true

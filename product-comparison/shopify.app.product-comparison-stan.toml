@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "ee5835d9d0f87901668dcc34ed5ca834"
-name = "Product Comparison Stan"
+name = "Comparify Stan"
 handle = "product-comparison-stan-1"
 application_url = "https://pipe-protocols-roger-film.trycloudflare.com"
 embedded = true

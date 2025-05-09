@@ -9,8 +9,8 @@ generator client {
 // enough when changing adapters.
 // See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:dev.sqlite"
 }
 
 model Session {
@@ -32,21 +32,21 @@ model Session {
 }
 
 model User {
-  id String @id
-  shop String
+  id       String @id
+  shop     String
   userName String
 }
 
 model Metafields {
-  id String @id
-  type Type
-  dimension Json?
-  money Json
+  id                    String  @id
+  type                  Type
+  dimension             Json?
+  money                 Json
   multi_line_text_field String
-  rating Json
-  link String?
-  volume Json?
-  weight Json?
+  rating                Json
+  link                  String?
+  volume                Json?
+  weight                Json?
 }
 
 enum Type {
@@ -56,11 +56,11 @@ enum Type {
 }
 
 model Subscription {
-  id Int @id
+  id          Int    @id
   displayName String
-  tier Tier
-  cost Json
-  benefits String
+  tier        Tier
+  cost        Json
+  benefits    String
 }
 
 enum Tier {
@@ -71,15 +71,16 @@ enum Tier {
 }
 
 model ProductComparison {
-  id           String   @id @default(uuid())
-  productAId   String
-  productBId   String
-  comparedAt   DateTime @default(now())
-  userId       String?  // Optional: can be null if not logged in
-  shop         String?  // Optional: for multi-shop support
+  id               String   @id @default(uuid())
+  collectionId     String
+  productAId       String
+  comparedProducts Json
+  comparedAt       DateTime @default(now())
+  userId           String? // Optional: can be null if not logged in
+  shop             String? // Optional: for multi-shop support
 
   @@index([productAId])
-  @@index([productBId])
+  @@index([comparedProducts])
   @@index([userId])
   @@index([shop])
 }
