@@ -1,3 +1,5 @@
+import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect } from "react";
 import "./App.css";
 import type { LocationData, Product } from "./product.ts";
@@ -159,15 +161,33 @@ export function App() {
                       Array.isArray(specValue)
                     ) {
                       return (
-                        <td key={`${productId}-${specKey}`}>
-                          {isAvailable(userLocation, specValue)
-                            ? "True"
-                            : "False"}
+                        <td
+                          key={`${productId}-${specKey}`}
+                          className="text-center"
+                        >
+                          {isAvailable(userLocation, specValue) ? (
+                            <FontAwesomeIcon
+                              icon={faCheck}
+                              color={"rgba(31,255,0,0.5)"}
+                              size={"2x"}
+                              fixedWidth
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              icon={faX}
+                              color={"#b02525"}
+                              size={"2x"}
+                              fixedWidth
+                            />
+                          )}
                         </td>
                       );
                     }
                     return (
-                      <td key={`${productId}-${specKey}`}>
+                      <td
+                        key={`${productId}-${specKey}`}
+                        className="text-center"
+                      >
                         {Array.isArray(specValue)
                           ? specValue.join(", ")
                           : specValue?.toString() || "N/A"}

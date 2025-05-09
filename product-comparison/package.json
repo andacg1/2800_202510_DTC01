@@ -4,6 +4,7 @@
   "scripts": {
     "build": "tsc --project tsconfig.ext.json && remix vite:build",
     "dev": "shopify app dev",
+    "dev:deniz": "shopify app dev -s bcit-deniz.myshopify.com",
     "tsc:extension": "tsc --watch --project tsconfig.ext.json",
     "config:link": "shopify app config link",
     "generate": "shopify app generate",
