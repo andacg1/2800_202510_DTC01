@@ -20,6 +20,8 @@ export function App() {
       setLoading(true);
       try {
         // Mock data - in reality this would be an API call
+        const products = window.productMetafieldData
+        console.log({reactProductData: products})
         const mockProducts = [
           {
             id: 'prod1',
@@ -53,7 +55,7 @@ export function App() {
           }
         ];
 
-        setProducts(mockProducts);
+        setProducts(products);
       } catch (err) {
         setError('Failed to load products');
         console.error(err);

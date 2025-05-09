@@ -3,7 +3,7 @@
 client_id = "e6ffb18d3894daf11d0047bb6a8516b7"
 name = "Product Comparison Deniz"
 handle = "product-comparison-deniz-1"
-application_url = "https://pr-factors-axis-cw.trycloudflare.com"
+application_url = "https://packaging-explicit-proceedings-vinyl.trycloudflare.com"
 embedded = true
 
 [webhooks]
@@ -15,9 +15,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://pr-factors-axis-cw.trycloudflare.com/auth/callback",
-  "https://pr-factors-axis-cw.trycloudflare.com/auth/shopify/callback",
-  "https://pr-factors-axis-cw.trycloudflare.com/api/auth/callback"
+  "https://packaging-explicit-proceedings-vinyl.trycloudflare.com/auth/callback",
+  "https://packaging-explicit-proceedings-vinyl.trycloudflare.com/auth/shopify/callback",
+  "https://packaging-explicit-proceedings-vinyl.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
