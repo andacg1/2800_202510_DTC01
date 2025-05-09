@@ -27,9 +27,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://freebsd-could-deputy-douglas.trycloudflare.com/auth/callback",
-  "https://freebsd-could-deputy-douglas.trycloudflare.com/auth/shopify/callback",
-  "https://freebsd-could-deputy-douglas.trycloudflare.com/api/auth/callback"
+  "https://product-comparison.fly.dev/auth/callback",
+  "https://product-comparison.fly.dev/auth/shopify/callback",
+  "https://product-comparison.fly.dev/api/auth/callback"
 ]
 
 [pos]
