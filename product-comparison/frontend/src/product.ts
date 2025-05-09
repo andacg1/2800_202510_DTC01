@@ -58,8 +58,8 @@ export type Variant = {
 };
 
 export type QuantityRule = {
-  min: number;
-  max: any;
+  min: number | null;
+  max: number | null;
   increment: number;
 };
 

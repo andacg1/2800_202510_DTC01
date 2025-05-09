@@ -1,9 +1,8 @@
-import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect } from "react";
 import "./App.css";
 import type { LocationData, Product } from "./product.ts";
 import { getMockLocation, isAvailable } from "./product.ts";
+import SpecData from "./SpecData.tsx";
 
 export function App() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,8 +10,6 @@ export function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<LocationData>();
-
-  // TODO: get location feature working for this
 
   // This function would normally fetch from your Shopify store
   // In this basic implementation, we're mocking product data
@@ -154,44 +151,15 @@ export function App() {
                   {selectedProducts.map((productId) => {
                     const product = products.find((p) => p.id === productId);
                     const specValue = product?.specs[specKey];
-                    const isAvailableField = specKey === "available_regions";
-                    if (
-                      isAvailableField &&
-                      userLocation &&
-                      Array.isArray(specValue)
-                    ) {
-                      return (
-                        <td
-                          key={`${productId}-${specKey}`}
-                          className="text-center"
-                        >
-                          {isAvailable(userLocation, specValue) ? (
-                            <FontAwesomeIcon
-                              icon={faCheck}
-                              color={"rgba(31,255,0,0.5)"}
-                              size={"2x"}
-                              fixedWidth
-                            />
-                          ) : (
-                            <FontAwesomeIcon
-                              icon={faX}
-                              color={"#b02525"}
-                              size={"2x"}
-                              fixedWidth
-                            />
-                          )}
-                        </td>
-                      );
-                    }
+
                     return (
-                      <td
-                        key={`${productId}-${specKey}`}
-                        className="text-center"
-                      >
-                        {Array.isArray(specValue)
-                          ? specValue.join(", ")
-                          : specValue?.toString() || "N/A"}
-                      </td>
+                      <SpecData
+                        key={productId}
+                        productId={productId}
+                        specKey={specKey}
+                        userLocation={userLocation}
+                        specValue={specValue}
+                      />
                     );
                   })}
                 </tr>

@@ -1,5 +1,3 @@
-<span>Product Comparison App</span>
-
 {% render 'regions' %}
 
 <script>
@@ -47,6 +45,22 @@
       "type": "collection",
       "id": "collection",
       "label": "Collection"
+    },
+    {
+      "type": "select",
+      "id": "table_variant",
+      "label": "Table Variant",
+      "options": [
+        {
+          "value": "multi-column",
+          "label": "Multi-Column Table"
+        },
+        {
+          "value": "two-column",
+          "label": "Two-Column Table"
+        }
+      ],
+      "default": "multi-column"
     }
   ]
 }
