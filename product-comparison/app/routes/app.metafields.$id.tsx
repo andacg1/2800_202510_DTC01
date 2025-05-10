@@ -83,7 +83,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       } = await response.json();
 
       return { metafields: edges.map((edge: any) => edge.node) };
-    } else if (action === "addMetafield") {
+    } else if (action === "addMetafield" || action === "updateMetafield") {
       const productId = formData.get("productId") as string;
       const fullProductId = `gid://shopify/Product/${productId}`;
       const metafieldNamespace = formData.get("metafieldNamespace") as string;
@@ -168,6 +168,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return { error: "Invalid action" };
     }
   } catch (error) {
+    console.error(error);
     return { error: "An error occurred while processing your request" };
   }
 };

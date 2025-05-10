@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Page,
   Layout,
@@ -20,8 +20,9 @@ import {
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
+import MetafieldTextField from "./MetafieldTextField";
 
-interface Metafield {
+export interface Metafield {
   id?: string;
   namespace: string;
   key: string;
@@ -29,12 +30,12 @@ interface Metafield {
   type: string;
 }
 
-interface Product {
+export interface Product {
   id: string;
   title: string;
 }
 
-interface FetcherData {
+export interface FetcherData {
   metafields?: Metafield[];
   metafield?: Metafield;
   deletedId?: string;
@@ -142,56 +143,69 @@ export default function ProductMetafieldManager({
                     Add Metafield
                   </Button>
                 </BlockStack>
+                <BlockStack>
+                  {initialMetafields?.length === 0 ? (
+                    <Text as="p">No metafields found for this product.</Text>
+                  ) : (
+                    <LegacyStack vertical spacing="loose">
+                      {initialMetafields?.map((metafield) => (
+                        <LegacyStack
+                          key={metafield.id}
+                          distribution="equalSpacing"
+                        >
+                          <LegacyStack distribution="fill" alignment="center">
+                            <Text as="p">
+                              {metafield.namespace}.{metafield.key}:{" "}
+                            </Text>
 
-                {initialMetafields?.length === 0 ? (
-                  <Text as="p">No metafields found for this product.</Text>
-                ) : (
-                  <LegacyStack vertical spacing="loose">
-                    {initialMetafields?.map((metafield) => (
-                      <LegacyStack
-                        key={metafield.id}
-                        distribution="equalSpacing"
-                      >
-                        <Text as="p">
-                          {metafield.namespace}.{metafield.key}:{" "}
-                          {metafield.value}
-                        </Text>
-                        <ButtonGroup>
-                          <Form method="post">
-                            <input
-                              type="hidden"
-                              name="action"
-                              value="deleteMetafield"
+                            <MetafieldTextField
+                              label=""
+                              metafield={metafield}
+                              selectedProduct={selectedProduct}
                             />
-                            <input
-                              type="hidden"
-                              name="metafieldId"
-                              value={metafield.id}
-                            />
-                            <input
-                              type="hidden"
-                              name="metafieldNamespace"
-                              value={metafield.namespace}
-                            />
-                            <input
-                              type="hidden"
-                              name="metafieldKey"
-                              value={metafield.key}
-                            />
-                            <input
-                              type="hidden"
-                              name="productId"
-                              value={selectedProduct.id}
-                            />
-                            <Button tone="critical" submit loading={isLoading}>
-                              Delete
-                            </Button>
-                          </Form>
-                        </ButtonGroup>
-                      </LegacyStack>
-                    ))}
-                  </LegacyStack>
-                )}
+                          </LegacyStack>
+
+                          <ButtonGroup>
+                            <Form method="post">
+                              <input
+                                type="hidden"
+                                name="action"
+                                value="deleteMetafield"
+                              />
+                              <input
+                                type="hidden"
+                                name="metafieldId"
+                                value={metafield.id}
+                              />
+                              <input
+                                type="hidden"
+                                name="metafieldNamespace"
+                                value={metafield.namespace}
+                              />
+                              <input
+                                type="hidden"
+                                name="metafieldKey"
+                                value={metafield.key}
+                              />
+                              <input
+                                type="hidden"
+                                name="productId"
+                                value={selectedProduct.id}
+                              />
+                              <Button
+                                tone="critical"
+                                submit
+                                loading={isLoading}
+                              >
+                                Delete
+                              </Button>
+                            </Form>
+                          </ButtonGroup>
+                        </LegacyStack>
+                      ))}
+                    </LegacyStack>
+                  )}
+                </BlockStack>
               </BlockStack>
             </Card>
           </Layout.Section>
