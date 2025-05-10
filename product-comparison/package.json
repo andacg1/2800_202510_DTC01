@@ -35,7 +35,7 @@
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-react": "^7.27.1",
     "@flydotio/litestream": "^1.0.1",
-    "@prisma/client": "^6.2.1",
+    "@prisma/client": "^6.6.0",
     "@remix-run/dev": "^2.16.1",
     "@remix-run/fs-routes": "^2.16.1",
     "@remix-run/node": "^2.16.1",
