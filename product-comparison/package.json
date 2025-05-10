@@ -5,6 +5,7 @@
     "build": "tsc --project tsconfig.ext.json && remix vite:build",
     "dev": "shopify app dev",
     "dev:deniz": "shopify app dev -s bcit-deniz.myshopify.com",
+    "dev:stan": "shopify app dev -s bcit-stan.myshopify.com",
     "tsc:extension": "tsc --watch --project tsconfig.ext.json",
     "config:link": "shopify app config link",
     "generate": "shopify app generate",
@@ -45,9 +46,11 @@
     "@shopify/polaris": "^12.0.0",
     "@shopify/shopify-app-remix": "^3.7.0",
     "@shopify/shopify-app-session-storage-prisma": "^6.0.0",
+    "@shopify/storefront-api-client": "^1.0.7",
     "babel-loader": "^10.0.0",
     "css-loader": "^7.1.2",
     "isbot": "^5.1.0",
+    "openai": "^4.98.0",
     "postcss-loader": "^8.1.1",
     "prisma": "^6.2.1",
     "react": "^18.2.0",
@@ -56,7 +59,8 @@
     "terser-webpack-plugin": "^5.3.14",
     "vite-tsconfig-paths": "^5.0.1",
     "webpack": "^5.99.8",
-    "webpack-cli": "^6.0.1"
+    "webpack-cli": "^6.0.1",
+    "zod": "^3.24.4"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.7.10",

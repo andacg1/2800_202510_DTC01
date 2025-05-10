@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import type { LocationData, Product } from "./product.ts";
 import { getMockLocation, isAvailable } from "./product.ts";
+import RecommendationQuery from "./RecommendationQuery.tsx";
 
 export function App() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -111,6 +112,8 @@ export function App() {
   return (
     <div className="product-comparison">
       <h2>Product Comparison</h2>
+
+      <RecommendationQuery products={products} />
 
       <div className="product-selection">
         <h3>Select Products to Compare (max 2)</h3>
