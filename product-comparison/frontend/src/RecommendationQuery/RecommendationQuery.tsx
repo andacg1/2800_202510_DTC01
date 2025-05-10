@@ -3,21 +3,22 @@ import {
   Recommendation,
   RecommendationContext,
   RecommendationQueryProps,
+  RecommendationResponse,
 } from "./RecommendationContext.ts";
 
 async function mockOpenApiResponse() {
   return {
     success: true,
     outputJson: {
-      recommendedProductId: "gid://shopify/Product/9962241917203",
-      recommendedProductTitle: "Antique Drawers",
+      recommendedProductId: "9962241655059",
+      recommendedProductTitle: "Copper Light",
       reason:
-        "As an eccentric socialite with a flair for the dramatic and a history as colorful as your love story, the 'Antique Drawers' are the perfect choice. Their vintage charm aligns perfectly with your unique, attention-grabbing lifestyle. Whether you're stashing love letters, mementos from wild nights, or just need a conversation piece everyone asks about at your next high-society gathering, these antique drawers bring a sense of style and story that fits your persona. Plus, the mysterious \"55 GB RAM\" detail only adds to the quirkiness—perfect for someone who's always keeping people guessing!",
+        "As a level 5 kobold working in dim mines, your primary issue is inadequate illumination from your head-candle. Of all the products you listed, the 'Copper Light' is the only item that is actually designed to produce light. Snowboards, wax, sofas, and plant pots do not provide any illumination for your underground activities. The 'Copper Light' is a bedside lamp, but it’s portable and much brighter than a typical kobold candle—making it the most logical upgrade for lighting up mine tunnels. Just make sure you find a way to power it underground!",
     },
     message: {
-      id: "resp_681eb7ef17848191855ed3792615cbf00005c863e3c5e74e",
+      id: "resp_681fca9d95d4819183c0eb7d807722830abf5240ac5e06eb",
       object: "response",
-      created_at: 1746843631,
+      created_at: 1746913949,
       status: "completed",
       error: null,
       incomplete_details: null,
@@ -26,14 +27,14 @@ async function mockOpenApiResponse() {
       model: "gpt-4.1-2025-04-14",
       output: [
         {
-          id: "msg_681eb7ef539c8191912bd3a3f4832fd00005c863e3c5e74e",
+          id: "msg_681fca9f324c8191af5b99dee4988ebe0abf5240ac5e06eb",
           type: "message",
           status: "completed",
           content: [
             {
               type: "output_text",
               annotations: [],
-              text: '{"recommendedProductId":"gid://shopify/Product/9962241917203","recommendedProductTitle":"Antique Drawers","reason":"As an eccentric socialite with a flair for the dramatic and a history as colorful as your love story, the \'Antique Drawers\' are the perfect choice. Their vintage charm aligns perfectly with your unique, attention-grabbing lifestyle. Whether you\'re stashing love letters, mementos from wild nights, or just need a conversation piece everyone asks about at your next high-society gathering, these antique drawers bring a sense of style and story that fits your persona. Plus, the mysterious \\"55 GB RAM\\" detail only adds to the quirkiness—perfect for someone who\'s always keeping people guessing!"}',
+              text: '{"recommendedProductId":"9962241655059","recommendedProductTitle":"Copper Light","reason":"As a level 5 kobold working in dim mines, your primary issue is inadequate illumination from your head-candle. Of all the products you listed, the \'Copper Light\' is the only item that is actually designed to produce light. Snowboards, wax, sofas, and plant pots do not provide any illumination for your underground activities. The \'Copper Light\' is a bedside lamp, but it’s portable and much brighter than a typical kobold candle—making it the most logical upgrade for lighting up mine tunnels. Just make sure you find a way to power it underground!"}',
             },
           ],
           role: "assistant",
@@ -56,15 +57,9 @@ async function mockOpenApiResponse() {
           schema: {
             type: "object",
             properties: {
-              recommendedProductId: {
-                type: "string",
-              },
-              recommendedProductTitle: {
-                type: "string",
-              },
-              reason: {
-                type: "string",
-              },
+              recommendedProductId: { type: "string" },
+              recommendedProductTitle: { type: "string" },
+              reason: { type: "string" },
             },
             required: [
               "recommendedProductId",
@@ -81,20 +76,16 @@ async function mockOpenApiResponse() {
       top_p: 1,
       truncation: "disabled",
       usage: {
-        input_tokens: 696,
-        input_tokens_details: {
-          cached_tokens: 0,
-        },
-        output_tokens: 151,
-        output_tokens_details: {
-          reasoning_tokens: 0,
-        },
-        total_tokens: 847,
+        input_tokens: 21795,
+        input_tokens_details: { cached_tokens: 0 },
+        output_tokens: 138,
+        output_tokens_details: { reasoning_tokens: 0 },
+        total_tokens: 21933,
       },
       user: null,
       metadata: {},
       output_text:
-        '{"recommendedProductId":"gid://shopify/Product/9962241917203","recommendedProductTitle":"Antique Drawers","reason":"As an eccentric socialite with a flair for the dramatic and a history as colorful as your love story, the \'Antique Drawers\' are the perfect choice. Their vintage charm aligns perfectly with your unique, attention-grabbing lifestyle. Whether you\'re stashing love letters, mementos from wild nights, or just need a conversation piece everyone asks about at your next high-society gathering, these antique drawers bring a sense of style and story that fits your persona. Plus, the mysterious \\"55 GB RAM\\" detail only adds to the quirkiness—perfect for someone who\'s always keeping people guessing!"}',
+        '{"recommendedProductId":"9962241655059","recommendedProductTitle":"Copper Light","reason":"As a level 5 kobold working in dim mines, your primary issue is inadequate illumination from your head-candle. Of all the products you listed, the \'Copper Light\' is the only item that is actually designed to produce light. Snowboards, wax, sofas, and plant pots do not provide any illumination for your underground activities. The \'Copper Light\' is a bedside lamp, but it’s portable and much brighter than a typical kobold candle—making it the most logical upgrade for lighting up mine tunnels. Just make sure you find a way to power it underground!"}',
     },
   };
 }
@@ -129,15 +120,21 @@ const RecommendationQuery = ({
             return console.error("Could not find APP_BACKEND_URL");
           }
           setIsLoading(true);
-          // const resp = await fetch(url, {
-          //   method: "POST",
-          //   body: JSON.stringify({
-          //     query,
-          //     products,
-          //   }),
-          // });
-          //const body: RecommendationResponse = await resp.json();
-          const body = await mockOpenApiResponse();
+
+          let body: RecommendationResponse;
+          const MOCK_OPENAI_REQUEST = false;
+          if (MOCK_OPENAI_REQUEST) {
+            body = await mockOpenApiResponse();
+          } else {
+            const resp = await fetch(url, {
+              method: "POST",
+              body: JSON.stringify({
+                query,
+                products,
+              }),
+            });
+            body = await resp.json();
+          }
           setIsLoading(false);
           setRecommendation(body.outputJson);
         }}

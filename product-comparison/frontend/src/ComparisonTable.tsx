@@ -82,10 +82,14 @@ const ComparisonTable = ({
 
   useEffect(() => {
     if (!recommendation?.recommendedProductId) {
+      console.log("No product ID", recommendation);
       return;
     }
-    const shortId = recommendation.recommendedProductId.slice(22);
-    setSelectedProducts([Number(shortId)]);
+    const productId = recommendation.recommendedProductId.replace(
+      "gid://shopify/Product/",
+      "",
+    );
+    setSelectedProducts([Number(productId)]);
     // ensureProductSelection(Number(shortId));
   }, [recommendation]);
 
