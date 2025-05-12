@@ -10,7 +10,8 @@
 <script id="product-metafields" type="application/json">
   {
   "allProducts": {{ block.settings.collection.products | json }},
-  "allMetafieldValues": {{ block.settings.collection.products | map: "metafields" | map: "product_specs" | json }}
+  "allMetafieldValues": {{ block.settings.collection.products | map: "metafields" | map: "product_specs" | json }},
+  "tableVariant": {{ block.settings.table_variant | json }}
   }
 </script>
 
@@ -24,6 +25,7 @@
   }
   console.log(productMetafieldData)
   window.productMetafieldData = productMetafieldData
+  window.tableVariant = productData.tableVariant
 </script>
 
 <div id="container"></div>
