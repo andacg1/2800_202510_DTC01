@@ -110,7 +110,7 @@ export function App() {
 
   return (
     <div className="product-comparison">
-      <h2>Product Comparison</h2>
+      <h2 className="text-2xl">Product Comparison</h2>
 
       <div className="product-selection">
         <h3>Select Products to Compare (max 2)</h3>
