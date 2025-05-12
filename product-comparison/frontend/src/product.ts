@@ -4,7 +4,7 @@ declare global {
 }
 
 export type Product = {
-  id: string;
+  id: number;
   title: string;
   handle: string;
   description: string;
