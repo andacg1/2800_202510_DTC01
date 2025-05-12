@@ -1,0 +1,102 @@
+meta {
+  name: Recommendation
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:52134/recommend
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "query": "I'm an eccentric socialite who found their soulmate while selling crack behind the local Wendy's",
+    "products": [
+      {
+        "id": "gid://shopify/Product/9962241917203",
+        "title": "Antique Drawers",
+        "description": "Antique wooden chest of drawers",
+        "priceRangeV2": {
+          "minVariantPrice": {
+            "amount": "250.0",
+            "currencyCode": "CAD"
+          },
+          "maxVariantPrice": {
+            "amount": "250.0",
+            "currencyCode": "CAD"
+          }
+        },
+        "options": [
+          {
+            "name": "Title",
+            "optionValues": [
+              {
+                "name": "Default Title"
+              }
+            ]
+          }
+        ],
+        "metafields": {
+          "edges": [
+            {
+              "node": {
+                "id": "gid://shopify/Metafield/42501472026899",
+                "namespace": "app-3890849--eligibility",
+                "type": "json_string",
+                "value": "{\"product_discovery_ineligible_reasons\":[],\"moderation_outcomes\":[],\"product_prohibited_categories\":[]}",
+                "key": "eligibility_details"
+              }
+            },
+            {
+              "node": {
+                "id": "gid://shopify/Metafield/42605880377619",
+                "namespace": "product_specs",
+                "type": "string",
+                "value": "55cm",
+                "key": "width"
+              }
+            },
+            {
+              "node": {
+                "id": "gid://shopify/Metafield/42605883588883",
+                "namespace": "product_specs",
+                "type": "string",
+                "value": "65cm",
+                "key": "height"
+              }
+            },
+            {
+              "node": {
+                "id": "gid://shopify/Metafield/42605910163731",
+                "namespace": "product_specs",
+                "type": "string",
+                "value": "55 GB",
+                "key": "RAM"
+              }
+            },
+            {
+              "node": {
+                "id": "gid://shopify/Metafield/42606681227539",
+                "namespace": "custom",
+                "type": "list.product_reference",
+                "value": "[\"gid://shopify/Product/9962241917203\",\"gid://shopify/Product/9962243752211\",\"gid://shopify/Product/9962242539795\"]",
+                "key": "product_list"
+              }
+            },
+            {
+              "node": {
+                "id": "gid://shopify/Metafield/42660561420563",
+                "namespace": "product_specs",
+                "type": "json",
+                "value": "[\"Africa\"]",
+                "key": "available_regions"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

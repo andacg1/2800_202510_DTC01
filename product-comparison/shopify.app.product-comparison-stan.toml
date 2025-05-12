@@ -3,7 +3,7 @@
 client_id = "ee5835d9d0f87901668dcc34ed5ca834"
 name = "Comparify Stan"
 handle = "product-comparison-stan-1"
-application_url = "https://guards-feeding-evident-bumper.trycloudflare.com"
+application_url = "https://localhost:3458"
 embedded = true
 
 [build]
@@ -19,9 +19,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://guards-feeding-evident-bumper.trycloudflare.com/auth/callback",
-  "https://guards-feeding-evident-bumper.trycloudflare.com/auth/shopify/callback",
-  "https://guards-feeding-evident-bumper.trycloudflare.com/api/auth/callback"
+  "https://localhost:3458/auth/callback",
+  "https://localhost:3458/auth/shopify/callback",
+  "https://localhost:3458/api/auth/callback"
 ]
 
 [pos]
