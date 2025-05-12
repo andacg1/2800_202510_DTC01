@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import Select, { MultiValue } from "react-select";
+import React, { useContext, useEffect, useState } from "react";
+import type { MultiValue } from "react-select";
+import Select from "react-select";
 import { isAvailable, type Product } from "./product.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
@@ -23,14 +24,6 @@ const MultiColumnComparison = ({
   products,
 }: MultiColumnComparisonProps) => {
   const pathName = window.location.pathname;
-  // const [productOptions, setProductOptions] = useState<ProductOption[]>(
-  //   products.map((product) => ({
-  //     value: String(product.id),
-  //     label: product.title,
-  //     product: product,
-  //     isFixed: window.location.pathname.includes(product.handle),
-  //   })),
-  // );
   const productOptions = products.map((product) => ({
     value: String(product.id),
     label: product.title,
@@ -54,15 +47,6 @@ const MultiColumnComparison = ({
     );
     console.log({ pathName, productOptions, currentProductOption });
   }, [pathName, productOptions, selectedOptions]);
-
-  // useEffect(() => {
-  //   const currentProductOption = productOptions.find((option) =>
-  //     pathName.includes(option.product.handle),
-  //   );
-  //   if (currentProductOption) {
-  //     setSelectedOptions([currentProductOption]);
-  //   }
-  // }, [pathName]);
 
   // Get all unique spec keys across selected products
   const getAllSpecKeys = () => {
@@ -104,7 +88,11 @@ const MultiColumnComparison = ({
                     <th>Specification</th>
                     {selectedOptions.map((selectedProduct) => {
                       const product = selectedProduct.product;
-                      return <th key={product.id}>{product?.title}</th>;
+                      return (
+                        <th key={product.id} className="text-center!">
+                          {product?.title}
+                        </th>
+                      );
                     })}
                   </tr>
                 </thead>
@@ -131,22 +119,24 @@ const MultiColumnComparison = ({
                               key={`${product.id}-${specKey}`}
                               className="text-center"
                             >
-                              {isAvailable(userLocation, specValue) ? (
-                                <FontAwesomeIcon
-                                  icon={faCheck}
-                                  color={"rgba(31,255,0,0.5)"}
-                                  size={"2x"}
-                                  fixedWidth
-                                />
-                              ) : (
-                                <FontAwesomeIcon
-                                  icon={faX}
-                                  color={"#b02525"}
-                                  size={"2x"}
-                                  fixedWidth
-                                />
-                              )}
-                              <div>{specValue.join(", ")}</div>
+                              <div className="flex flex-col items-center justify-center">
+                                {isAvailable(userLocation, specValue) ? (
+                                  <FontAwesomeIcon
+                                    icon={faCheck}
+                                    color={"rgba(31,255,0,0.5)"}
+                                    size={"2x"}
+                                    fixedWidth
+                                  />
+                                ) : (
+                                  <FontAwesomeIcon
+                                    icon={faX}
+                                    color={"#b02525"}
+                                    size={"2x"}
+                                    fixedWidth
+                                  />
+                                )}
+                                <div>{specValue.join(", ")}</div>
+                              </div>
                             </td>
                           );
                         }
@@ -155,9 +145,11 @@ const MultiColumnComparison = ({
                             key={`${product.id}-${specKey}`}
                             className="text-center"
                           >
-                            {Array.isArray(specValue)
-                              ? specValue.join(", ")
-                              : specValue?.toString() || "N/A"}
+                            <div className="flex flex-col items-center justify-center">
+                              {Array.isArray(specValue)
+                                ? specValue.join(", ")
+                                : specValue?.toString() || "N/A"}
+                            </div>
                           </td>
                         );
                       })}

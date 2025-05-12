@@ -11,7 +11,8 @@
   {
   "allProducts": {{ block.settings.collection.products | json }},
   "allMetafieldValues": {{ block.settings.collection.products | map: "metafields" | map: "product_specs" | json }},
-  "tableVariant": {{ block.settings.table_variant | json }}
+  "tableVariant": {{ block.settings.table_variant | json }},
+  "currentProduct": {{ product |  json }}
   }
 </script>
 
