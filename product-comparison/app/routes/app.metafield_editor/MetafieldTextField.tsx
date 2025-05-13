@@ -29,6 +29,10 @@ const MetafieldTextField = ({
 
   const handleChange = useCallback(
     (newValue: string) => {
+      if (!formRef?.current) {
+        console.log("formRef not found");
+        return;
+      }
       setValue(newValue);
       fetcher.submit(formRef.current);
     },
