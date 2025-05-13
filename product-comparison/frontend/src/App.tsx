@@ -13,6 +13,7 @@ export function App() {
   const [recommendation, setRecommendation] = useState<Recommendation>();
   const tableVariant: string = window?.tableVariant;
   const [userLocation, setUserLocation] = useState<LocationData | null>(null);
+  const products = window?.productMetafieldData;
 
   useEffect(() => {
     (async () => {
@@ -22,18 +23,21 @@ export function App() {
     })();
   }, []);
 
+  if (!products) {
+    return null;
+  }
   return (
     <LocationContext value={{ location: userLocation }}>
       <RecommendationContext value={{ setRecommendation, recommendation }}>
         <div className="product-comparison z-10">
           <h2>Product Comparison</h2>
 
-          <RecommendationQuery products={window?.productMetafieldData} />
+          <RecommendationQuery products={products} />
 
           {tableVariant && tableVariant === "multi-column" ? (
-            <MultiColumnComparison products={window?.productMetafieldData} />
+            <MultiColumnComparison products={products} />
           ) : (
-            <ComparisonTable products={window?.productMetafieldData} />
+            <ComparisonTable products={products} />
           )}
         </div>
       </RecommendationContext>

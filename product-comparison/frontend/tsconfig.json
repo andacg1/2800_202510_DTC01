@@ -12,7 +12,7 @@
 
     /* Emit */
     "noEmit": true,
-
+    "noEmitOnError": false,
     /* Interop Constraints */
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,

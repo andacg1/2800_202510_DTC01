@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import type { MultiValue } from "react-select";
+import type { MultiValue, StylesConfig } from "react-select";
 import Select from "react-select";
 import { isAvailable, type Product } from "./product.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
 import { LocationContext } from "./LocationContext.ts";
+import makeAnimated from "react-select/animated";
 
 type MultiColumnComparisonProps = {
   className?: string;
@@ -18,6 +19,33 @@ export type ProductOption = {
   readonly product: Product;
 };
 
+const animatedComponents = makeAnimated();
+
+const selectStyles: StylesConfig<ProductOption, true> = {
+  control: (styles) => ({
+    ...styles,
+    backgroundColor: "white",
+    animation: "none",
+    opacity: 1,
+    transform: "translateY(0px)",
+  }),
+  menu: (styles) => ({
+    ...styles,
+    zIndex: "100",
+    backgroundColor: "white",
+    animation: "none",
+    opacity: 1,
+    transform: "translateY(0px)",
+  }),
+  input: (styles) => ({
+    ...styles,
+    ":focus-visible": {
+      ...styles[":focus-visible"],
+      boxShadow: "none",
+    },
+  }),
+};
+
 const MultiColumnComparison = ({
   className,
   children,
@@ -28,7 +56,7 @@ const MultiColumnComparison = ({
     value: String(product.id),
     label: product.title,
     product: product,
-    isFixed: pathName.includes(product.handle),
+    isFixed: window.location.pathname.includes(product.handle),
   }));
 
   const [selectedOptions, setSelectedOptions] = useState<
@@ -71,10 +99,13 @@ const MultiColumnComparison = ({
         isMulti
         name="products"
         options={productOptions}
+        components={animatedComponents}
         className="basic-multi-select"
-        classNamePrefix="select"
+        classNamePrefix="select-internal"
+        /* menuIsOpen={true} */
         onChange={setSelectedOptions}
         value={selectedOptions}
+        styles={selectStyles}
       />
       {Array.isArray(selectedOptions) &&
       selectedOptions?.length === 0 ? null : (

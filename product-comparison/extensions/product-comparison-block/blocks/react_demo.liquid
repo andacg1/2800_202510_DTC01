@@ -16,10 +16,10 @@
   }
 </script>
 
-<script>
+<script defer="defer">
   const productData = JSON.parse(document.getElementById('product-metafields').innerText)
   const productMetafieldData = []
-  for (let i=0; i < productData.allProducts.length; i++) {
+  for (let i=0; i < productData?.allProducts.length; i++) {
     const product = productData.allProducts[i]
     const metafield = productData.allMetafieldValues[i]
     productMetafieldData.push({ ...product, specs: metafield })
