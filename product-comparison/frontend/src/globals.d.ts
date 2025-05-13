@@ -4,5 +4,7 @@ declare global {
     dataLayer: Record<string, any>;
     productMetafieldData: Product[];
     tableVariant?: string;
+    currentProduct?: Product;
+    collection?: string;
   }
 }

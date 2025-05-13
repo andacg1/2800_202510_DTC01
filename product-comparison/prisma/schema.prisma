@@ -71,16 +71,16 @@ enum Tier {
 }
 
 model ProductComparison {
-  id               String   @id @default(uuid())
-  collectionId     String
-  productAId       String
-  comparedProducts Json
-  comparedAt       DateTime @default(now())
-  userId           String? // Optional: can be null if not logged in
-  shop             String? // Optional: for multi-shop support
+  id                String   @id @default(uuid())
+  collectionId      String
+  originalProductId String
+  comparedProducts  Json
+  comparedAt        DateTime @default(now())
+  sessionId         String? // Optional: can be null if not logged in
+  shop              String? // Optional: for multi-shop support
 
-  @@index([productAId])
-  @@index([comparedProducts])
-  @@index([userId])
+  @@index([originalProductId])
+  @@index([collectionId])
+  @@index([sessionId])
   @@index([shop])
 }

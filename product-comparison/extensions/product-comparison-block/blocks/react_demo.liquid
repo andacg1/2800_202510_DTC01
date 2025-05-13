@@ -12,7 +12,8 @@
   "allProducts": {{ block.settings.collection.products | json }},
   "allMetafieldValues": {{ block.settings.collection.products | map: "metafields" | map: "product_specs" | json }},
   "tableVariant": {{ block.settings.table_variant | json }},
-  "currentProduct": {{ product |  json }}
+  "currentProduct": {{ product |  json }},
+  "collection": {{ block.settings.collection | json }}
   }
 </script>
 
@@ -27,6 +28,8 @@
   console.log(productMetafieldData)
   window.productMetafieldData = productMetafieldData
   window.tableVariant = productData.tableVariant
+  window.currentProduct = productData.currentProduct
+  window.collection = productData.collection
 </script>
 
 <div id="container" data-theme="light"></div>
