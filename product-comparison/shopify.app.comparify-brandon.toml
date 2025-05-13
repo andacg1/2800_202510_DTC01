@@ -1,0 +1,28 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "a5964c6796450f7151ea3e568dcc1ca8"
+name = "comparify-brandon"
+handle = "comparify-brandon"
+application_url = "https://localhost:53974"
+embedded = true
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-04"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://localhost:53974/auth/callback",
+  "https://localhost:53974/auth/shopify/callback",
+  "https://localhost:53974/api/auth/callback"
+]
+
+[pos]
+embedded = false

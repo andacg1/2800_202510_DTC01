@@ -3,7 +3,7 @@
 client_id = "92e5966503baef9a8237c021f369ade7"
 name = "Comparify"
 handle = "product-comparison-13"
-application_url = "https://product-comparison.fly.dev"
+application_url = "https://cp-commons-norway-complimentary.trycloudflare.com"
 embedded = true
 
 [build]
@@ -27,9 +27,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://freebsd-could-deputy-douglas.trycloudflare.com/auth/callback",
-  "https://freebsd-could-deputy-douglas.trycloudflare.com/auth/shopify/callback",
-  "https://freebsd-could-deputy-douglas.trycloudflare.com/api/auth/callback"
+  "https://cp-commons-norway-complimentary.trycloudflare.com/auth/callback",
+  "https://cp-commons-norway-complimentary.trycloudflare.com/auth/shopify/callback",
+  "https://cp-commons-norway-complimentary.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
