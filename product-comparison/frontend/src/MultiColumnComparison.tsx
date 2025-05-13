@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
 import { LocationContext } from "./LocationContext.ts";
 import makeAnimated from "react-select/animated";
+import { RecommendationContext } from "./RecommendationQuery/RecommendationContext.ts";
+import { getShortId } from "./utils.ts";
 
 type MultiColumnComparisonProps = {
   className?: string;
@@ -67,6 +69,10 @@ const MultiColumnComparison = ({
     ),
   );
   const { location: userLocation } = useContext(LocationContext);
+  const { recommendation, setRecommendation } = useContext(
+    RecommendationContext,
+  );
+
   const getCurrentProduct = () =>
     productOptions.find((option) => pathName.includes(option.product.handle));
 
@@ -77,6 +83,26 @@ const MultiColumnComparison = ({
     );
     console.log({ pathName, productOptions, currentProductOption });
   }, [pathName, productOptions, selectedOptions]);
+
+  useEffect(() => {
+    if (!recommendation?.recommendedProductId) {
+      console.log("No product ID", recommendation);
+      return;
+    }
+    for (const option of productOptions) {
+      console.log(
+        getShortId(option.product.id),
+        getShortId(recommendation.recommendedProductId),
+      );
+    }
+    setSelectedOptions(
+      productOptions.filter(
+        (option) =>
+          getShortId(recommendation.recommendedProductId) ===
+          getShortId(option.product.id),
+      ),
+    );
+  }, [recommendation]);
 
   // Get all unique spec keys across selected products
   const getAllSpecKeys = () => {

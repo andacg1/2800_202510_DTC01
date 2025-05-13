@@ -1,19 +1,12 @@
 {% render 'regions' %}
 
-<script>
-  const allProducts = {{ block.settings.collection.products | json }}
-  window.allProducts = allProducts;
-  console.log({allProducts});
-  console.log('React Demo loaded', window.allProducts);
-</script>
-
 <script id="product-metafields" type="application/json">
   {
   "allProducts": {{ block.settings.collection.products | json }},
   "allMetafieldValues": {{ block.settings.collection.products | map: "metafields" | map: "product_specs" | json }},
   "tableVariant": {{ block.settings.table_variant | json }},
   "currentProduct": {{ product |  json }},
-  "collection": {{ block.settings.collection | json }}
+  "collection": {{ block.settings.collection.handle | json }}
   }
 </script>
 

@@ -90,7 +90,6 @@ const ComparisonTable = ({
       "",
     );
     setSelectedProducts([Number(productId)]);
-    // ensureProductSelection(Number(shortId));
   }, [recommendation]);
 
   // Track comparison when two products are selected

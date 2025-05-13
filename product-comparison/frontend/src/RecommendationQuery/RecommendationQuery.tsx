@@ -114,14 +114,15 @@ const RecommendationQuery = ({
           const data = new FormData(e.currentTarget);
           const query = data.get("query");
           // TODO: define this port in the shopify CLI config, if possible
-          const url = `${process.env.APP_BACKEND_URL}/recommend`;
-          console.log(url);
-          if (!url) {
+          if (!process.env.APP_BACKEND_URL) {
             return console.error("Could not find APP_BACKEND_URL");
           }
+          const url = `${process.env.APP_BACKEND_URL}/recommend`;
+          console.log(url);
           setIsLoading(true);
 
           let body: RecommendationResponse;
+
           const MOCK_OPENAI_REQUEST = false;
           if (MOCK_OPENAI_REQUEST) {
             body = await mockOpenApiResponse();
@@ -140,7 +141,7 @@ const RecommendationQuery = ({
         }}
       >
         <textarea
-          className="w-full"
+          className="textarea w-full"
           placeholder={"Tell us about your use case"}
           name="query"
           style={{ width: "100%" }}

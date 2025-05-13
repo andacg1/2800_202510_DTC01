@@ -48,6 +48,11 @@ export const action: ActionFunction = async ({ request }) => {
       outputJson,
       message: response,
     },
-    200,
+    {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    },
   );
 };
