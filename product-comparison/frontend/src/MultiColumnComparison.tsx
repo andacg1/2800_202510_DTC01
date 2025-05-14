@@ -154,7 +154,6 @@ const MultiColumnComparison = ({
 
   return (
     <div className={className}>
-      Multi Column Comparison Table
       <Select
         isMulti
         name="products"

@@ -1,4 +1,5 @@
 import React, { createContext } from "react";
+import { undefined } from "zod";
 import type { Product } from "../product.ts";
 
 export type RecommendationQueryProps = {
@@ -22,6 +23,8 @@ export type RecommendationContextType = {
   setRecommendation: React.Dispatch<
     React.SetStateAction<Recommendation | undefined>
   >;
+  query: string | undefined;
+  setQuery: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 export const defaultRecommendationContext: RecommendationContextType = {
@@ -31,6 +34,8 @@ export const defaultRecommendationContext: RecommendationContextType = {
     reason: "",
   },
   setRecommendation: () => {},
+  query: "",
+  setQuery: () => {},
 };
 
 export const RecommendationContext = createContext(
