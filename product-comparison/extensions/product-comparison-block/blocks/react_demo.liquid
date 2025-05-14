@@ -6,7 +6,8 @@
   "allMetafieldValues": {{ block.settings.collection.products | map: "metafields" | map: "product_specs" | json }},
   "tableVariant": {{ block.settings.table_variant | json }},
   "currentProduct": {{ product |  json }},
-  "collection": {{ block.settings.collection.handle | json }}
+  "collection": {{ block.settings.collection.handle | json }},
+  "metaobject": {{ shop.metaobjects.metafield_highlighting.values | json }}
   }
 </script>
 
@@ -23,9 +24,12 @@
   window.tableVariant = productData.tableVariant
   window.currentProduct = productData.currentProduct
   window.collection = productData.collection
+  window.metaobject = productData.metaobject
 </script>
 
 <div id="container" data-theme="light"></div>
+
+
 
 {% schema %}
 {
