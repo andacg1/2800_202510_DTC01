@@ -96,11 +96,10 @@ const RecommendationQuery = ({
   children,
   products,
 }: RecommendationQueryProps) => {
-  const [isLoading, setIsLoading] = useState(false);
   const { recommendation, setRecommendation, query, setQuery } = useContext(
     RecommendationContext,
   );
-  useEffect(() => {}, []);
+  const isLoading = query && (!recommendation || !recommendation?.reason);
 
   return (
     <div className="mb-12">
@@ -133,11 +132,8 @@ const RecommendationQuery = ({
           }
           const url = `${process.env.APP_BACKEND_URL}/recommend`;
           console.log(url);
-          setIsLoading(true);
 
           let body: RecommendationResponse;
-
-          // I just narrowly escaped a drive-by shooting and I have a newfound appreciation for life. How can I best spend my ill-gotten gains?
 
           const MOCK_OPENAI_REQUEST = false;
           if (MOCK_OPENAI_REQUEST) {
@@ -152,7 +148,6 @@ const RecommendationQuery = ({
             });
             body = await resp.json();
           }
-          setIsLoading(false);
           setRecommendation(body.outputJson);
         }}
       >
