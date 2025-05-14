@@ -1,0 +1,28 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "17beda824d6dd54acf7acf4156a383ff"
+name = "Product Comparison Allen"
+handle = "product-comparison-allen-1"
+application_url = "https://localhost:57799"
+embedded = true
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-04"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://localhost:57799/auth/callback",
+  "https://localhost:57799/auth/shopify/callback",
+  "https://localhost:57799/api/auth/callback"
+]
+
+[pos]
+embedded = false
