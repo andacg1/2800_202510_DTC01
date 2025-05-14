@@ -6,6 +6,8 @@
     "dev": "shopify app dev --use-localhost",
     "dev:deniz": "shopify app dev -s bcit-deniz.myshopify.com --use-localhost",
     "dev:stan": "shopify app dev -s bcit-stan.myshopify.com --use-localhost",
+    "dev:brandon": "shopify app dev -s bcit-brandon.myshopify.com --use-localhost",
+    "dev:allen": "shopify app dev -s bcit-allen.myshopify.com --use-localhost",
     "tsc:extension": "tsc --watch --project tsconfig.ext.json",
     "config:link": "shopify app config link",
     "generate": "shopify app generate",
@@ -69,7 +71,6 @@
     "@flydotio/dockerfile": "^0.7.10",
     "@remix-run/eslint-config": "^2.16.1",
     "@remix-run/route-config": "^2.16.1",
-    "@rollup/rollup-linux-x64-gnu": "^4.40.2",
     "@shopify/api-codegen-preset": "^1.1.1",
     "@storybook/addon-essentials": "^8.6.12",
     "@storybook/addon-interactions": "^8.6.12",
@@ -92,6 +93,9 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.40.2"
   },
   "workspaces": [
     "extensions/*"

@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
+import type { Media, Specs, Variant } from "../../../frontend/src/product";
 
 const client = new OpenAI();
 const ProductRecommendation = z.object({
@@ -12,31 +13,110 @@ const ProductRecommendation = z.object({
   reason: z.string(),
 });
 
-export const action: ActionFunction = async ({ request }) => {
-  const body = await request.json();
-  const query = `
-  ${body.query}
+export type Product = {
+  id: number;
+  title: string;
+  handle: string;
+  description: string;
+  published_at: string;
+  created_at: string;
+  vendor: string;
+  type: string;
+  tags: string[];
+  price: number;
+  price_min: number;
+  price_max: number;
+  available: boolean;
+  price_varies: boolean;
+  compare_at_price: number;
+  compare_at_price_min: number;
+  compare_at_price_max: number;
+  compare_at_price_varies: boolean;
+  variants: Variant[];
+  images: string[];
+  featured_image: string;
+  options: string[];
+  media: Media[];
+  requires_selling_plan: boolean;
+  selling_plan_groups: any[];
+  content: string;
+  specs: Specs;
+};
 
-  Here is a JSON array of the products I'm interested in:
-  ${JSON.stringify(body.products, null, 2)}
-  `;
+type RequestBody = {
+  query: string;
+  products: Product[];
+};
+
+function buildQuery(products: Product[]) {
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "CAD",
+    }).format(price / 100);
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+  let prompt = "";
+  for (const product of products) {
+    prompt += `* ${product.title}\n`;
+    prompt += `    * ID: ${product.id}\n`;
+    prompt += `    * Title: ${product.title}\n`;
+    prompt += `    * Description: ${product.description}\n`;
+    prompt += `    * Type: ${product.type}\n`;
+    prompt += `    * Price: ${formatPrice(product.price)}\n`;
+    prompt += `    * Tags: ${product.tags.join(", ")}\n`;
+    prompt += `    * Options: ${product.options.join(", ")}\n`;
+    prompt += `    * Created At: ${product.created_at}\n`;
+    for (const [key, value] of Object.entries(product.specs)) {
+      prompt += `    * ${key
+        .split("_")
+        .map((s) => capitalize(s))
+        .join(" ")}: ${value}\n`;
+    }
+  }
+  return prompt;
+}
+
+const instructions = (products: Product[]) => `
+# Identity
+
+You are a helpful customer service agent working for an online store. You want to sell products to customers.
+Customers will tell you about their current needs in life, and you will recommend products based on the user's current situation.
+Carefully read the issue and think hard about a plan to improve the user's life using one of our products.
+
+
+# Instructions
+
+* Only consider products inside the products list.
+* Be witty and funny with your responses.
+* Explain your reasoning in detail, and relate it back to the customer's current needs.
+* Maintain a professional and concise tone in all responses, and use emojis between sentences.
+* End the message by explaining how much better their life will be if they buy the recommended product.
+
+<products>
+${buildQuery(products)}
+</products>
+`;
+
+export const action: ActionFunction = async ({ request }) => {
+  const body: RequestBody = await request.json();
 
   const response = await client.responses.create({
     model: "gpt-4.1",
     input: [
       {
-        role: "system",
-        content:
-          "Compare the products inside the JSON array based on the user's use case.",
+        role: "developer",
+        content: instructions(body.products),
       },
       {
         role: "user",
-        content: query,
+        content: body.query,
       },
     ],
     text: {
       format: zodTextFormat(ProductRecommendation, "recommendation"),
     },
+    temperature: 0.8,
   });
 
   const outputJson = JSON.parse(response.output_text);
@@ -48,6 +128,11 @@ export const action: ActionFunction = async ({ request }) => {
       outputJson,
       message: response,
     },
-    200,
+    {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    },
   );
 };

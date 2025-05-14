@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
+  defaultRecommendationContext,
   Recommendation,
   RecommendationContext,
   RecommendationQueryProps,
@@ -96,32 +97,48 @@ const RecommendationQuery = ({
   products,
 }: RecommendationQueryProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { recommendation, setRecommendation } = useContext(
+  const { recommendation, setRecommendation, query, setQuery } = useContext(
     RecommendationContext,
   );
   useEffect(() => {}, []);
 
   return (
-    <div>
+    <div className="mb-12">
       <form
         style={{
           display: "flex",
           flexDirection: "column",
           alignItems: "end",
         }}
+        className="flex flex-col items-end mb-6"
         onSubmit={async (e) => {
           e.preventDefault();
+          const queryInput = e.currentTarget.elements.namedItem(
+            "query",
+          ) as HTMLTextAreaElement;
+          console.log(e.currentTarget.elements);
           const data = new FormData(e.currentTarget);
-          const query = data.get("query");
+          const queryData = data.get("query");
           // TODO: define this port in the shopify CLI config, if possible
-          const url = `${process.env.APP_BACKEND_URL}/recommend`;
-          console.log(url);
-          if (!url) {
+          if (!(typeof queryData === "string")) {
+            return console.error("Query cannot be a File");
+          }
+          if (queryInput && queryInput?.value) {
+            queryInput.value = "";
+          }
+          setQuery(queryData || "");
+          setRecommendation(defaultRecommendationContext.recommendation);
+          if (!process.env.APP_BACKEND_URL) {
             return console.error("Could not find APP_BACKEND_URL");
           }
+          const url = `${process.env.APP_BACKEND_URL}/recommend`;
+          console.log(url);
           setIsLoading(true);
 
           let body: RecommendationResponse;
+
+          // I just narrowly escaped a drive-by shooting and I have a newfound appreciation for life. How can I best spend my ill-gotten gains?
+
           const MOCK_OPENAI_REQUEST = false;
           if (MOCK_OPENAI_REQUEST) {
             body = await mockOpenApiResponse();
@@ -129,7 +146,7 @@ const RecommendationQuery = ({
             const resp = await fetch(url, {
               method: "POST",
               body: JSON.stringify({
-                query,
+                query: queryData,
                 products,
               }),
             });
@@ -140,17 +157,35 @@ const RecommendationQuery = ({
         }}
       >
         <textarea
-          className="w-full"
+          className="textarea w-full text-2xl placeholder:opacity-40"
           placeholder={"Tell us about your use case"}
           name="query"
-          style={{ width: "100%" }}
         />
-        <button type="submit" style={{ width: "100px", marginTop: "8px" }}>
+        <button
+          type="submit"
+          className={"btn btn-primary"}
+          style={{ width: "100px", marginTop: "8px" }}
+        >
           Submit
         </button>
       </form>
-      {isLoading ? "Loading..." : null}
-      {recommendation?.reason ? <p>{recommendation.reason}</p> : null}
+      {query ? (
+        <div className="chat chat-end">
+          <div className="chat-bubble chat-bubble-info max-w-prose">
+            {query}
+          </div>
+        </div>
+      ) : null}
+      {isLoading ? (
+        <span className="loading loading-dots loading-md"></span>
+      ) : null}
+      {recommendation?.reason ? (
+        <div className="chat chat-start mb-1">
+          <div className="chat-bubble max-w-prose">
+            {recommendation?.reason}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };

@@ -176,6 +176,10 @@ export function isAvailable(
     return false;
   }
   const regionData: RegionData[] = window?.regions;
+  if (!regionData) {
+    console.warn("Could not find regionData.");
+    return false;
+  }
   console.log({ availableRegions });
   const userRegionData = regionData.find(
     (data) => data["alpha-2"] === locationData.country,

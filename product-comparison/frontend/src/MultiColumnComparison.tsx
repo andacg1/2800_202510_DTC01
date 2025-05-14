@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import type { MultiValue, StylesConfig } from "react-select";
+import type { ActionMeta, MultiValue, StylesConfig } from "react-select";
 import Select from "react-select";
 import { isAvailable, type Product } from "./product.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
 import { LocationContext } from "./LocationContext.ts";
 import makeAnimated from "react-select/animated";
+import { RecommendationContext } from "./RecommendationQuery/RecommendationContext.ts";
+import { getShortId } from "./utils.ts";
 
 type MultiColumnComparisonProps = {
   className?: string;
@@ -67,6 +69,12 @@ const MultiColumnComparison = ({
     ),
   );
   const { location: userLocation } = useContext(LocationContext);
+  const { recommendation, setRecommendation } = useContext(
+    RecommendationContext,
+  );
+
+  const getCurrentProduct = () =>
+    productOptions.find((option) => pathName.includes(option.product.handle));
 
   useEffect(() => {
     console.log({ selectedOptions });
@@ -75,6 +83,26 @@ const MultiColumnComparison = ({
     );
     console.log({ pathName, productOptions, currentProductOption });
   }, [pathName, productOptions, selectedOptions]);
+
+  useEffect(() => {
+    if (!recommendation?.recommendedProductId) {
+      console.log("No product ID", recommendation);
+      return;
+    }
+    for (const option of productOptions) {
+      console.log(
+        getShortId(option.product.id),
+        getShortId(recommendation.recommendedProductId),
+      );
+    }
+    setSelectedOptions(
+      productOptions.filter(
+        (option) =>
+          getShortId(recommendation.recommendedProductId) ===
+          getShortId(option.product.id),
+      ),
+    );
+  }, [recommendation]);
 
   // Get all unique spec keys across selected products
   const getAllSpecKeys = () => {
@@ -92,9 +120,40 @@ const MultiColumnComparison = ({
     return Array.from(allKeys);
   };
 
+  const handleProductChange = async (
+    newValue: MultiValue<ProductOption>,
+    actionMeta: ActionMeta<ProductOption>,
+  ) => {
+    setSelectedOptions(newValue);
+    // TODO: Track the comparison
+    const currentProductOption: Product = window?.currentProduct;
+    if (!currentProductOption) {
+      return console.error('"currentProductOption" is not defined');
+    }
+    const sessionId = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("_shopify_s="))
+      ?.split("=")[1];
+    console.log({ sessionId });
+    const collectionId = window?.collection;
+
+    const resp = await fetch(
+      `${process.env.APP_BACKEND_URL}/api/product/comparison/track`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          collectionId,
+          originalProductId: currentProductOption?.id,
+          comparedProducts: newValue.map((option) => option.product.id),
+          sessionId,
+        }),
+        mode: "cors",
+      },
+    );
+  };
+
   return (
     <div className={className}>
-      Multi Column Comparison Table
       <Select
         isMulti
         name="products"
@@ -103,7 +162,7 @@ const MultiColumnComparison = ({
         className="basic-multi-select"
         classNamePrefix="select-internal"
         /* menuIsOpen={true} */
-        onChange={setSelectedOptions}
+        onChange={handleProductChange}
         value={selectedOptions}
         styles={selectStyles}
       />

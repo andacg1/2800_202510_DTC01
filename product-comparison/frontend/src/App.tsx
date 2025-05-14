@@ -11,6 +11,7 @@ import { LocationContext } from "./LocationContext.ts";
 
 export function App() {
   const [recommendation, setRecommendation] = useState<Recommendation>();
+  const [query, setQuery] = useState<string>();
   const tableVariant: string = window?.tableVariant;
   const [userLocation, setUserLocation] = useState<LocationData | null>(null);
   const products = window?.productMetafieldData;
@@ -28,7 +29,9 @@ export function App() {
   }
   return (
     <LocationContext value={{ location: userLocation }}>
-      <RecommendationContext value={{ setRecommendation, recommendation }}>
+      <RecommendationContext
+        value={{ recommendation, setRecommendation, query, setQuery }}
+      >
         <div className="product-comparison z-10">
           <h2>Product Comparison</h2>
 

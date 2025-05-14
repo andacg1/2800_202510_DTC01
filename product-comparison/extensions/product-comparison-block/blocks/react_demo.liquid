@@ -1,22 +1,16 @@
 {% render 'regions' %}
 
-<script>
-  const allProducts = {{ block.settings.collection.products | json }}
-  window.allProducts = allProducts;
-  console.log({allProducts});
-  console.log('React Demo loaded', window.allProducts);
-</script>
-
 <script id="product-metafields" type="application/json">
   {
   "allProducts": {{ block.settings.collection.products | json }},
   "allMetafieldValues": {{ block.settings.collection.products | map: "metafields" | map: "product_specs" | json }},
   "tableVariant": {{ block.settings.table_variant | json }},
-  "currentProduct": {{ product |  json }}
+  "currentProduct": {{ product |  json }},
+  "collection": {{ block.settings.collection.handle | json }}
   }
 </script>
 
-<script defer="defer">
+<script>
   const productData = JSON.parse(document.getElementById('product-metafields').innerText)
   const productMetafieldData = []
   for (let i=0; i < productData?.allProducts.length; i++) {
@@ -27,6 +21,8 @@
   console.log(productMetafieldData)
   window.productMetafieldData = productMetafieldData
   window.tableVariant = productData.tableVariant
+  window.currentProduct = productData.currentProduct
+  window.collection = productData.collection
 </script>
 
 <div id="container" data-theme="light"></div>
