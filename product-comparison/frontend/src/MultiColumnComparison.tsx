@@ -172,7 +172,7 @@ const MultiColumnComparison = ({
     const collectionId = window?.collection;
 
     const resp = await fetch(
-      `${process.env.APP_BACKEND_URL}/api/product/comparison/track`,
+      `${import.meta.env.VITE_APP_BACKEND_URL}/api/product/comparison/track`,
       {
         method: "POST",
         body: JSON.stringify({
