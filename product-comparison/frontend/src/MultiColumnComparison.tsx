@@ -9,12 +9,18 @@ import makeAnimated from "react-select/animated";
 import { RecommendationContext } from "./RecommendationQuery/RecommendationContext.ts";
 import { getShortId } from "./utils.ts";
 
+/**
+ * Props for the MultiColumnComparison component
+ */
 type MultiColumnComparisonProps = {
   className?: string;
   children?: React.ReactNode;
   products: Product[];
 };
 
+/**
+ * Type definition for product options used in the multi-select dropdown
+ */
 export type ProductOption = {
   readonly value: string;
   readonly label: string;
@@ -23,6 +29,9 @@ export type ProductOption = {
 
 const animatedComponents = makeAnimated();
 
+/**
+ * Custom styles configuration for the React-Select component
+ */
 const selectStyles: StylesConfig<ProductOption, true> = {
   control: (styles) => ({
     ...styles,
@@ -48,6 +57,17 @@ const selectStyles: StylesConfig<ProductOption, true> = {
   }),
 };
 
+/**
+ * A component that renders a multi-column product comparison interface.
+ * Features a multi-select dropdown for product selection and displays a detailed
+ * comparison table of the selected products' specifications.
+ * 
+ * @param {Object} props - Component props
+ * @param {string} [props.className] - Additional CSS classes to apply to the component
+ * @param {React.ReactNode} [props.children] - Child elements
+ * @param {Product[]} props.products - Array of products available for comparison
+ * @returns {JSX.Element} The rendered multi-column comparison component
+ */
 const MultiColumnComparison = ({
   className,
   children,
@@ -73,6 +93,10 @@ const MultiColumnComparison = ({
     RecommendationContext,
   );
 
+  /**
+   * Gets the currently viewed product based on the URL path
+   * @returns {ProductOption | undefined} The current product option or undefined if not found
+   */
   const getCurrentProduct = () =>
     productOptions.find((option) => pathName.includes(option.product.handle));
 
@@ -104,7 +128,10 @@ const MultiColumnComparison = ({
     );
   }, [recommendation]);
 
-  // Get all unique spec keys across selected products
+  /**
+   * Gets all unique specification keys across the selected products
+   * @returns {string[]} Array of unique specification keys
+   */
   const getAllSpecKeys = () => {
     const selectedProductData = products.filter((p) =>
       selectedOptions.map((product) => product.value).includes(String(p.id)),
@@ -120,6 +147,13 @@ const MultiColumnComparison = ({
     return Array.from(allKeys);
   };
 
+  /**
+   * Handles changes in product selection from the multi-select dropdown
+   * Tracks the comparison event and updates the selected products state
+   * 
+   * @param {MultiValue<ProductOption>} newValue - The newly selected product options
+   * @param {ActionMeta<ProductOption>} actionMeta - Metadata about the selection change action
+   */
   const handleProductChange = async (
     newValue: MultiValue<ProductOption>,
     actionMeta: ActionMeta<ProductOption>,

@@ -7,12 +7,19 @@ import { z } from "zod";
 import type { Media, Specs, Variant } from "../../../frontend/src/product";
 
 const client = new OpenAI();
+
+/**
+ * Zod schema for validating product recommendations
+ */
 const ProductRecommendation = z.object({
   recommendedProductId: z.string(),
   recommendedProductTitle: z.string(),
   reason: z.string(),
 });
 
+/**
+ * Type definition for a product in the recommendation system
+ */
 export type Product = {
   id: number;
   title: string;
@@ -43,11 +50,21 @@ export type Product = {
   specs: Specs;
 };
 
+/**
+ * Type definition for the request body of the recommendation endpoint
+ */
 type RequestBody = {
   query: string;
   products: Product[];
 };
 
+/**
+ * Builds a formatted product description string for the AI prompt
+ * Includes product details like title, price, specs, etc.
+ * 
+ * @param {Product[]} products - Array of products to format
+ * @returns {string} Formatted product descriptions
+ */
 function buildQuery(products: Product[]) {
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("en-US", {
@@ -77,6 +94,12 @@ function buildQuery(products: Product[]) {
   return prompt;
 }
 
+/**
+ * Generates instructions for the AI model about how to recommend products
+ * 
+ * @param {Product[]} products - Array of products to include in the instructions
+ * @returns {string} Formatted instruction string for the AI
+ */
 const instructions = (products: Product[]) => `
 # Identity
 
@@ -98,6 +121,14 @@ ${buildQuery(products)}
 </products>
 `;
 
+/**
+ * Remix action function that handles product recommendation requests
+ * Uses OpenAI to generate personalized product recommendations based on user query
+ * 
+ * @param {Object} params - Action function parameters
+ * @param {Request} params.request - The incoming request object
+ * @returns {Promise<Response>} JSON response containing the recommendation
+ */
 export const action: ActionFunction = async ({ request }) => {
   const body: RequestBody = await request.json();
 

@@ -13,16 +13,35 @@ import {
     Banner,
 } from "@shopify/polaris";
 
+/**
+ * Loader function for the metafields setup page
+ * Authenticates admin requests and provides shop information
+ * 
+ * @param {Object} params - Loader function parameters
+ * @param {Request} params.request - The incoming request object
+ * @returns {Promise<Response>} JSON response containing shop data
+ */
 export const loader: LoaderFunction = async ({ request }) => {
     await authenticate.admin(request);
     return json({ shop: process.env.SHOPIFY_SHOP });
 };
 
+/**
+ * MetafieldsSetup component that provides UI for setting up product metafields
+ * Allows generating random metafields for all products in the store
+ * 
+ * @returns {JSX.Element} The rendered metafields setup page component
+ */
 export default function MetafieldsSetup() {
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
     const [data, setData] = useState<{ processedCount?: number; errorCount?: number; errors?: string[] } | null>(null);
 
+    /**
+     * Sets up metafields for all products in the store
+     * Makes an API call to generate random metafield values
+     * Updates the UI state based on the operation result
+     */
     const setupMetafields = async () => {
         setStatus('loading');
         setMessage('');

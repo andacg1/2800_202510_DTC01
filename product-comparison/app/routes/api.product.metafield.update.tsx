@@ -2,6 +2,18 @@ import type { ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 
+/**
+ * Action function that updates product metafields
+ * Handles bulk updates of multiple metafields for a single product
+ * Validates input parameters and executes the update through Shopify's GraphQL API
+ * 
+ * @param {Object} params - Action function parameters
+ * @param {Request} params.request - The incoming request object containing:
+ *   - productId: The ID of the product to update
+ *   - metafields: Array of metafield objects with namespace, key, value, and type
+ * @returns {Promise<Response>} JSON response containing updated metafields or error details
+ * @throws {Error} If the request method is not POST or if required parameters are missing
+ */
 export const action = async ({ request }: ActionFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
 

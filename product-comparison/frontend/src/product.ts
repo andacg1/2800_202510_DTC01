@@ -1,8 +1,14 @@
+/**
+ * Global type declarations for window object extensions
+ */
 declare global {
   var productMetafieldData: Product[];
   var regions: RegionData[];
 }
 
+/**
+ * Represents a product with all its details and specifications
+ */
 export type Product = {
   id: number;
   title: string;
@@ -33,6 +39,9 @@ export type Product = {
   specs: Specs;
 };
 
+/**
+ * Represents a product variant with its specific details
+ */
 export type Variant = {
   id: number;
   title: string;
@@ -57,12 +66,18 @@ export type Variant = {
   quantity_rule: QuantityRule;
 };
 
+/**
+ * Defines quantity rules for product variants
+ */
 export type QuantityRule = {
   min: number | null;
   max: number | null;
   increment: number;
 };
 
+/**
+ * Represents media associated with a product
+ */
 export type Media = {
   alt: any;
   id: number;
@@ -75,6 +90,9 @@ export type Media = {
   width: number;
 };
 
+/**
+ * Represents preview image data for product media
+ */
 export type PreviewImage = {
   aspect_ratio: number;
   height: number;
@@ -82,6 +100,9 @@ export type PreviewImage = {
   src: string;
 };
 
+/**
+ * Contains geographical region data following ISO standards
+ */
 export type RegionData = {
   name: string;
   "alpha-2": string;
@@ -96,6 +117,9 @@ export type RegionData = {
   "intermediate-region-code": string;
 };
 
+/**
+ * Contains detailed location data for a user
+ */
 export type LocationData = {
   ip: string;
   network: string;
@@ -126,14 +150,27 @@ export type LocationData = {
   org: string;
 };
 
+/**
+ * Represents product specifications with optional available regions
+ */
 export type Specs = Record<string, string[] | string | number> & {
   available_regions?: string[];
 };
 
+/**
+ * Fetches the user's location data from ipapi.co
+ * @returns {Promise<LocationData>} Promise resolving to the user's location data
+ */
 export const getLocation = async (): Promise<LocationData> => {
   const ipResp = await fetch("https://ipapi.co/json/");
   return await ipResp.json();
 };
+
+/**
+ * Returns mock location data for testing purposes
+ * Simulates a user located in Vancouver, Canada
+ * @returns {Promise<LocationData>} Promise resolving to mock location data
+ */
 export const getMockLocation = async (): Promise<LocationData> => {
   const mockResponse = {
     ip: "8.8.8.8",
@@ -168,6 +205,14 @@ export const getMockLocation = async (): Promise<LocationData> => {
   return mockResponse;
 };
 
+/**
+ * Checks if a product is available in the user's region
+ * Compares the user's location against the product's available regions
+ * 
+ * @param {LocationData} locationData - The user's location data
+ * @param {string[]} availableRegions - Array of regions where the product is available
+ * @returns {boolean} True if the product is available in the user's region, false otherwise
+ */
 export function isAvailable(
   locationData: LocationData,
   availableRegions: string[],

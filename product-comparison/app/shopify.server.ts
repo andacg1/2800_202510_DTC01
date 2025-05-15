@@ -8,6 +8,11 @@ import {
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "./db.server";
 
+/**
+ * Shopify app configuration instance.
+ * Initializes and configures the Shopify app with necessary settings and hooks.
+ * @type {ReturnType<typeof shopifyApp>}
+ */
 const shopify = shopifyApp({
   apiKey: process.env.SHOPIFY_API_KEY,
   apiSecretKey: process.env.SHOPIFY_API_SECRET || "",
@@ -38,10 +43,41 @@ const shopify = shopifyApp({
 });
 
 export default shopify;
+
+/** Current Shopify API version being used by the app */
 export const apiVersion = ApiVersion.January25;
+
+/** Function to add Shopify-specific response headers to documents
+ * @param {Request} request - The incoming request object
+ * @param {Headers} headers - The headers object to modify
+ */
 export const addDocumentResponseHeaders = shopify.addDocumentResponseHeaders;
+
+/** Authentication middleware for protected routes
+ * @param {Request} request - The incoming request object
+ * @returns {Promise<Response>} Authentication response
+ */
 export const authenticate = shopify.authenticate;
+
+/** Middleware for routes that don't require authentication
+ * @param {Request} request - The incoming request object
+ * @returns {Promise<Response>} Response for unauthenticated routes
+ */
 export const unauthenticated = shopify.unauthenticated;
+
+/** Function to handle Shopify login process
+ * @param {Request} request - The incoming request object
+ * @returns {Promise<Response>} Login response
+ */
 export const login = shopify.login;
+
+/** Function to register Shopify webhooks
+ * @param {Object} options - Webhook registration options
+ * @returns {Promise<void>}
+ */
 export const registerWebhooks = shopify.registerWebhooks;
+
+/** Session storage instance for managing Shopify sessions
+ * @type {PrismaSessionStorage}
+ */
 export const sessionStorage = shopify.sessionStorage;
