@@ -16,12 +16,28 @@ import {
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 
+/**
+ * Loader function for the index page
+ * Authenticates admin requests before rendering the page
+ * 
+ * @param {LoaderFunctionArgs} params - Loader function arguments
+ * @param {Request} params.request - The incoming request object
+ * @returns {Promise<null>} Returns null after authentication
+ */
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await authenticate.admin(request);
 
   return null;
 };
 
+/**
+ * Action function that creates a new product with random color
+ * Creates a snowboard product with a random color and sets its price
+ * 
+ * @param {ActionFunctionArgs} params - Action function arguments
+ * @param {Request} params.request - The incoming request object
+ * @returns {Promise<Object>} Object containing created product and variant data
+ */
 export const action = async ({ request }: ActionFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
   const color = ["Red", "Orange", "Yellow", "Green"][
@@ -91,6 +107,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   };
 };
 
+/**
+ * Index component that renders the main admin dashboard
+ * Displays product creation functionality and dashboard widgets
+ * 
+ * @returns {JSX.Element} The rendered index page component
+ */
 export default function Index() {
   const fetcher = useFetcher<typeof action>();
 
@@ -108,6 +130,11 @@ export default function Index() {
       shopify.toast.show("Product created");
     }
   }, [productId, shopify]);
+
+  /**
+   * Generates a new product with random properties
+   * Helper function that triggers the product creation action
+   */
   const generateProduct = () => fetcher.submit({}, { method: "POST" });
 
   return (
@@ -134,25 +161,25 @@ export default function Index() {
                     <Grid>
                       <Grid.Cell columnSpan={{xs: 3, sm: 3, md: 3, lg: 3, xl: 3}}>
                         <LegacyCard title="PlaceHolder" sectioned>
-                          <p>View a summary of your online store’s sales.</p>
+                          <p>View a summary of your online store's sales.</p>
                         </LegacyCard>
                       </Grid.Cell>
 
                       <Grid.Cell columnSpan={{xs: 3, sm: 3, md: 3, lg: 3, xl: 3}}>
                         <LegacyCard title="PlaceHolder" sectioned>
-                          <p>View a summary of your online store’s orders.</p>
+                          <p>View a summary of your online store's orders.</p>
                         </LegacyCard>
                       </Grid.Cell>
 
                       <Grid.Cell columnSpan={{xs: 3, sm: 3, md: 3, lg: 3, xl: 3}}>
                         <LegacyCard title="PlaceHolder" sectioned>
-                          <p>View a summary of your online store’s orders.</p>
+                          <p>View a summary of your online store's orders.</p>
                         </LegacyCard>
                       </Grid.Cell>
 
                       <Grid.Cell columnSpan={{xs: 3, sm: 3, md: 3, lg: 3, xl: 3}}>
                         <LegacyCard title="PlaceHolder" sectioned>
-                          <p>View a summary of your online store’s orders.</p>
+                          <p>View a summary of your online store's orders.</p>
                         </LegacyCard>
                       </Grid.Cell>
                     </Grid>
@@ -175,7 +202,7 @@ export default function Index() {
                           Reports
                         </Text>
                         <Text as="p" variant="bodyMd">
-                          View a summary of your online store’s performance.
+                          View a summary of your online store's performance.
                         </Text>
                       </BlockStack>
                     </Box>
@@ -185,7 +212,7 @@ export default function Index() {
                           Summary
                         </Text>
                         <Text as="p" variant="bodyMd">
-                          View a summary of your online store’s performance, including sales,
+                          View a summary of your online store's performance, including sales,
                           visitors, top products, and referrals.
                         </Text>
                       </BlockStack>

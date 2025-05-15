@@ -22,6 +22,9 @@ import {
 } from "@remix-run/react";
 import MetafieldTextField from "./MetafieldTextField";
 
+/**
+ * Interface representing a Shopify metafield
+ */
 export interface Metafield {
   id?: string;
   namespace: string;
@@ -30,11 +33,17 @@ export interface Metafield {
   type: string;
 }
 
+/**
+ * Interface representing a Shopify product
+ */
 export interface Product {
   id: string;
   title: string;
 }
 
+/**
+ * Interface for data returned by the fetcher
+ */
 export interface FetcherData {
   metafields?: Metafield[];
   metafield?: Metafield;
@@ -42,12 +51,25 @@ export interface FetcherData {
   error?: string;
 }
 
+/**
+ * Props for the ProductMetafieldManager component
+ */
 interface ProductMetafieldManagerProps {
   actionData: FetcherData | undefined;
   initialProduct?: Product;
   initialMetafields?: Metafield[];
 }
 
+/**
+ * A component that manages product metafields in the Shopify admin.
+ * Allows adding, editing, and deleting metafields for a selected product.
+ * 
+ * @param {Object} props - Component props
+ * @param {FetcherData} [props.actionData] - Data from the last action
+ * @param {Product} [props.initialProduct] - Initially selected product
+ * @param {Metafield[]} [props.initialMetafields] - Initial metafields for the selected product
+ * @returns {JSX.Element} The rendered product metafield manager
+ */
 export default function ProductMetafieldManager({
   actionData,
   initialProduct,
@@ -92,6 +114,10 @@ export default function ProductMetafieldManager({
     console.log({ initialProduct, initialMetafields });
   }, [initialProduct, initialMetafields]);
 
+  /**
+   * Handles product selection using Shopify's resource picker
+   * Updates the selected product and navigates to the metafields page for that product
+   */
   const handleProductSelect = async () => {
     try {
       const products = await window.shopify.resourcePicker({

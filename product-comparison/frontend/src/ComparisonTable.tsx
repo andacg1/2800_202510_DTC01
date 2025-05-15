@@ -15,6 +15,16 @@ type ComparisonTableProps = {
   products: Product[];
 };
 
+/**
+ * A component that renders a table comparing selected products and their specifications.
+ * Allows users to select up to two products for comparison and displays their specifications side by side.
+ * 
+ * @param {Object} props - Component props
+ * @param {string} [props.className] - Additional CSS classes to apply to the component
+ * @param {React.ReactNode} [props.children] - Child elements
+ * @param {Product[]} props.products - Array of products available for comparison
+ * @returns {JSX.Element} The rendered comparison table component
+ */
 const ComparisonTable = ({
   className,
   children,
@@ -28,6 +38,12 @@ const ComparisonTable = ({
     RecommendationContext,
   );
 
+  /**
+   * Toggles the selection state of a product in the comparison table.
+   * Maintains a maximum of 2 products selected at any time.
+   * 
+   * @param {number} productId - The ID of the product to toggle
+   */
   const toggleProductSelection = (productId: number) => {
     setSelectedProducts((prev) => {
       if (prev.includes(productId)) {
@@ -42,6 +58,13 @@ const ComparisonTable = ({
     });
   };
 
+  /**
+   * Ensures a product is selected for comparison.
+   * If the product isn't already selected, adds it to the selection,
+   * maintaining the maximum of 2 products rule.
+   * 
+   * @param {number} productId - The ID of the product to ensure is selected
+   */
   const ensureProductSelection = (productId: number) => {
     setSelectedProducts((prev) => {
       if (prev.includes(productId)) {
@@ -56,7 +79,11 @@ const ComparisonTable = ({
     });
   };
 
-  // Get all unique spec keys across selected products
+  /**
+   * Retrieves all unique specification keys across the currently selected products.
+   * 
+   * @returns {string[]} Array of unique specification keys
+   */
   const getAllSpecKeys = () => {
     const selectedProductData = products.filter((p) =>
       selectedProducts.includes(p.id),

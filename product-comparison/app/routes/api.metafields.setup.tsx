@@ -25,7 +25,15 @@ interface MetafieldsSetData {
     };
 }
 
-
+/**
+ * Gets a random subset of elements from an array
+ * 
+ * @template T - The type of elements in the array
+ * @param {T[]} array - The source array to select elements from
+ * @param {number} minSize - Minimum size of the subset
+ * @param {number} maxSize - Maximum size of the subset
+ * @returns {T[]} A randomly selected subset of elements
+ */
 function getRandomSubset<T>(array: T[], minSize: number, maxSize: number): T[] {
     const size = Math.floor(Math.random() * (maxSize - minSize + 1)) + minSize;
     const shuffled = [...array].sort(() => 0.5 - Math.random());
@@ -46,6 +54,15 @@ const metafieldTypes = {
     }
 };
 
+/**
+ * Action function that sets up product metafields with random values
+ * Processes all products in the store and assigns random values from predefined options
+ * for various product specification metafields
+ * 
+ * @param {Object} params - Action function parameters
+ * @param {Request} params.request - The incoming request object
+ * @returns {Promise<Response>} JSON response indicating success/failure of the operation
+ */
 export const action: ActionFunction = async ({ request }) => {
     const { admin } = await authenticate.admin(request);
 

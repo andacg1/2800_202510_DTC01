@@ -7,6 +7,9 @@ import type {
   Product,
 } from "./ProductMetafieldManager";
 
+/**
+ * Props for the MetafieldTextField component
+ */
 type MetafieldTextFieldProps = {
   className?: string;
   children?: React.ReactNode;
@@ -15,6 +18,18 @@ type MetafieldTextFieldProps = {
   selectedProduct: Product;
 };
 
+/**
+ * A component that renders an editable text field for a product metafield.
+ * Automatically submits changes to update the metafield value.
+ * 
+ * @param {Object} props - Component props
+ * @param {string} [props.className] - Additional CSS classes to apply to the component
+ * @param {React.ReactNode} [props.children] - Child elements
+ * @param {string} [props.label] - Label for the text field
+ * @param {Metafield} props.metafield - The metafield to edit
+ * @param {Product} props.selectedProduct - The product this metafield belongs to
+ * @returns {JSX.Element | null} The rendered text field or null if no metafield/product is provided
+ */
 const MetafieldTextField = ({
   className,
   children,
@@ -27,6 +42,12 @@ const MetafieldTextField = ({
   const [value, setValue] = useState(metafield?.value);
   const formRef = useRef<HTMLFormElement>(null);
 
+  /**
+   * Handles changes to the text field value.
+   * Automatically submits the form to update the metafield.
+   * 
+   * @param {string} newValue - The new value entered in the text field
+   */
   const handleChange = useCallback(
     (newValue: string) => {
       if (!formRef?.current) {

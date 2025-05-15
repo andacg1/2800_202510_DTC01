@@ -1,0 +1,44 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Shopify Integration Guide
+
+## Main Integration
+- Shopify integration is handled in [`shopify.server.ts`](mdc:product-comparison/app/shopify.server.ts).
+- The app uses the `@shopify/shopify-app-remix` package for authentication, API access, and webhook registration.
+
+## Configuration
+- The `shopifyApp` function in `shopify.server.ts` configures the app with:
+  - API keys and secrets from environment variables
+  - App URL configuration
+  - Session storage using Prisma
+  - Webhook handlers
+
+## Key Exports
+The `shopify.server.ts` file exports:
+- `shopify`: The main Shopify app instance for API access.
+- `authenticate`: Used for authenticating admin and storefront requests.
+- `sessionStorage`: Prisma-based session storage instance.
+
+## Webhooks
+- Webhook handlers are defined in separate route files:
+  - [`webhooks.app.uninstalled.tsx`](mdc:product-comparison/app/routes/webhooks.app.uninstalled.tsx): Handles app uninstallation.
+  - [`webhooks.app.scopes_update.tsx`](mdc:product-comparison/app/routes/webhooks.app.scopes_update.tsx): Handles app scope updates.
+
+## Authentication
+- Authentication routes use the Shopify OAuth flow:
+  - [`auth.$.tsx`](mdc:product-comparison/app/routes/auth.$.tsx): Catch-all route for auth requests.
+  - [`auth.login/`](mdc:product-comparison/app/routes/auth.login): Login-specific routes.
+
+## Metafields
+- Metafield management is a key part of the product comparison functionality:
+  - [`app.metafields-setup.tsx`](mdc:product-comparison/app/routes/app.metafields-setup.tsx): Setup UI for metafields.
+  - [`api.metafields.setup.tsx`](mdc:product-comparison/app/routes/api.metafields.setup.tsx): API for metafield setup.
+  - [`api.product.metafield.sync.tsx`](mdc:product-comparison/app/routes/api.product.metafield.sync.tsx): Syncs product metafields.
+  - [`api.product.metafield.update.tsx`](mdc:product-comparison/app/routes/api.product.metafield.update.tsx): Updates product metafields.
+
+## GraphQL Usage
+- The app uses Shopify's GraphQL Admin API for most operations.
+- Example GraphQL queries can be found in various route files, especially in `app._index.tsx`.

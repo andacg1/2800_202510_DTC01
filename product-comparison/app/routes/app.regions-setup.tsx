@@ -1,18 +1,37 @@
 import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
+/**
+ * Loader function for the regions setup page
+ * Authenticates admin requests and initializes the page
+ * 
+ * @param {LoaderFunctionArgs} params - Loader function arguments
+ * @param {Request} params.request - The incoming request object
+ * @returns {Promise<Response>} Empty JSON response after authentication
+ */
 export const loader: LoaderFunction = async ({ request }) => {
     await authenticate.admin(request);
     return json({});
 };
 
+/**
+ * RegionsSetup component that provides UI for setting up shop regions
+ * Allows initializing region data in shop metafields
+ * 
+ * @returns {JSX.Element} The rendered regions setup page component
+ */
 export default function RegionsSetup() {
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
     const [data, setData] = useState<{ regionCount?: number; subRegionCount?: number } | null>(null);
 
+    /**
+     * Sets up regions data in shop metafields
+     * Makes an API call to process and store region information
+     * Updates the UI state based on the operation result
+     */
     const setupRegions = async () => {
         setStatus('loading');
         setMessage('');

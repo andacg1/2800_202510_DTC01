@@ -3,17 +3,35 @@ import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 
-
+/**
+ * Loader function for the product regions setup page
+ * Authenticates admin requests and provides shop information
+ * 
+ * @param {Object} params - Loader function parameters
+ * @param {Request} params.request - The incoming request object
+ * @returns {Promise<Response>} JSON response containing shop data
+ */
 export const loader: LoaderFunction = async ({ request }) => {
     await authenticate.admin(request);
     return json({ shop: process.env.SHOPIFY_SHOP });
 };
 
+/**
+ * ProductRegionsSetupPage component that provides UI for setting up product regions
+ * Allows assigning random regions to all products in the store
+ * 
+ * @returns {JSX.Element} The rendered product regions setup page component
+ */
 export default function ProductRegionsSetupPage() {
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
     const [details, setDetails] = useState<string | null>(null);
 
+    /**
+     * Sets up product regions for all products in the store
+     * Makes an API call to assign random regions to products
+     * Updates the UI state based on the operation result
+     */
     const setupProductRegions = async () => {
         setStatus('loading');
         setMessage('');

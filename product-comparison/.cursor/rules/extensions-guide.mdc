@@ -1,0 +1,35 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Shopify Extensions Guide
+
+## Overview
+The [`extensions/`](mdc:product-comparison/extensions) directory contains Shopify app extensions that extend the app's functionality into the Shopify storefront.
+
+## Product Comparison Block Extension
+The main extension is [`product-comparison-block/`](mdc:product-comparison/extensions/product-comparison-block), structured as follows:
+
+### Directory Structure
+- [`blocks/`](mdc:product-comparison/extensions/product-comparison-block/blocks): Contains Liquid block templates for the product comparison UI.
+- [`snippets/`](mdc:product-comparison/extensions/product-comparison-block/snippets): Contains reusable Liquid snippet files.
+- [`assets/`](mdc:product-comparison/extensions/product-comparison-block/assets): Contains static assets like images and client-side JavaScript.
+- [`locales/`](mdc:product-comparison/extensions/product-comparison-block/locales): Contains localization files for multi-language support.
+
+### Configuration
+- [`shopify.extension.toml`](mdc:product-comparison/extensions/product-comparison-block/shopify.extension.toml): Configuration file for the extension that defines settings like name, type, capabilities, and permissions.
+
+## Extension Development
+- Extensions are bundled with the main app but run in the Shopify storefront context.
+- Theme app extensions can add blocks and sections to themes.
+- Extensions can use metafields defined through the app to store and display data.
+
+## Deployment
+- Extensions are deployed alongside the main app when using the Shopify CLI.
+- The extension configuration in `shopify.extension.toml` determines how the extension appears in the Shopify admin.
+
+## Related Files
+- Product comparison logic in the app is implemented in:
+  - [`api.product.comparison.track.tsx`](mdc:product-comparison/app/routes/api.product.comparison.track.tsx): Tracks product comparison events.
+  - [`app._index.tsx`](mdc:product-comparison/app/routes/app._index.tsx): Main dashboard that may show product comparison analytics.

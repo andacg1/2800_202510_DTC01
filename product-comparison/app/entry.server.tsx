@@ -10,6 +10,15 @@ import { addDocumentResponseHeaders } from "./shopify.server";
 
 export const streamTimeout = 5000;
 
+/**
+ * Handles server-side rendering of the Remix application.
+ * @param {Request} request - The incoming HTTP request object
+ * @param {number} responseStatusCode - The HTTP status code to be sent in the response
+ * @param {Headers} responseHeaders - The HTTP headers to be sent in the response
+ * @param {EntryContext} remixContext - The Remix context containing routing and loader data
+ * @returns {Promise<Response>} A promise that resolves to a Response object containing the rendered HTML
+ * @throws {Error} If there's an error during the rendering process
+ */
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,

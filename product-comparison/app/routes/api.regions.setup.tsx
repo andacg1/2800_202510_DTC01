@@ -23,6 +23,16 @@ interface RegionData {
     subRegions: string[];
 }
 
+/**
+ * Action function that sets up region data for the Shopify store
+ * Reads region data from a liquid template file and stores it as shop metafields
+ * Processes regions and sub-regions from country data and creates a consolidated list
+ * 
+ * @param {Object} params - Action function parameters
+ * @param {Request} params.request - The incoming request object
+ * @returns {Promise<Response>} JSON response containing success status and region counts
+ * @throws {Error} If regions data file is not found or contains invalid data
+ */
 export const action: ActionFunction = async ({ request }) => {
     const { admin } = await authenticate.admin(request);
     try {

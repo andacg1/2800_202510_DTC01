@@ -3,6 +3,15 @@ import type { ActionFunction } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 import prisma from "../db.server";
 
+/**
+ * Action function that synchronizes product metafields with a local database
+ * Fetches all product metafields from Shopify and updates/creates corresponding records in the local database
+ * Handles various metafield types and formats their values appropriately
+ * 
+ * @param {Object} params - Action function parameters
+ * @param {Request} params.request - The incoming request object
+ * @returns {Promise<Response>} JSON response indicating success/failure of the sync operation
+ */
 export const action: ActionFunction = async ({ request }) => {
   const { admin } = await authenticate.admin(request);
 

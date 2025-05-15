@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Product Comparison/RecommendationQuery Empty smoke-test 1`] = `
+<div data-theme="light">
+  <div style="width: 800px; padding: 20px;">
+    <div class="mb-12">
+      <form class="flex flex-col items-end mb-6"
+            style="display: flex; flex-direction: column; align-items: end;"
+      >
+        <textarea class="textarea w-full text-2xl placeholder:opacity-40"
+                  placeholder="Tell us about your use case"
+                  name="query"
+        >
+        </textarea>
+        <button type="submit"
+                class="btn btn-primary"
+                style="width: 100px; margin-top: 8px;"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Product Comparison/RecommendationQuery WhileWaiting smoke-test 1`] = `
+<div data-theme="light">
+  <div style="width: 800px; padding: 20px;">
+    <div class="mb-12">
+      <form class="flex flex-col items-end mb-6"
+            style="display: flex; flex-direction: column; align-items: end;"
+      >
+        <textarea class="textarea w-full text-2xl placeholder:opacity-40"
+                  placeholder="Tell us about your use case"
+                  name="query"
+        >
+        </textarea>
+        <button type="submit"
+                class="btn btn-primary"
+                style="width: 100px; margin-top: 8px;"
+        >
+          Submit
+        </button>
+      </form>
+      <div class="chat chat-end">
+        <div class="chat-bubble chat-bubble-info max-w-prose">
+          I am a level 5 kobold working in dark mines. My head-candle doesn't provide enough light. Which product would help me?
+        </div>
+      </div>
+      <span class="loading loading-dots loading-md">
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Product Comparison/RecommendationQuery WithRecommendation smoke-test 1`] = `
+<div data-theme="light">
+  <div style="width: 800px; padding: 20px;">
+    <div class="mb-12">
+      <form class="flex flex-col items-end mb-6"
+            style="display: flex; flex-direction: column; align-items: end;"
+      >
+        <textarea class="textarea w-full text-2xl placeholder:opacity-40"
+                  placeholder="Tell us about your use case"
+                  name="query"
+        >
+        </textarea>
+        <button type="submit"
+                class="btn btn-primary"
+                style="width: 100px; margin-top: 8px;"
+        >
+          Submit
+        </button>
+      </form>
+      <div class="chat chat-end">
+        <div class="chat-bubble chat-bubble-info max-w-prose">
+          I am a level 5 kobold working in dark mines. My head-candle doesn't provide enough light. Which product would help me?
+        </div>
+      </div>
+      <div class="chat chat-start mb-1">
+        <div class="chat-bubble max-w-prose">
+          As a level 5 kobold working in dim mines, your primary issue is inadequate illumination from your head-candle. Of all the products you listed, the 'Copper Light' is the only item that is actually designed to produce light.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
