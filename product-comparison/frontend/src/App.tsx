@@ -7,6 +7,7 @@ import type { Recommendation } from "./RecommendationQuery/RecommendationContext
 import { RecommendationContext } from "./RecommendationQuery/RecommendationContext.ts";
 import RecommendationQuery from "./RecommendationQuery/RecommendationQuery.tsx";
 import MultiColumnComparison from "./MultiColumnComparison.tsx";
+import MultiSessionComparison from "./MultiSessionComparison.tsx";
 import { LocationContext } from "./LocationContext.ts";
 
 export function App() {
@@ -37,8 +38,10 @@ export function App() {
 
           <RecommendationQuery products={products} />
 
-          {tableVariant && tableVariant === "multi-column" ? (
+          {tableVariant === "multi-column" ? (
             <MultiColumnComparison products={products} />
+          ) : tableVariant === "multi-session" ? (
+            <MultiSessionComparison products={products} />
           ) : (
             <ComparisonTable products={products} />
           )}
