@@ -61,7 +61,7 @@ const selectStyles: StylesConfig<ProductOption, true> = {
  * A component that renders a multi-column product comparison interface.
  * Features a multi-select dropdown for product selection and displays a detailed
  * comparison table of the selected products' specifications.
- * 
+ *
  * @param {Object} props - Component props
  * @param {string} [props.className] - Additional CSS classes to apply to the component
  * @param {React.ReactNode} [props.children] - Child elements
@@ -150,7 +150,7 @@ const MultiColumnComparison = ({
   /**
    * Handles changes in product selection from the multi-select dropdown
    * Tracks the comparison event and updates the selected products state
-   * 
+   *
    * @param {MultiValue<ProductOption>} newValue - The newly selected product options
    * @param {ActionMeta<ProductOption>} actionMeta - Metadata about the selection change action
    */

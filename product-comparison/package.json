@@ -28,7 +28,8 @@
     "graphql-codegen": "graphql-codegen",
     "vite": "vite",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test-storybook": "test-storybook"
   },
   "type": "module",
   "engines": {
@@ -79,6 +80,7 @@
     "@storybook/react": "^8.6.12",
     "@storybook/react-vite": "^8.6.12",
     "@storybook/test": "^8.6.12",
+    "@storybook/test-runner": "^0.22.0",
     "@types/eslint": "^9.6.1",
     "@types/node": "^22.15.3",
     "@types/react": "^18.2.31",

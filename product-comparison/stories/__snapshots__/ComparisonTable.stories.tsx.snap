@@ -1,0 +1,89 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Product Comparison/ComparisonTable Empty smoke-test 1`] = `
+<div data-theme="light"
+     style="padding: 1rem;"
+>
+  <div>
+    <div class="product-selection">
+      <h3>
+        Select Products to Compare (max 2)
+      </h3>
+      <div class="products-grid">
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Product Comparison/ComparisonTable WithThreeProducts smoke-test 1`] = `
+<div data-theme="light"
+     style="padding: 1rem;"
+>
+  <div>
+    <div class="product-selection">
+      <h3>
+        Select Products to Compare (max 2)
+      </h3>
+      <div class="products-grid">
+        <div class="product-card ">
+          <h4>
+            Product A
+          </h4>
+          <div class="select-indicator">
+            +
+          </div>
+        </div>
+        <div class="product-card ">
+          <h4>
+            Product B
+          </h4>
+          <div class="select-indicator">
+            +
+          </div>
+        </div>
+        <div class="product-card ">
+          <h4>
+            Product C
+          </h4>
+          <div class="select-indicator">
+            +
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Product Comparison/ComparisonTable WithTwoProducts smoke-test 1`] = `
+<div data-theme="light"
+     style="padding: 1rem;"
+>
+  <div>
+    <div class="product-selection">
+      <h3>
+        Select Products to Compare (max 2)
+      </h3>
+      <div class="products-grid">
+        <div class="product-card ">
+          <h4>
+            Product A
+          </h4>
+          <div class="select-indicator">
+            +
+          </div>
+        </div>
+        <div class="product-card ">
+          <h4>
+            Product B
+          </h4>
+          <div class="select-indicator">
+            +
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -12,8 +12,8 @@ import { LocationContext } from "./LocationContext.ts";
 export function App() {
   const [recommendation, setRecommendation] = useState<Recommendation>();
   const [query, setQuery] = useState<string>();
-  const tableVariant: string = window?.tableVariant;
   const [userLocation, setUserLocation] = useState<LocationData | null>(null);
+  const tableVariant: string = window?.tableVariant || "multi-column";
   const products = window?.productMetafieldData;
 
   useEffect(() => {

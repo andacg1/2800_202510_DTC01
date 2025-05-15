@@ -1,10 +1,6 @@
 import { createRoot } from "react-dom/client";
 import { StrictMode } from "react";
 import { App } from "./App";
-import {
-  defaultRecommendationContext,
-  RecommendationContext,
-} from "./RecommendationQuery/RecommendationContext.ts";
 
 const container =
   document.getElementById("container") || document.getElementById("app");

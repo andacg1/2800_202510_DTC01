@@ -10,7 +10,7 @@ import {
 /**
  * Simulates an OpenAI API response for testing purposes
  * Returns a mock recommendation for a "Copper Light" product
- * 
+ *
  * @returns {Promise<RecommendationResponse>} A promise that resolves to a mock recommendation response
  */
 async function mockOpenApiResponse() {
@@ -41,7 +41,7 @@ async function mockOpenApiResponse() {
             {
               type: "output_text",
               annotations: [],
-              text: '{"recommendedProductId":"9962241655059","recommendedProductTitle":"Copper Light","reason":"As a level 5 kobold working in dim mines, your primary issue is inadequate illumination from your head-candle. Of all the products you listed, the \'Copper Light\' is the only item that is actually designed to produce light. Snowboards, wax, sofas, and plant pots do not provide any illumination for your underground activities. The \'Copper Light\' is a bedside lamp, but it's portable and much brighter than a typical kobold candle—making it the most logical upgrade for lighting up mine tunnels. Just make sure you find a way to power it underground!"}',
+              text: `{"recommendedProductId":"9962241655059","recommendedProductTitle":"Copper Light","reason":"As a level 5 kobold working in dim mines, your primary issue is inadequate illumination from your head-candle. Of all the products you listed, the \'Copper Light\' is the only item that is actually designed to produce light. Snowboards, wax, sofas, and plant pots do not provide any illumination for your underground activities. The \'Copper Light\' is a bedside lamp, but it\'s portable and much brighter than a typical kobold candle—making it the most logical upgrade for lighting up mine tunnels. Just make sure you find a way to power it underground!"}`,
             },
           ],
           role: "assistant",
@@ -91,8 +91,7 @@ async function mockOpenApiResponse() {
       },
       user: null,
       metadata: {},
-      output_text:
-        '{"recommendedProductId":"9962241655059","recommendedProductTitle":"Copper Light","reason":"As a level 5 kobold working in dim mines, your primary issue is inadequate illumination from your head-candle. Of all the products you listed, the \'Copper Light\' is the only item that is actually designed to produce light. Snowboards, wax, sofas, and plant pots do not provide any illumination for your underground activities. The \'Copper Light\' is a bedside lamp, but it's portable and much brighter than a typical kobold candle—making it the most logical upgrade for lighting up mine tunnels. Just make sure you find a way to power it underground!"}',
+      output_text: `{"recommendedProductId":"9962241655059","recommendedProductTitle":"Copper Light","reason":"As a level 5 kobold working in dim mines, your primary issue is inadequate illumination from your head-candle. Of all the products you listed, the \'Copper Light\' is the only item that is actually designed to produce light. Snowboards, wax, sofas, and plant pots do not provide any illumination for your underground activities. The \'Copper Light\' is a bedside lamp, but it\'s portable and much brighter than a typical kobold candle—making it the most logical upgrade for lighting up mine tunnels. Just make sure you find a way to power it underground!"}`,
     },
   };
 }
@@ -100,7 +99,7 @@ async function mockOpenApiResponse() {
 /**
  * A component that provides a product recommendation interface.
  * Allows users to input their use case and receives AI-powered product recommendations.
- * 
+ *
  * @param {Object} props - Component props
  * @param {string} [props.className] - Additional CSS classes to apply to the component
  * @param {React.ReactNode} [props.children] - Child elements
