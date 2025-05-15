@@ -3,71 +3,50 @@ import React, { useState, useEffect } from "react";
 interface ComparisonSession {
   id: string;
   name: string;
-  products: string[];
+  productIds: string[];
 }
 
 interface ComparisonSessionManagerProps {
-  onSessionChange: (sessionId: string) => void;
-  onNewSession: () => void;
+  sessions: ComparisonSession[];
   currentSessionId?: string;
+  onSessionSelect: (sessionId: string) => void;
+  onNewSessionClick: () => void;
 }
 
 export const ComparisonSessionManager: React.FC<
   ComparisonSessionManagerProps
-> = ({ onSessionChange, onNewSession, currentSessionId }) => {
-  const [sessions, setSessions] = useState<ComparisonSession[]>([]);
-  const [selectedSessionId, setSelectedSessionId] = useState<string>("");
+> = ({ sessions, currentSessionId, onSessionSelect, onNewSessionClick }) => {
+  const [selectedUiId, setSelectedUiId] = useState<string>("");
 
   useEffect(() => {
-    const savedSessions = localStorage.getItem("comparisonSessions");
-    if (savedSessions) {
-      const parsedSessions = JSON.parse(savedSessions);
-      setSessions(parsedSessions);
-
-      if (
-        currentSessionId &&
-        parsedSessions.some((s: ComparisonSession) => s.id === currentSessionId)
-      ) {
-        setSelectedSessionId(currentSessionId);
-      } else if (parsedSessions.length > 0) {
-        setSelectedSessionId(parsedSessions[0].id);
-        onSessionChange(parsedSessions[0].id);
-      }
+    if (currentSessionId) {
+      setSelectedUiId(currentSessionId);
+    } else if (sessions.length > 0) {
+      setSelectedUiId(sessions[0].id);
+    } else {
+      setSelectedUiId("");
     }
-  }, [currentSessionId, onSessionChange]);
-
-  useEffect(() => {
-    if (sessions.length > 0) {
-      localStorage.setItem("comparisonSessions", JSON.stringify(sessions));
-    }
-  }, [sessions]);
+  }, [currentSessionId, sessions]);
 
   const handleSessionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newSessionId = event.target.value;
-    setSelectedSessionId(newSessionId);
-    onSessionChange(newSessionId);
+    setSelectedUiId(newSessionId);
+    onSessionSelect(newSessionId);
   };
 
   const handleNewSession = () => {
-    const newSession: ComparisonSession = {
-      id: `session-${Date.now()}`,
-      name: `Comparison ${sessions.length + 1}`,
-      products: [],
-    };
-
-    setSessions((prev) => [...prev, newSession]);
-    setSelectedSessionId(newSession.id);
-    onNewSession();
+    onNewSessionClick();
   };
 
   return (
-    <div className="flex items-center gap-4 p-4 bg-white rounded-lg shadow">
+    <div className="flex items-center gap-4 p-4 bg-gray-100 rounded-lg shadow mb-4">
       <select
-        value={selectedSessionId}
+        value={selectedUiId}
         onChange={handleSessionChange}
         className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         disabled={sessions.length === 0}
       >
+        {sessions.length === 0 && <option value="">No sessions</option>}
         {sessions.map((session) => (
           <option key={session.id} value={session.id}>
             {session.name}
