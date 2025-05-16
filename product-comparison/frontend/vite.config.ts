@@ -1,7 +1,7 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type UserConfig, loadEnv } from "vite";
-import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     plugins: [
-      react(),
+      tailwindcss(),
       viteStaticCopy({
         targets: [
           {
