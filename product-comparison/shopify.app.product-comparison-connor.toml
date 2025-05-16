@@ -3,7 +3,7 @@
 client_id = "609b33a1d729587001b458bdc2aeb4e7"
 name = "product-comparison-connor"
 handle = "product-comparison-connor"
-application_url = "https://arrangement-locale-lately-wallpaper.trycloudflare.com"
+application_url = "https://court-mild-images-plant.trycloudflare.com"
 embedded = true
 
 [build]
@@ -19,9 +19,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://arrangement-locale-lately-wallpaper.trycloudflare.com/auth/callback",
-  "https://arrangement-locale-lately-wallpaper.trycloudflare.com/auth/shopify/callback",
-  "https://arrangement-locale-lately-wallpaper.trycloudflare.com/api/auth/callback"
+  "https://court-mild-images-plant.trycloudflare.com/auth/callback",
+  "https://court-mild-images-plant.trycloudflare.com/auth/shopify/callback",
+  "https://court-mild-images-plant.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
