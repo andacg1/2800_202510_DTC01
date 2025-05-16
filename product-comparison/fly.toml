@@ -13,6 +13,7 @@ primary_region = 'sea'
   SCOPES = 'write_products'
   SHOPIFY_API_KEY = '92e5966503baef9a8237c021f369ade7'
   SHOPIFY_APP_URL = 'https://product-comparison.fly.dev'
+  VITE_APP_BACKEND_URL='https://product-comparison.fly.dev'
 
 [processes]
   app = 'node ./dbsetup.js npm run docker-start'
