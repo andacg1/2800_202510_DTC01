@@ -9,204 +9,172 @@ import makeAnimated from "react-select/animated";
 import { RecommendationContext } from "./RecommendationQuery/RecommendationContext.ts";
 import { getShortId } from "./utils.ts";
 
-type MultiColumnComparisonProps = {
+type Props = {
   className?: string;
   children?: React.ReactNode;
   products: Product[];
 };
-
-export type ProductOption = {
+type ProductOption = {
   readonly value: string;
   readonly label: string;
   readonly product: Product;
 };
 
 const animatedComponents = makeAnimated();
+const baseStyles = {
+  white: "white",
+  primary: "hsl(var(--p))",
+  hover: "#f3f4f6",
+};
 
 const selectStyles: StylesConfig<ProductOption, true> = {
-  control: (styles) => ({
-    ...styles,
-    backgroundColor: "white",
-    animation: "none",
-    opacity: 1,
-    transform: "translateY(0px)",
+  control: (s) => ({
+    ...s,
+    backgroundColor: baseStyles.white,
     minHeight: "3rem",
-    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.05)",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
     border: "1px solid #e5e7eb",
     borderRadius: "0.75rem",
     "&:hover": {
       borderColor: "#d1d5db",
-      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)",
+      boxShadow: "0 4px 6px rgba(0,0,0,0.05)",
     },
     "&:focus-within": {
-      borderColor: "hsl(var(--p))",
-      boxShadow: "0 0 0 2px hsla(var(--p), 0.2)",
+      borderColor: baseStyles.primary,
+      boxShadow: `0 0 0 2px ${baseStyles.primary}20`,
     },
   }),
-  menu: (styles) => ({
-    ...styles,
-    zIndex: "100",
-    backgroundColor: "white",
+  menu: (s) => ({
+    ...s,
+    zIndex: 100,
+    backgroundColor: baseStyles.white,
     animation: "fadeIn 0.2s ease-out",
-    opacity: 1,
     transform: "translateY(0.5rem)",
     boxShadow:
-      "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+      "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
     borderRadius: "0.75rem",
     marginTop: "0.5rem",
     border: "1px solid #e5e7eb",
   }),
-  input: (styles) => ({
-    ...styles,
-    ":focus-visible": {
-      ...styles[":focus-visible"],
-      boxShadow: "none",
-    },
+  input: (s) => ({
+    ...s,
+    ":focus-visible": { ...s[":focus-visible"], boxShadow: "none" },
   }),
-  option: (styles, state) => ({
-    ...styles,
-    backgroundColor: state.isSelected ? "hsla(var(--p), 0.1)" : "white",
-    color: state.isSelected ? "hsl(var(--p))" : "#1f2937",
+  option: (s, state) => ({
+    ...s,
+    backgroundColor: state.isSelected
+      ? `${baseStyles.primary}10`
+      : baseStyles.white,
+    color: state.isSelected ? baseStyles.primary : "#1f2937",
     padding: "0.875rem 1rem",
     cursor: "pointer",
     transition: "all 0.2s ease",
     "&:hover": {
-      backgroundColor: state.isSelected ? "hsla(var(--p), 0.15)" : "#f3f4f6",
+      backgroundColor: state.isSelected
+        ? `${baseStyles.primary}15`
+        : baseStyles.hover,
     },
-    "&:active": {
-      backgroundColor: "hsla(var(--p), 0.2)",
-    },
+    "&:active": { backgroundColor: `${baseStyles.primary}20` },
   }),
-  multiValue: (styles) => ({
-    ...styles,
-    backgroundColor: "hsla(var(--p), 0.1)",
+  multiValue: (s) => ({
+    ...s,
+    backgroundColor: `${baseStyles.primary}10`,
     borderRadius: "0.5rem",
     padding: "0.25rem",
   }),
-  multiValueLabel: (styles) => ({
-    ...styles,
-    color: "hsl(var(--p))",
+  multiValueLabel: (s) => ({
+    ...s,
+    color: baseStyles.primary,
     fontWeight: 500,
     padding: "0.25rem 0.5rem",
   }),
-  multiValueRemove: (styles) => ({
-    ...styles,
-    color: "hsl(var(--p))",
+  multiValueRemove: (s) => ({
+    ...s,
+    color: baseStyles.primary,
     ":hover": {
-      backgroundColor: "hsla(var(--p), 0.2)",
-      color: "hsl(var(--p))",
+      backgroundColor: `${baseStyles.primary}20`,
+      color: baseStyles.primary,
     },
   }),
 };
 
-const MultiColumnComparison = ({
-  className,
-  children,
-  products,
-}: MultiColumnComparisonProps) => {
+const MultiColumnComparison = ({ className, children, products }: Props) => {
   const pathName = window.location.pathname;
-  const productOptions = products.map((product) => ({
-    value: String(product.id),
-    label: product.title,
-    product: product,
-    isFixed: window.location.pathname.includes(product.handle),
-  }));
-
-  const [selectedOptions, setSelectedOptions] = useState<
-    MultiValue<ProductOption>
-  >(
-    productOptions.filter((option) =>
-      window.location.pathname.includes(option.product.handle),
-    ),
-  );
   const { location: userLocation } = useContext(LocationContext);
   const { recommendation, setRecommendation } = useContext(
     RecommendationContext,
   );
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState<
+    MultiValue<ProductOption>
+  >(
+    products
+      .map((p) => ({
+        value: String(p.id),
+        label: p.title,
+        product: p,
+        isFixed: pathName.includes(p.handle),
+      }))
+      .filter((o) => pathName.includes(o.product.handle)),
+  );
 
-  const getCurrentProduct = () =>
-    productOptions.find((option) => pathName.includes(option.product.handle));
+  const productOptions = products.map((p) => ({
+    value: String(p.id),
+    label: p.title,
+    product: p,
+  }));
 
   useEffect(() => {
-    console.log({ selectedOptions });
-    const currentProductOption = productOptions.find((option) =>
-      pathName.includes(option.product.handle),
-    );
-    console.log({ pathName, productOptions, currentProductOption });
-  }, [pathName, productOptions, selectedOptions]);
-
-  useEffect(() => {
-    if (!recommendation?.recommendedProductId) {
-      console.log("No product ID", recommendation);
-      return;
-    }
-    for (const option of productOptions) {
-      console.log(
-        getShortId(option.product.id),
-        getShortId(recommendation.recommendedProductId),
-      );
-    }
+    if (!recommendation?.recommendedProductId) return;
     setSelectedOptions(
       productOptions.filter(
-        (option) =>
+        (o) =>
           getShortId(recommendation.recommendedProductId) ===
-          getShortId(option.product.id),
+          getShortId(o.product.id),
       ),
     );
   }, [recommendation]);
-
-  const getAllSpecKeys = () => {
-    const selectedProductData = products.filter((p) =>
-      selectedOptions.map((product) => product.value).includes(String(p.id)),
-    );
-    const allKeys = new Set<string>();
-
-    selectedProductData.forEach((product) => {
-      Object.keys(product.specs).forEach((key) => {
-        allKeys.add(key);
-      });
-    });
-
-    return Array.from(allKeys);
-  };
 
   const handleProductChange = async (
     newValue: MultiValue<ProductOption>,
     actionMeta: ActionMeta<ProductOption>,
   ) => {
     setSelectedOptions(newValue);
+    const currentProduct = window?.currentProduct as Product;
+    if (!currentProduct)
+      return console.error('"currentProduct" is not defined');
 
-    const currentProductOption: Product = window?.currentProduct;
-    if (!currentProductOption) {
-      return console.error('"currentProductOption" is not defined');
-    }
     const sessionId = document.cookie
       .split("; ")
-      .find((row) => row.startsWith("_shopify_s="))
+      .find((r) => r.startsWith("_shopify_s="))
       ?.split("=")[1];
-    console.log({ sessionId });
-    const collectionId = window?.collection;
+    const collectionId = window?.collection as string;
 
-    const resp = await fetch(
-      `${process.env.APP_BACKEND_URL}/api/product/comparison/track`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          collectionId,
-          originalProductId: currentProductOption?.id,
-          comparedProducts: newValue.map((option) => option.product.id),
-          sessionId,
-        }),
-        mode: "cors",
-      },
-    );
+    await fetch(`${process.env.APP_BACKEND_URL}/api/product/comparison/track`, {
+      method: "POST",
+      body: JSON.stringify({
+        collectionId,
+        originalProductId: currentProduct?.id,
+        comparedProducts: newValue.map((o) => o.product.id),
+        sessionId,
+      }),
+      mode: "cors",
+    });
   };
 
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const getAllSpecKeys = () =>
+    Array.from(
+      new Set(
+        products
+          .filter((p) =>
+            selectedOptions.map((o) => o.value).includes(String(p.id)),
+          )
+          .flatMap((p) => Object.keys(p.specs)),
+      ),
+    );
 
   return (
     <div className={`${className} space-y-6`}>
-      {/* Product Tabs */}
       <div className="bg-base-100 p-6 rounded-xl shadow-sm border border-base-200">
         <div className="flex flex-wrap gap-3 items-center w-full">
           {selectedOptions.map((option) => (
@@ -224,10 +192,9 @@ const MultiColumnComparison = ({
                   e.preventDefault();
                   e.stopPropagation();
                   const newOptions = selectedOptions.filter(
-                    (opt) => opt.value !== option.value,
+                    (o) => o.value !== option.value,
                   );
                   setSelectedOptions(newOptions);
-
                   handleProductChange(newOptions, {
                     action: "remove-value",
                     removedValue: option,
@@ -252,7 +219,6 @@ const MultiColumnComparison = ({
         </div>
       </div>
 
-      {/* Product Select Dropdown */}
       {isSelectOpen && (
         <div className="relative z-50 animate-fadeIn">
           <div
@@ -268,10 +234,7 @@ const MultiColumnComparison = ({
               classNamePrefix="select-internal"
               menuIsOpen={isSelectOpen}
               onMenuClose={() => setIsSelectOpen(false)}
-              onChange={(newValue, actionMeta) => {
-                handleProductChange(newValue, actionMeta);
-                setIsSelectOpen(false);
-              }}
+              onChange={handleProductChange}
               value={selectedOptions}
               styles={selectStyles}
               placeholder="Search and select products to compare..."
@@ -283,7 +246,6 @@ const MultiColumnComparison = ({
         </div>
       )}
 
-      {/* Comparison Table */}
       {selectedOptions.length > 0 && (
         <div className="overflow-x-auto rounded-xl border border-base-300 bg-base-100 shadow-sm">
           <div className="comparison-table">
@@ -293,33 +255,28 @@ const MultiColumnComparison = ({
                   <th className="w-1/4 font-semibold text-base-content">
                     Specification
                   </th>
-                  {selectedOptions.map((selectedProduct) => {
-                    const product = selectedProduct.product;
-                    return (
-                      <th
-                        key={product.id}
-                        className="text-center font-semibold text-base-content"
-                      >
-                        {product?.title}
-                      </th>
-                    );
-                  })}
+                  {selectedOptions.map(({ product }) => (
+                    <th
+                      key={product.id}
+                      className="text-center font-semibold text-base-content"
+                    >
+                      {product?.title}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {getAllSpecKeys().map((specKey) => (
                   <tr key={specKey} className="hover:bg-base-200/50">
-                    {specKey === "available_regions" && userLocation ? (
-                      <td className="font-medium">{`Available in ${userLocation?.country_name || "N/A"}?`}</td>
-                    ) : (
-                      <td className="font-medium">
-                        {specKey.replace("_", " ")}
-                      </td>
-                    )}
-                    {selectedOptions.map((selectedProduct) => {
-                      const product = selectedProduct.product;
+                    <td className="font-medium">
+                      {specKey === "available_regions" && userLocation
+                        ? `Available in ${userLocation?.country_name || "N/A"}?`
+                        : specKey.replace("_", " ")}
+                    </td>
+                    {selectedOptions.map(({ product }) => {
                       const specValue = product?.specs[specKey];
                       const isAvailableField = specKey === "available_regions";
+
                       if (
                         isAvailableField &&
                         userLocation &&
@@ -331,21 +288,20 @@ const MultiColumnComparison = ({
                             className="text-center align-middle"
                           >
                             <div className="flex flex-col items-center justify-center gap-1">
-                              {isAvailable(userLocation, specValue) ? (
-                                <FontAwesomeIcon
-                                  icon={faCheck}
-                                  className="text-success"
-                                  size={"2x"}
-                                  fixedWidth
-                                />
-                              ) : (
-                                <FontAwesomeIcon
-                                  icon={faX}
-                                  className="text-error"
-                                  size={"2x"}
-                                  fixedWidth
-                                />
-                              )}
+                              <FontAwesomeIcon
+                                icon={
+                                  isAvailable(userLocation, specValue)
+                                    ? faCheck
+                                    : faX
+                                }
+                                className={
+                                  isAvailable(userLocation, specValue)
+                                    ? "text-success"
+                                    : "text-error"
+                                }
+                                size="2x"
+                                fixedWidth
+                              />
                               <div className="text-sm text-base-content/70">
                                 {specValue.join(", ")}
                               </div>
@@ -353,6 +309,7 @@ const MultiColumnComparison = ({
                           </td>
                         );
                       }
+
                       return (
                         <td
                           key={`${product.id}-${specKey}`}
