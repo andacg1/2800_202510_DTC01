@@ -142,9 +142,9 @@ const RecommendationQuery = ({
           }
           setQuery(queryData || "");
           setRecommendation(defaultRecommendationContext.recommendation);
-          if (!import.meta.env.VITE_APP_BACKEND_URL) {
-            return console.error("Could not find APP_BACKEND_URL");
-          }
+          // if (!import.meta.env.VITE_APP_BACKEND_URL) {
+          //   return console.error("Could not find APP_BACKEND_URL");
+          // }
           const url = `${import.meta.env.VITE_APP_BACKEND_URL}/recommend`;
           console.log(url);
 

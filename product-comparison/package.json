@@ -4,10 +4,11 @@
   "scripts": {
     "build": "tsc --project tsconfig.ext.json && remix vite:build",
     "dev": "shopify app dev --use-localhost",
-    "dev:deniz": "shopify app dev -s bcit-deniz.myshopify.com --use-localhost",
+    "dev:deniz": "shopify app dev -s bcit-deniz.myshopify.com --tunnel-url=https://deniz.ngrok.dev:3100",
     "dev:stan": "shopify app dev -s bcit-stan.myshopify.com --use-localhost",
     "dev:brandon": "shopify app dev -s bcit-brandon.myshopify.com --use-localhost",
     "dev:allen": "shopify app dev -s bcit-allen.myshopify.com --use-localhost",
+    "ngrok:deniz": "ngrok start deniz",
     "tsc:extension": "tsc --watch --project tsconfig.ext.json",
     "config:link": "shopify app config link",
     "generate": "shopify app generate",

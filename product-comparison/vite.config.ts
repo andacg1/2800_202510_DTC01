@@ -1,6 +1,7 @@
 import { vitePlugin as remix } from "@remix-run/dev";
 import { installGlobals } from "@remix-run/node";
-import { defineConfig, type UserConfig } from "vite";
+import { resolve } from "node:path";
+import { defineConfig, type UserConfig, Plugin } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 installGlobals({ nativeFetch: true });
@@ -37,6 +38,25 @@ if (host === "localhost") {
   };
 }
 
+function myPlugin(): Plugin[] {
+  return [
+    {
+      name: "my-plugin:serve",
+      apply: "serve",
+      configResolved(config) {
+        //console.log("dev server:", config);
+      },
+    },
+    {
+      name: "my-plugin:build",
+      apply: "build",
+      configResolved(config) {
+        //console.log("bundle:", config);
+      },
+    },
+  ];
+}
+
 export default defineConfig({
   server: {
     allowedHosts: [host],
@@ -63,9 +83,21 @@ export default defineConfig({
       },
     }),
     tsconfigPaths(),
+    myPlugin(),
   ],
   build: {
     assetsInlineLimit: 0,
+    // rollupOptions: {
+    //   input: {
+    //     main: resolve(__dirname, "frontend/src/index.html"),
+    //     //main: "./frontend/src/index.html",
+    //   },
+    //   output: {
+    //     entryFileNames: `[name].js`,
+    //     chunkFileNames: `[name].js`,
+    //     assetFileNames: `[name].[ext]`,
+    //   },
+    // },
   },
   optimizeDeps: {
     include: ["@shopify/app-bridge-react", "@shopify/polaris"],
