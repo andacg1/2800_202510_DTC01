@@ -3,7 +3,7 @@ import type { ActionMeta, MultiValue, StylesConfig } from "react-select";
 import Select from "react-select";
 import { isAvailable, type Product } from "./product.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faX, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { LocationContext } from "./LocationContext.ts";
 import makeAnimated from "react-select/animated";
 import { RecommendationContext } from "./RecommendationQuery/RecommendationContext.ts";
@@ -30,6 +30,12 @@ const selectStyles: StylesConfig<ProductOption, true> = {
     animation: "none",
     opacity: 1,
     transform: "translateY(0px)",
+    minHeight: "2.5rem",
+    boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+    border: "1px solid #e5e7eb",
+    "&:hover": {
+      borderColor: "#d1d5db",
+    },
   }),
   menu: (styles) => ({
     ...styles,
@@ -38,12 +44,26 @@ const selectStyles: StylesConfig<ProductOption, true> = {
     animation: "none",
     opacity: 1,
     transform: "translateY(0px)",
+    boxShadow:
+      "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+    borderRadius: "0.5rem",
+    marginTop: "0.5rem",
   }),
   input: (styles) => ({
     ...styles,
     ":focus-visible": {
       ...styles[":focus-visible"],
       boxShadow: "none",
+    },
+  }),
+  option: (styles, state) => ({
+    ...styles,
+    backgroundColor: state.isSelected ? "#f3f4f6" : "white",
+    color: "#1f2937",
+    padding: "0.75rem 1rem",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "#f3f4f6",
     },
   }),
 };
@@ -104,7 +124,6 @@ const MultiColumnComparison = ({
     );
   }, [recommendation]);
 
-  // Get all unique spec keys across selected products
   const getAllSpecKeys = () => {
     const selectedProductData = products.filter((p) =>
       selectedOptions.map((product) => product.value).includes(String(p.id)),
@@ -125,7 +144,7 @@ const MultiColumnComparison = ({
     actionMeta: ActionMeta<ProductOption>,
   ) => {
     setSelectedOptions(newValue);
-    // TODO: Track the comparison
+
     const currentProductOption: Product = window?.currentProduct;
     if (!currentProductOption) {
       return console.error('"currentProductOption" is not defined');
@@ -152,135 +171,162 @@ const MultiColumnComparison = ({
     );
   };
 
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
+
   return (
-    <div className={className}>
-      <div className="tabs tabs-lift">
-        <input
-          type="radio"
-          name="my_tabs_3"
-          className="tab"
-          aria-label="Tab 1"
-        />
-        <div className="tab-content bg-base-100 border-base-300 p-6">
-          Tab content 1
-        </div>
-
-        <input
-          type="radio"
-          name="my_tabs_3"
-          className="tab"
-          aria-label="Tab 2"
-          defaultChecked
-        />
-        <div className="tab-content bg-base-100 border-base-300 p-6">
-          Tab content 2
-        </div>
-
-        <input
-          type="radio"
-          name="my_tabs_3"
-          className="tab"
-          aria-label="Tab 3"
-        />
-        <div className="tab-content bg-base-100 border-base-300 p-6">
-          Tab content 3
+    <div className={`${className} space-y-6`}>
+      {/* Product Tabs */}
+      <div className="bg-base-100 p-4 rounded-lg shadow-sm">
+        <div className="flex flex-wrap justify-center gap-2 items-center w-full">
+          {selectedOptions.map((option) => (
+            <button
+              key={option.value}
+              className="group relative flex items-center justify-center text-center px-4 py-2 bg-base-200 hover:bg-base-300 rounded-lg transition-colors duration-200 min-w-[120px] h-10"
+              onClick={() => {}}
+            >
+              <span className="font-medium text-base-content truncate">
+                {option.label}
+              </span>
+              <button
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 btn btn-ghost btn-xs p-0 w-6 h-6 flex items-center justify-center rounded-full hover:bg-base-300/50 transition-colors duration-200 flex-shrink-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedOptions(
+                    selectedOptions.filter((opt) => opt.value !== option.value),
+                  );
+                }}
+                aria-label={`Remove ${option.label} from comparison`}
+              >
+                <FontAwesomeIcon
+                  icon={faX}
+                  className="text-base-content/70 group-hover:text-base-content text-sm"
+                />
+              </button>
+            </button>
+          ))}
+          <button
+            className="flex items-center justify-center w-10 h-10 bg-primary hover:bg-primary-focus text-primary-content rounded-lg transition-colors duration-200 flex-shrink-0"
+            onClick={() => setIsSelectOpen(true)}
+            aria-label="Add product to comparison"
+          >
+            <FontAwesomeIcon icon={faPlus} />
+          </button>
         </div>
       </div>
-      <Select
-        isMulti
-        name="products"
-        options={productOptions}
-        components={animatedComponents}
-        className="basic-multi-select"
-        classNamePrefix="select-internal"
-        /* menuIsOpen={true} */
-        onChange={handleProductChange}
-        value={selectedOptions}
-        styles={selectStyles}
-      />
-      {Array.isArray(selectedOptions) &&
-      selectedOptions?.length === 0 ? null : (
-        <div className="overflow-x-auto">
-          {selectedOptions.length > 0 && (
-            <div className="comparison-table">
-              <h3>Comparison</h3>
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Specification</th>
+
+      {/* Product Select Dropdown */}
+      {isSelectOpen && (
+        <div className="relative z-50">
+          <Select
+            isMulti
+            name="products"
+            options={productOptions}
+            components={animatedComponents}
+            className="basic-multi-select"
+            classNamePrefix="select-internal"
+            menuIsOpen={isSelectOpen}
+            onMenuClose={() => setIsSelectOpen(false)}
+            onChange={(newValue, actionMeta) => {
+              handleProductChange(newValue, actionMeta);
+              setIsSelectOpen(false);
+            }}
+            value={selectedOptions}
+            styles={selectStyles}
+            placeholder="Select products to compare..."
+          />
+        </div>
+      )}
+
+      {/* Comparison Table */}
+      {selectedOptions.length > 0 && (
+        <div className="overflow-x-auto rounded-lg border border-base-300 bg-base-100 shadow-sm">
+          <div className="comparison-table">
+            <table className="table table-zebra w-full">
+              <thead>
+                <tr className="bg-base-200">
+                  <th className="w-1/4 font-semibold text-base-content">
+                    Specification
+                  </th>
+                  {selectedOptions.map((selectedProduct) => {
+                    const product = selectedProduct.product;
+                    return (
+                      <th
+                        key={product.id}
+                        className="text-center font-semibold text-base-content"
+                      >
+                        {product?.title}
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                {getAllSpecKeys().map((specKey) => (
+                  <tr key={specKey} className="hover:bg-base-200/50">
+                    {specKey === "available_regions" && userLocation ? (
+                      <td className="font-medium">{`Available in ${userLocation?.country_name || "N/A"}?`}</td>
+                    ) : (
+                      <td className="font-medium">
+                        {specKey.replace("_", " ")}
+                      </td>
+                    )}
                     {selectedOptions.map((selectedProduct) => {
                       const product = selectedProduct.product;
-                      return (
-                        <th key={product.id} className="text-center!">
-                          {product?.title}
-                        </th>
-                      );
-                    })}
-                  </tr>
-                </thead>
-                <tbody>
-                  {getAllSpecKeys().map((specKey) => (
-                    <tr key={specKey}>
-                      {specKey === "available_regions" && userLocation ? (
-                        <td>{`Available in ${userLocation?.country_name || "N/A"}?`}</td>
-                      ) : (
-                        <td>{specKey.replace("_", " ")}</td>
-                      )}
-                      {selectedOptions.map((selectedProduct) => {
-                        const product = selectedProduct.product;
-                        const specValue = product?.specs[specKey];
-                        const isAvailableField =
-                          specKey === "available_regions";
-                        if (
-                          isAvailableField &&
-                          userLocation &&
-                          Array.isArray(specValue)
-                        ) {
-                          return (
-                            <td
-                              key={`${product.id}-${specKey}`}
-                              className="text-center"
-                            >
-                              <div className="flex flex-col items-center justify-center">
-                                {isAvailable(userLocation, specValue) ? (
-                                  <FontAwesomeIcon
-                                    icon={faCheck}
-                                    color={"rgba(31,255,0,0.5)"}
-                                    size={"2x"}
-                                    fixedWidth
-                                  />
-                                ) : (
-                                  <FontAwesomeIcon
-                                    icon={faX}
-                                    color={"#b02525"}
-                                    size={"2x"}
-                                    fixedWidth
-                                  />
-                                )}
-                                <div>{specValue.join(", ")}</div>
-                              </div>
-                            </td>
-                          );
-                        }
+                      const specValue = product?.specs[specKey];
+                      const isAvailableField = specKey === "available_regions";
+                      if (
+                        isAvailableField &&
+                        userLocation &&
+                        Array.isArray(specValue)
+                      ) {
                         return (
                           <td
                             key={`${product.id}-${specKey}`}
-                            className="text-center"
+                            className="text-center align-middle"
                           >
-                            <div className="flex flex-col items-center justify-center">
-                              {Array.isArray(specValue)
-                                ? specValue.join(", ")
-                                : specValue?.toString() || "N/A"}
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              {isAvailable(userLocation, specValue) ? (
+                                <FontAwesomeIcon
+                                  icon={faCheck}
+                                  className="text-success"
+                                  size={"2x"}
+                                  fixedWidth
+                                />
+                              ) : (
+                                <FontAwesomeIcon
+                                  icon={faX}
+                                  className="text-error"
+                                  size={"2x"}
+                                  fixedWidth
+                                />
+                              )}
+                              <div className="text-sm text-base-content/70">
+                                {specValue.join(", ")}
+                              </div>
                             </div>
                           </td>
                         );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                      }
+                      return (
+                        <td
+                          key={`${product.id}-${specKey}`}
+                          className="text-center align-middle"
+                        >
+                          <div className="flex flex-col items-center justify-center">
+                            <span className="text-base-content">
+                              {Array.isArray(specValue)
+                                ? specValue.join(", ")
+                                : specValue?.toString() || "N/A"}
+                            </span>
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
