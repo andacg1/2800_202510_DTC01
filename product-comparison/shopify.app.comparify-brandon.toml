@@ -3,7 +3,7 @@
 client_id = "a5964c6796450f7151ea3e568dcc1ca8"
 name = "comparify-brandon"
 handle = "comparify-brandon"
-application_url = "https://localhost:53974"
+application_url = "https://localhost:52925"
 embedded = true
 
 [build]
@@ -19,9 +19,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://localhost:53974/auth/callback",
-  "https://localhost:53974/auth/shopify/callback",
-  "https://localhost:53974/api/auth/callback"
+  "https://localhost:52925/auth/callback",
+  "https://localhost:52925/auth/shopify/callback",
+  "https://localhost:52925/api/auth/callback"
 ]
 
 [pos]

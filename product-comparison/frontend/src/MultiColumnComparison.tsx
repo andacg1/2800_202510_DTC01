@@ -8,6 +8,22 @@ import { LocationContext } from "./LocationContext.ts";
 import makeAnimated from "react-select/animated";
 import { RecommendationContext } from "./RecommendationQuery/RecommendationContext.ts";
 import { getShortId } from "./utils.ts";
+import SpecData from "./SpecData.tsx";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  horizontalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 /**
  * Props for the MultiColumnComparison component
@@ -57,6 +73,39 @@ const selectStyles: StylesConfig<ProductOption, true> = {
   }),
 };
 
+const SortableColumnHeader: React.FC<{
+  productId: string;
+  children: React.ReactNode;
+}> = ({ productId, children }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: productId });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 2 : 1,
+    cursor: "grab",
+    background: isDragging ? "#f0f0f0" : undefined,
+  };
+  return (
+    <th
+      ref={setNodeRef}
+      style={style}
+      className="text-center"
+      {...attributes}
+      {...listeners}
+    >
+      {children}
+    </th>
+  );
+};
+
 /**
  * A component that renders a multi-column product comparison interface.
  * Features a multi-select dropdown for product selection and displays a detailed
@@ -92,6 +141,23 @@ const MultiColumnComparison = ({
   const { recommendation, setRecommendation } = useContext(
     RecommendationContext,
   );
+
+  // Drag and drop sensors
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  // Drag and drop handler for columns
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setSelectedOptions((items) => {
+        // Cast to ProductOption[] to satisfy mutable type
+        const arr = [...items] as ProductOption[];
+        const oldIndex = arr.findIndex((item) => item.value === active.id);
+        const newIndex = arr.findIndex((item) => item.value === over.id);
+        return arrayMove(arr, oldIndex, newIndex);
+      });
+    }
+  };
 
   /**
    * Gets the currently viewed product based on the URL path
@@ -206,81 +272,59 @@ const MultiColumnComparison = ({
           {selectedOptions.length > 0 && (
             <div className="comparison-table">
               <h3>Comparison</h3>
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Specification</th>
-                    {selectedOptions.map((selectedProduct) => {
-                      const product = selectedProduct.product;
-                      return (
-                        <th key={product.id} className="text-center!">
-                          {product?.title}
-                        </th>
-                      );
-                    })}
-                  </tr>
-                </thead>
-                <tbody>
-                  {getAllSpecKeys().map((specKey) => (
-                    <tr key={specKey}>
-                      {specKey === "available_regions" && userLocation ? (
-                        <td>{`Available in ${userLocation?.country_name || "N/A"}?`}</td>
-                      ) : (
-                        <td>{specKey.replace("_", " ")}</td>
-                      )}
-                      {selectedOptions.map((selectedProduct) => {
-                        const product = selectedProduct.product;
-                        const specValue = product?.specs[specKey];
-                        const isAvailableField =
-                          specKey === "available_regions";
-                        if (
-                          isAvailableField &&
-                          userLocation &&
-                          Array.isArray(specValue)
-                        ) {
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={selectedOptions.map((opt) => opt.value)}
+                  strategy={horizontalListSortingStrategy}
+                >
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Specification</th>
+                        {selectedOptions.map((selectedProduct) => {
+                          const product = selectedProduct.product;
                           return (
-                            <td
-                              key={`${product.id}-${specKey}`}
-                              className="text-center"
+                            <SortableColumnHeader
+                              key={selectedProduct.value}
+                              productId={selectedProduct.value}
                             >
-                              <div className="flex flex-col items-center justify-center">
-                                {isAvailable(userLocation, specValue) ? (
-                                  <FontAwesomeIcon
-                                    icon={faCheck}
-                                    color={"rgba(31,255,0,0.5)"}
-                                    size={"2x"}
-                                    fixedWidth
-                                  />
-                                ) : (
-                                  <FontAwesomeIcon
-                                    icon={faX}
-                                    color={"#b02525"}
-                                    size={"2x"}
-                                    fixedWidth
-                                  />
-                                )}
-                                <div>{specValue.join(", ")}</div>
-                              </div>
-                            </td>
+                              {product?.title}
+                            </SortableColumnHeader>
                           );
-                        }
-                        return (
-                          <td
-                            key={`${product.id}-${specKey}`}
-                            className="text-center"
-                          >
-                            <div className="flex flex-col items-center justify-center">
-                              {Array.isArray(specValue)
-                                ? specValue.join(", ")
-                                : specValue?.toString() || "N/A"}
-                            </div>
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                        })}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {getAllSpecKeys().map((specKey) => (
+                        <tr key={specKey}>
+                          {specKey === "available_regions" && userLocation ? (
+                            <td>{`Available in ${userLocation?.country_name || "N/A"}?`}</td>
+                          ) : (
+                            <td>{specKey.replace("_", " ")}</td>
+                          )}
+                          {selectedOptions.map((selectedProduct) => {
+                            const product = selectedProduct.product;
+                            const specValue = product?.specs[specKey];
+                            return (
+                              <SpecData
+                                key={`${product.id}-${specKey}`}
+                                productId={String(product.id)}
+                                specKey={specKey}
+                                userLocation={userLocation}
+                                specValue={specValue}
+                              />
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </SortableContext>
+              </DndContext>
             </div>
           )}
         </div>
