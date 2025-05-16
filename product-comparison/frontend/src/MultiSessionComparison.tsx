@@ -30,24 +30,31 @@ const selectStyles: StylesConfig<ProductOption, true> = {
     animation: "none",
     opacity: 1,
     transform: "translateY(0px)",
-    minHeight: "2.5rem",
-    boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+    minHeight: "3rem",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.05)",
     border: "1px solid #e5e7eb",
+    borderRadius: "0.75rem",
     "&:hover": {
       borderColor: "#d1d5db",
+      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)",
+    },
+    "&:focus-within": {
+      borderColor: "hsl(var(--p))",
+      boxShadow: "0 0 0 2px hsla(var(--p), 0.2)",
     },
   }),
   menu: (styles) => ({
     ...styles,
     zIndex: "100",
     backgroundColor: "white",
-    animation: "none",
+    animation: "fadeIn 0.2s ease-out",
     opacity: 1,
-    transform: "translateY(0px)",
+    transform: "translateY(0.5rem)",
     boxShadow:
-      "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-    borderRadius: "0.5rem",
+      "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    borderRadius: "0.75rem",
     marginTop: "0.5rem",
+    border: "1px solid #e5e7eb",
   }),
   input: (styles) => ({
     ...styles,
@@ -58,12 +65,36 @@ const selectStyles: StylesConfig<ProductOption, true> = {
   }),
   option: (styles, state) => ({
     ...styles,
-    backgroundColor: state.isSelected ? "#f3f4f6" : "white",
-    color: "#1f2937",
-    padding: "0.75rem 1rem",
+    backgroundColor: state.isSelected ? "hsla(var(--p), 0.1)" : "white",
+    color: state.isSelected ? "hsl(var(--p))" : "#1f2937",
+    padding: "0.875rem 1rem",
     cursor: "pointer",
+    transition: "all 0.2s ease",
     "&:hover": {
-      backgroundColor: "#f3f4f6",
+      backgroundColor: state.isSelected ? "hsla(var(--p), 0.15)" : "#f3f4f6",
+    },
+    "&:active": {
+      backgroundColor: "hsla(var(--p), 0.2)",
+    },
+  }),
+  multiValue: (styles) => ({
+    ...styles,
+    backgroundColor: "hsla(var(--p), 0.1)",
+    borderRadius: "0.5rem",
+    padding: "0.25rem",
+  }),
+  multiValueLabel: (styles) => ({
+    ...styles,
+    color: "hsl(var(--p))",
+    fontWeight: 500,
+    padding: "0.25rem 0.5rem",
+  }),
+  multiValueRemove: (styles) => ({
+    ...styles,
+    color: "hsl(var(--p))",
+    ":hover": {
+      backgroundColor: "hsla(var(--p), 0.2)",
+      color: "hsl(var(--p))",
     },
   }),
 };
@@ -176,24 +207,31 @@ const MultiColumnComparison = ({
   return (
     <div className={`${className} space-y-6`}>
       {/* Product Tabs */}
-      <div className="bg-base-100 p-4 rounded-lg shadow-sm">
-        <div className="flex flex-wrap justify-center gap-2 items-center w-full">
+      <div className="bg-base-100 p-6 rounded-xl shadow-sm border border-base-200">
+        <div className="flex flex-wrap gap-3 items-center w-full">
           {selectedOptions.map((option) => (
-            <button
+            <div
               key={option.value}
-              className="group relative flex items-center justify-center text-center px-4 py-2 bg-base-200 hover:bg-base-300 rounded-lg transition-colors duration-200 min-w-[120px] h-10"
-              onClick={() => {}}
+              className="group relative flex items-center bg-base-200 hover:bg-base-300 rounded-lg transition-all duration-200 min-w-[160px] h-12 px-4 pr-12 shadow-sm hover:shadow-md"
             >
-              <span className="font-medium text-base-content truncate">
+              <span className="font-medium text-base-content truncate flex-1">
                 {option.label}
               </span>
               <button
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 btn btn-ghost btn-xs p-0 w-6 h-6 flex items-center justify-center rounded-full hover:bg-base-300/50 transition-colors duration-200 flex-shrink-0"
+                type="button"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 btn btn-ghost btn-sm p-0 w-8 h-8 flex items-center justify-center rounded-full hover:bg-base-300/50 transition-colors duration-200 flex-shrink-0 z-10"
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
-                  setSelectedOptions(
-                    selectedOptions.filter((opt) => opt.value !== option.value),
+                  const newOptions = selectedOptions.filter(
+                    (opt) => opt.value !== option.value,
                   );
+                  setSelectedOptions(newOptions);
+
+                  handleProductChange(newOptions, {
+                    action: "remove-value",
+                    removedValue: option,
+                  });
                 }}
                 aria-label={`Remove ${option.label} from comparison`}
               >
@@ -202,44 +240,52 @@ const MultiColumnComparison = ({
                   className="text-base-content/70 group-hover:text-base-content text-sm"
                 />
               </button>
-            </button>
+            </div>
           ))}
           <button
-            className="flex items-center justify-center w-10 h-10 bg-primary hover:bg-primary-focus text-primary-content rounded-lg transition-colors duration-200 flex-shrink-0"
+            className="flex items-center justify-center w-12 h-12 bg-primary hover:bg-primary-focus text-primary-content rounded-lg transition-all duration-200 flex-shrink-0 shadow-sm hover:shadow-md hover:scale-105"
             onClick={() => setIsSelectOpen(true)}
             aria-label="Add product to comparison"
           >
-            <FontAwesomeIcon icon={faPlus} />
+            <FontAwesomeIcon icon={faPlus} className="text-lg" />
           </button>
         </div>
       </div>
 
       {/* Product Select Dropdown */}
       {isSelectOpen && (
-        <div className="relative z-50">
-          <Select
-            isMulti
-            name="products"
-            options={productOptions}
-            components={animatedComponents}
-            className="basic-multi-select"
-            classNamePrefix="select-internal"
-            menuIsOpen={isSelectOpen}
-            onMenuClose={() => setIsSelectOpen(false)}
-            onChange={(newValue, actionMeta) => {
-              handleProductChange(newValue, actionMeta);
-              setIsSelectOpen(false);
-            }}
-            value={selectedOptions}
-            styles={selectStyles}
-            placeholder="Select products to compare..."
+        <div className="relative z-50 animate-fadeIn">
+          <div
+            className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-xl"
+            onClick={() => setIsSelectOpen(false)}
           />
+          <div className="relative">
+            <Select
+              isMulti
+              name="products"
+              options={productOptions}
+              components={animatedComponents}
+              classNamePrefix="select-internal"
+              menuIsOpen={isSelectOpen}
+              onMenuClose={() => setIsSelectOpen(false)}
+              onChange={(newValue, actionMeta) => {
+                handleProductChange(newValue, actionMeta);
+                setIsSelectOpen(false);
+              }}
+              value={selectedOptions}
+              styles={selectStyles}
+              placeholder="Search and select products to compare..."
+              noOptionsMessage={() => "No products found"}
+              loadingMessage={() => "Loading products..."}
+              className="select-container"
+            />
+          </div>
         </div>
       )}
 
       {/* Comparison Table */}
       {selectedOptions.length > 0 && (
-        <div className="overflow-x-auto rounded-lg border border-base-300 bg-base-100 shadow-sm">
+        <div className="overflow-x-auto rounded-xl border border-base-300 bg-base-100 shadow-sm">
           <div className="comparison-table">
             <table className="table table-zebra w-full">
               <thead>
