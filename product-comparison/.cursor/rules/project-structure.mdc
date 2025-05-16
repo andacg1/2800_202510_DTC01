@@ -1,0 +1,48 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Project Structure Guide
+
+This project is a Shopify app built with the Remix framework, using Prisma for database management and supporting Shopify app extensions for product comparison functionality.
+
+## Key Directories and Files
+
+- [`app/`](mdc:product-comparison/app): Main Remix app source code.
+  - [`shopify.server.ts`](mdc:product-comparison/app/shopify.server.ts): Shopify app configuration and authentication logic.
+  - [`db.server.ts`](mdc:product-comparison/app/db.server.ts): Database client initialization.
+  - [`routes/`](mdc:product-comparison/app/routes): Route handlers and UI for the app, organized by feature and endpoint.
+    - [`app._index.tsx`](mdc:product-comparison/app/routes/app._index.tsx): Main app dashboard.
+    - [`webhooks.app.uninstalled.tsx`](mdc:product-comparison/app/routes/webhooks.app.uninstalled.tsx): Handles Shopify webhook for app uninstallation.
+  - [`entry.server.tsx`](mdc:product-comparison/app/entry.server.tsx): Server-side rendering entry point.
+  - [`root.tsx`](mdc:product-comparison/app/root.tsx): Root component for the Remix app.
+
+- [`prisma/`](mdc:product-comparison/prisma): Database schema and migration files.
+  - [`schema.prisma`](mdc:product-comparison/prisma/schema.prisma): Prisma schema definition with models for Session, User, Metafields, Subscription, and ProductComparison.
+  - [`migrations/`](mdc:product-comparison/prisma/migrations): Database migration scripts.
+  - [`seed.ts`](mdc:product-comparison/prisma/seed.ts): Seed script for initial data.
+
+- [`extensions/`](mdc:product-comparison/extensions): Shopify app extensions.
+  - [`product-comparison-block/`](mdc:product-comparison/extensions/product-comparison-block): Product comparison extension with blocks, snippets, assets, and locales.
+
+- [`frontend/`](mdc:product-comparison/frontend): Frontend code for embedded app components.
+  - [`src/`](mdc:product-comparison/frontend/src): Source code for frontend components.
+
+- [`public/`](mdc:product-comparison/public): Static assets (e.g., favicon).
+
+## Configuration Files
+- [`shopify.app.toml`](mdc:product-comparison/shopify.app.toml): Main Shopify app configuration file.
+- [`vite.config.ts`](mdc:product-comparison/vite.config.ts): Vite build configuration.
+- [`tsconfig.json`](mdc:product-comparison/tsconfig.json): TypeScript configuration.
+- [`tailwind.config.js`](mdc:product-comparison/tailwind.config.js): Tailwind CSS configuration.
+- [`fly.toml`](mdc:product-comparison/fly.toml): Fly.io deployment configuration.
+- [`Dockerfile`](mdc:product-comparison/Dockerfile): Docker configuration for containerization.
+
+## Documentation
+- [`README.md`](mdc:product-comparison/README.md): Project documentation and setup instructions.
+
+## Additional Notes
+- The app uses environment variables for Shopify API keys and configuration.
+- Prisma is used for session storage and database access.
+- The Remix app is designed to be embedded in Shopify Admin by default.

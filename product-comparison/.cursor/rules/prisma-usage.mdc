@@ -1,0 +1,32 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Prisma Usage Guide
+
+## Overview
+- Prisma ORM is used for database access and session storage in this product comparison app.
+- The main schema is defined in [`schema.prisma`](mdc:product-comparison/prisma/schema.prisma).
+- The application uses SQLite by default (see database source configuration in schema.prisma).
+
+## Models
+The schema includes these key models:
+- [`Session`](mdc:product-comparison/prisma/schema.prisma#17-31): Stores Shopify session data.
+- [`User`](mdc:product-comparison/prisma/schema.prisma#33-37): Basic user information.
+- [`Metafields`](mdc:product-comparison/prisma/schema.prisma#39-48): Product metafield definitions.
+- [`Subscription`](mdc:product-comparison/prisma/schema.prisma#54-59): App subscription tiers.
+- [`ProductComparison`](mdc:product-comparison/prisma/schema.prisma#66-77): Product comparison tracking.
+
+## Database Operations
+- Database connection is initialized in [`db.server.ts`](mdc:product-comparison/app/db.server.ts).
+- Session storage for Shopify authentication is configured via Prisma in [`shopify.server.ts`](mdc:product-comparison/app/shopify.server.ts).
+- Seed data can be added using [`seed.ts`](mdc:product-comparison/prisma/seed.ts).
+- Database cleanup is handled in [`cleandb.ts`](mdc:product-comparison/prisma/cleandb.ts).
+
+## Common Commands
+- `npx prisma generate`: Generate Prisma client after schema changes.
+- `npx prisma migrate dev`: Create new migrations during development.
+- `npx prisma migrate deploy`: Apply migrations in production.
+- `npx prisma db seed`: Seed the database with initial data.
+- `npx prisma studio`: Open Prisma Studio for visual database management.

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Page,
   Layout,
@@ -20,8 +20,12 @@ import {
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
+import MetafieldTextField from "./MetafieldTextField";
 
-interface Metafield {
+/**
+ * Interface representing a Shopify metafield
+ */
+export interface Metafield {
   id?: string;
   namespace: string;
   key: string;
@@ -29,24 +33,43 @@ interface Metafield {
   type: string;
 }
 
-interface Product {
+/**
+ * Interface representing a Shopify product
+ */
+export interface Product {
   id: string;
   title: string;
 }
 
-interface FetcherData {
+/**
+ * Interface for data returned by the fetcher
+ */
+export interface FetcherData {
   metafields?: Metafield[];
   metafield?: Metafield;
   deletedId?: string;
   error?: string;
 }
 
+/**
+ * Props for the ProductMetafieldManager component
+ */
 interface ProductMetafieldManagerProps {
   actionData: FetcherData | undefined;
   initialProduct?: Product;
   initialMetafields?: Metafield[];
 }
 
+/**
+ * A component that manages product metafields in the Shopify admin.
+ * Allows adding, editing, and deleting metafields for a selected product.
+ * 
+ * @param {Object} props - Component props
+ * @param {FetcherData} [props.actionData] - Data from the last action
+ * @param {Product} [props.initialProduct] - Initially selected product
+ * @param {Metafield[]} [props.initialMetafields] - Initial metafields for the selected product
+ * @returns {JSX.Element} The rendered product metafield manager
+ */
 export default function ProductMetafieldManager({
   actionData,
   initialProduct,
@@ -91,6 +114,10 @@ export default function ProductMetafieldManager({
     console.log({ initialProduct, initialMetafields });
   }, [initialProduct, initialMetafields]);
 
+  /**
+   * Handles product selection using Shopify's resource picker
+   * Updates the selected product and navigates to the metafields page for that product
+   */
   const handleProductSelect = async () => {
     try {
       const products = await window.shopify.resourcePicker({
@@ -142,56 +169,69 @@ export default function ProductMetafieldManager({
                     Add Metafield
                   </Button>
                 </BlockStack>
+                <BlockStack>
+                  {initialMetafields?.length === 0 ? (
+                    <Text as="p">No metafields found for this product.</Text>
+                  ) : (
+                    <LegacyStack vertical spacing="loose">
+                      {initialMetafields?.map((metafield) => (
+                        <LegacyStack
+                          key={metafield.id}
+                          distribution="equalSpacing"
+                        >
+                          <LegacyStack distribution="fill" alignment="center">
+                            <Text as="p">
+                              {metafield.namespace}.{metafield.key}:{" "}
+                            </Text>
 
-                {initialMetafields?.length === 0 ? (
-                  <Text as="p">No metafields found for this product.</Text>
-                ) : (
-                  <LegacyStack vertical spacing="loose">
-                    {initialMetafields?.map((metafield) => (
-                      <LegacyStack
-                        key={metafield.id}
-                        distribution="equalSpacing"
-                      >
-                        <Text as="p">
-                          {metafield.namespace}.{metafield.key}:{" "}
-                          {metafield.value}
-                        </Text>
-                        <ButtonGroup>
-                          <Form method="post">
-                            <input
-                              type="hidden"
-                              name="action"
-                              value="deleteMetafield"
+                            <MetafieldTextField
+                              label=""
+                              metafield={metafield}
+                              selectedProduct={selectedProduct}
                             />
-                            <input
-                              type="hidden"
-                              name="metafieldId"
-                              value={metafield.id}
-                            />
-                            <input
-                              type="hidden"
-                              name="metafieldNamespace"
-                              value={metafield.namespace}
-                            />
-                            <input
-                              type="hidden"
-                              name="metafieldKey"
-                              value={metafield.key}
-                            />
-                            <input
-                              type="hidden"
-                              name="productId"
-                              value={selectedProduct.id}
-                            />
-                            <Button tone="critical" submit loading={isLoading}>
-                              Delete
-                            </Button>
-                          </Form>
-                        </ButtonGroup>
-                      </LegacyStack>
-                    ))}
-                  </LegacyStack>
-                )}
+                          </LegacyStack>
+
+                          <ButtonGroup>
+                            <Form method="post">
+                              <input
+                                type="hidden"
+                                name="action"
+                                value="deleteMetafield"
+                              />
+                              <input
+                                type="hidden"
+                                name="metafieldId"
+                                value={metafield.id}
+                              />
+                              <input
+                                type="hidden"
+                                name="metafieldNamespace"
+                                value={metafield.namespace}
+                              />
+                              <input
+                                type="hidden"
+                                name="metafieldKey"
+                                value={metafield.key}
+                              />
+                              <input
+                                type="hidden"
+                                name="productId"
+                                value={selectedProduct.id}
+                              />
+                              <Button
+                                tone="critical"
+                                submit
+                                loading={isLoading}
+                              >
+                                Delete
+                              </Button>
+                            </Form>
+                          </ButtonGroup>
+                        </LegacyStack>
+                      ))}
+                    </LegacyStack>
+                  )}
+                </BlockStack>
               </BlockStack>
             </Card>
           </Layout.Section>

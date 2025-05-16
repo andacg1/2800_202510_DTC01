@@ -1,41 +1,42 @@
-<span>Product Comparison App</span>
-
 {% render 'regions' %}
-
-<script>
-  const allProducts = {{ block.settings.collection.products | json }}
-  window.allProducts = allProducts;
-  console.log({allProducts});
-  console.log('React Demo loaded', window.allProducts);
-</script>
 
 <script id="product-metafields" type="application/json">
   {
   "allProducts": {{ block.settings.collection.products | json }},
-  "allMetafieldValues": {{ block.settings.collection.products | map: "metafields" | map: "product_specs" | json }}
+  "allMetafieldValues": {{ block.settings.collection.products | map: "metafields" | map: "product_specs" | json }},
+  "tableVariant": {{ block.settings.table_variant | json }},
+  "currentProduct": {{ product |  json }},
+  "collection": {{ block.settings.collection.handle | json }},
+  "metaobject": {{ shop.metaobjects.metafield_highlighting.values | json }}
   }
 </script>
 
 <script>
   const productData = JSON.parse(document.getElementById('product-metafields').innerText)
   const productMetafieldData = []
-  for (let i=0; i < productData.allProducts.length; i++) {
+  for (let i=0; i < productData?.allProducts.length; i++) {
     const product = productData.allProducts[i]
     const metafield = productData.allMetafieldValues[i]
     productMetafieldData.push({ ...product, specs: metafield })
   }
   console.log(productMetafieldData)
   window.productMetafieldData = productMetafieldData
+  window.tableVariant = productData.tableVariant
+  window.currentProduct = productData.currentProduct
+  window.collection = productData.collection
+  window.metaobject = productData.metaobject
 </script>
 
-<div id="container"></div>
+<div id="container" data-theme="light"></div>
+
+
 
 {% schema %}
 {
   "name": "React Product Comparison",
   "target": "section",
-  "javascript": "index.js",
-  "stylesheet": "index.css",
+  "javascript": "main.js",
+  "stylesheet": "main.css",
   "settings": [
     {
       "type": "product",
@@ -47,6 +48,22 @@
       "type": "collection",
       "id": "collection",
       "label": "Collection"
+    },
+    {
+      "type": "select",
+      "id": "table_variant",
+      "label": "Table Variant",
+      "options": [
+        {
+          "value": "multi-column",
+          "label": "Multi-Column Table"
+        },
+        {
+          "value": "two-column",
+          "label": "Two-Column Table"
+        }
+      ],
+      "default": "multi-column"
     }
   ]
 }

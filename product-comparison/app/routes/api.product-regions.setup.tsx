@@ -56,6 +56,16 @@ interface MetafieldsSetData {
 }
 
 
+/**
+ * Gets a random subset of elements from an array
+ * Ensures the subset size is within valid bounds based on array length
+ * 
+ * @template T - The type of elements in the array
+ * @param {T[]} array - The source array to select elements from
+ * @param {number} minSize - Minimum size of the subset
+ * @param {number} maxSize - Maximum size of the subset
+ * @returns {T[]} A randomly selected subset of elements
+ */
 function getRandomSubset<T>(array: T[], minSize: number, maxSize: number): T[] {
     if (!array || array.length === 0) {
         return [];
@@ -69,6 +79,14 @@ function getRandomSubset<T>(array: T[], minSize: number, maxSize: number): T[] {
     return shuffled.slice(0, size);
 }
 
+/**
+ * Action function that sets up product region availability
+ * Assigns random regions to each product in the store using region data from a liquid template
+ * 
+ * @param {Object} params - Action function parameters
+ * @param {Request} params.request - The incoming request object
+ * @returns {Promise<Response>} JSON response indicating success/failure of the operation
+ */
 export const action: ActionFunction = async ({ request }) => {
     const { admin } = await authenticate.admin(request);
     let productsUpdatedCount = 0;

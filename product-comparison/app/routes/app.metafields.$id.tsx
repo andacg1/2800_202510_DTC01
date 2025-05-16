@@ -4,6 +4,16 @@ import ProductMetafieldManager from "./app.metafield_editor/ProductMetafieldMana
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
 import { useActionData, useLoaderData } from "@remix-run/react";
 
+/**
+ * Loader function that fetches product and metafield data
+ * Retrieves a specific product and its metafields using the Shopify GraphQL API
+ * 
+ * @param {LoaderFunctionArgs} params - Loader function arguments
+ * @param {Request} params.request - The incoming request object
+ * @param {Object} params.params - URL parameters containing product ID
+ * @returns {Promise<Object>} Object containing product and metafield data
+ * @throws {Response} 404 error if product is not found
+ */
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
   const productId = params.id;
@@ -48,6 +58,14 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   };
 };
 
+/**
+ * Action function that handles metafield operations
+ * Supports fetching, adding, updating, and deleting metafields
+ * 
+ * @param {ActionFunctionArgs} params - Action function arguments
+ * @param {Request} params.request - The incoming request object
+ * @returns {Promise<Object>} Response object containing operation result
+ */
 export const action = async ({ request }: ActionFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
   const formData = await request.formData();
@@ -83,7 +101,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       } = await response.json();
 
       return { metafields: edges.map((edge: any) => edge.node) };
-    } else if (action === "addMetafield") {
+    } else if (action === "addMetafield" || action === "updateMetafield") {
       const productId = formData.get("productId") as string;
       const fullProductId = `gid://shopify/Product/${productId}`;
       const metafieldNamespace = formData.get("metafieldNamespace") as string;
@@ -168,10 +186,17 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return { error: "Invalid action" };
     }
   } catch (error) {
+    console.error(error);
     return { error: "An error occurred while processing your request" };
   }
 };
 
+/**
+ * ProductMetafieldsPage component that renders the metafield management interface
+ * Displays and allows editing of a product's metafields
+ * 
+ * @returns {JSX.Element} The rendered product metafields page component
+ */
 export default function ProductMetafieldsPage() {
   const actionData = useActionData<typeof action>();
   const { initialProduct, initialMetafields } = useLoaderData<typeof loader>();
