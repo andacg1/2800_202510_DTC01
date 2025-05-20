@@ -8,6 +8,7 @@ import { LocationContext } from "./LocationContext.ts";
 import makeAnimated from "react-select/animated";
 import { RecommendationContext } from "./RecommendationQuery/RecommendationContext.ts";
 import { getShortId } from "./utils.ts";
+import convert, { convertMany, Unit } from "convert";
 
 /**
  * Props for the MultiColumnComparison component
@@ -57,6 +58,17 @@ const selectStyles: StylesConfig<ProductOption, true> = {
   }),
 };
 
+export type SpecOrderingEntry = {
+  metafield_ascending_order: boolean;
+  metafield_key: string;
+  metafield_namespace: string;
+};
+
+export type BestSpecDefinition = {
+  key: string;
+  bestProduct: Product | null;
+};
+
 /**
  * A component that renders a multi-column product comparison interface.
  * Features a multi-select dropdown for product selection and displays a detailed
@@ -94,6 +106,84 @@ const MultiColumnComparison = ({
   );
 
   /**
+   * Gets all unique specification keys across the selected products
+   * @returns {string[]} Array of unique specification keys
+   */
+  const getAllSpecKeys = () => {
+    const selectedProductData = products.filter((p) =>
+      selectedOptions.map((product) => product.value).includes(String(p.id)),
+    );
+    const allKeys = new Set<string>();
+
+    selectedProductData.forEach((product) => {
+      Object.keys(product.specs).forEach((key) => {
+        allKeys.add(key);
+      });
+    });
+
+    return Array.from(allKeys);
+  };
+
+  const [specOrdering, setSpecOrdering] = useState<SpecOrderingEntry[]>(
+    window?.metaobject || [],
+  );
+  const getBestSpecs = (specKey: string): BestSpecDefinition => {
+    const firstProductWithSpec = selectedOptions.find(
+      (selectedProduct) => specKey in selectedProduct.product?.specs,
+    );
+    if (selectedOptions.length === 0 || !firstProductWithSpec) {
+      return {
+        key: specKey,
+        bestProduct: null,
+      };
+    }
+
+    try {
+      const getQuantity = (
+        option: ProductOption,
+        unit: Unit,
+      ): number | null => {
+        if (!(specKey in option.product?.specs)) {
+          return null;
+        }
+        return convertMany(String(option.product?.specs[specKey])).to(unit);
+      };
+
+      let bestProduct = firstProductWithSpec;
+      const unit = convertMany(String(bestProduct.product?.specs[specKey])).to(
+        "best",
+      ).unit;
+      for (const selectedProduct of selectedOptions) {
+        const quantity = getQuantity(selectedProduct, unit);
+        const bestQuantity = getQuantity(bestProduct, unit);
+        if (quantity === null || bestQuantity === null) {
+          continue;
+        }
+        if (quantity > bestQuantity) {
+          bestProduct = selectedProduct;
+        }
+      }
+
+      return {
+        key: specKey,
+        bestProduct: bestProduct.product,
+      };
+    } catch (e) {
+      console.error(e);
+      return {
+        key: specKey,
+        bestProduct: null,
+      };
+    }
+  };
+
+  const bestSpecs: BestSpecDefinition[] = getAllSpecKeys()
+    .filter((specKey) =>
+      specOrdering.some((entry) => entry.metafield_key === specKey),
+    )
+    .map(getBestSpecs);
+
+  /**
    * Gets the currently viewed product based on the URL path
    * @returns {ProductOption | undefined} The current product option or undefined if not found
    */
@@ -128,24 +218,9 @@ const MultiColumnComparison = ({
     );
   }, [recommendation]);
 
-  /**
-   * Gets all unique specification keys across the selected products
-   * @returns {string[]} Array of unique specification keys
-   */
-  const getAllSpecKeys = () => {
-    const selectedProductData = products.filter((p) =>
-      selectedOptions.map((product) => product.value).includes(String(p.id)),
-    );
-    const allKeys = new Set<string>();
-
-    selectedProductData.forEach((product) => {
-      Object.keys(product.specs).forEach((key) => {
-        allKeys.add(key);
-      });
-    });
-
-    return Array.from(allKeys);
-  };
+  useEffect(() => {
+    console.log("specOrdering", { specOrdering });
+  }, [specOrdering]);
 
   /**
    * Handles changes in product selection from the multi-select dropdown
@@ -233,6 +308,14 @@ const MultiColumnComparison = ({
                         const specValue = product?.specs[specKey];
                         const isAvailableField =
                           specKey === "available_regions";
+                        const isOrderedSpec = bestSpecs.find(
+                          (bestSpec) => bestSpec.key === specKey,
+                        );
+                        const isBestProduct =
+                          isOrderedSpec?.bestProduct &&
+                          isOrderedSpec.bestProduct.id ===
+                            selectedProduct.product.id;
+
                         if (
                           isAvailableField &&
                           userLocation &&
@@ -241,7 +324,7 @@ const MultiColumnComparison = ({
                           return (
                             <td
                               key={`${product.id}-${specKey}`}
-                              className="text-center"
+                              className={`text-center ${isBestProduct ? "bg-green-800/25" : "bg-inherit"}`}
                             >
                               <div className="flex flex-col items-center justify-center">
                                 {isAvailable(userLocation, specValue) ? (
@@ -267,7 +350,7 @@ const MultiColumnComparison = ({
                         return (
                           <td
                             key={`${product.id}-${specKey}`}
-                            className="text-center"
+                            className={`text-center ${isBestProduct ? "bg-green-800/25" : "bg-inherit"}`}
                           >
                             <div className="flex flex-col items-center justify-center">
                               {Array.isArray(specValue)
