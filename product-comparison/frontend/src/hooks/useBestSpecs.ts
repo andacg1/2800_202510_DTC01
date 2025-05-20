@@ -1,7 +1,6 @@
 import type { Unit } from "convert";
 import { convertMany } from "convert";
 import { useState } from "react";
-import type { MultiValue } from "react-select";
 import type {
   BestSpecDefinition,
   ProductOption,
@@ -10,15 +9,11 @@ import type {
 import type { Product } from "../product.ts";
 import { getAllSpecKeys } from "../product.ts";
 
-export type UseBestSpecsArgs = {
-  selectedOptions: MultiValue<ProductOption>;
-};
-
 export const useBestSpecs = (
   products: Product[],
-  selectedOptions: MultiValue<ProductOption>,
+  selectedOptions: ProductOption[],
 ) => {
-  const [specOrdering, setSpecOrdering] = useState<SpecOrderingEntry[]>(
+  const [specOrdering] = useState<SpecOrderingEntry[]>(
     window?.metaobject || [],
   );
   const getBestSpecs = (specKey: string): BestSpecDefinition => {

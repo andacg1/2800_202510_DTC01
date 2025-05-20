@@ -1,7 +1,7 @@
-import React from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
-import SpecData from '../frontend/src/SpecData';
-import { LocationData } from '../frontend/src/product';
+import React from "react";
+import type { Meta, StoryObj } from "@storybook/react";
+import SpecData from "../frontend/src/ui/SpecData";
+import type { LocationData } from "../frontend/src/product";
 
 // Sample location data for the story
 const sampleLocation: LocationData = {
@@ -31,23 +31,21 @@ const sampleLocation: LocationData = {
   country_area: 9629091,
   country_population: 327167434,
   asn: "AS12345",
-  org: "Example ISP"
+  org: "Example ISP",
 };
 
 const meta = {
-  title: 'Product Comparison/SpecData',
+  title: "Product Comparison/SpecData",
   component: SpecData,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <table>
+      <table data-theme="light">
         <tbody>
-          <tr>
-            {Story()}
-          </tr>
+          <tr>{Story()}</tr>
         </tbody>
       </table>
     ),
@@ -105,4 +103,4 @@ export const EmptyValue: Story = {
     specKey: "color",
     specValue: undefined,
   },
-}; 
+};

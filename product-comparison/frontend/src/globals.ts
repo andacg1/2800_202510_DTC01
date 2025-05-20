@@ -1,5 +1,5 @@
 import type { SpecOrderingEntry } from "./MultiColumnComparison.tsx";
-import type { Product } from "./product.ts";
+import type { Product, RegionData } from "./product.ts";
 
 declare global {
   interface Window {
@@ -10,6 +10,7 @@ declare global {
     currentProduct?: Product;
     collection?: string;
     metaobject?: SpecOrderingEntry[];
+    regions?: RegionData[];
   }
 }
 

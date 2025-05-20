@@ -1,13 +1,5 @@
-import { MultiValue } from "react-select";
-import { ProductOption } from "./MultiColumnComparison.tsx";
-
-/**
- * Global type declarations for window object extensions
- */
-declare global {
-  var productMetafieldData: Product[];
-  var regions: RegionData[];
-}
+import type { MultiValue } from "react-select";
+import type { ProductOption } from "./MultiColumnComparison.tsx";
 
 /**
  * Represents a product with all its details and specifications
@@ -204,7 +196,6 @@ export const getMockLocation = async (): Promise<LocationData> => {
     asn: "AS6327",
     org: "SHAW",
   };
-  console.log({ mockResponse });
   return mockResponse;
 };
 
@@ -223,16 +214,14 @@ export function isAvailable(
   if (!availableRegions) {
     return false;
   }
-  const regionData: RegionData[] = window?.regions;
+  const regionData: RegionData[] | undefined = window?.regions;
   if (!regionData) {
     console.warn("Could not find regionData.");
     return false;
   }
-  console.log({ availableRegions });
   const userRegionData = regionData.find(
     (data) => data["alpha-2"] === locationData.country,
   );
-  console.log({ userRegionData });
   return availableRegions.some(
     (region) =>
       region === userRegionData?.region ||

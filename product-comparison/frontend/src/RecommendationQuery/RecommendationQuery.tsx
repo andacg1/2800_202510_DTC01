@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
-import {
-  defaultRecommendationContext,
-  Recommendation,
-  RecommendationContext,
+import React, { useContext } from "react";
+import type {
   RecommendationQueryProps,
   RecommendationResponse,
+} from "./RecommendationContext.ts";
+import {
+  defaultRecommendationContext,
+  RecommendationContext,
 } from "./RecommendationContext.ts";
 
 /**

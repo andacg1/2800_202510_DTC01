@@ -1,5 +1,5 @@
-import React, { createContext } from "react";
-import { undefined } from "zod";
+import type React from "react";
+import { createContext } from "react";
 import type { Product } from "../product.ts";
 
 /**

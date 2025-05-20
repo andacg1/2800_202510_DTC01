@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import type { ActionMeta, MultiValue, StylesConfig } from "react-select";
 import Select from "react-select";
-import { useBestSpecs } from "./hooks/useBestSpecs.ts";
-import { getAllSpecKeys, isAvailable, type Product } from "./product.ts";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
-import { LocationContext } from "./LocationContext.ts";
+import { useBestSpecs } from "./hooks/useBestSpecs";
+import { useTrackComparison } from "./hooks/useTrackComparison.ts";
+import { getAllSpecKeys, type Product } from "./product";
+import { LocationContext } from "./LocationContext";
 import makeAnimated from "react-select/animated";
-import { RecommendationContext } from "./RecommendationQuery/RecommendationContext.ts";
-import { getShortId } from "./utils.ts";
+import { RecommendationContext } from "./RecommendationQuery/RecommendationContext";
+import SpecData from "./ui/SpecData";
+import { getShortId } from "./utils";
 
 /**
  * Props for the MultiColumnComparison component
@@ -85,8 +85,7 @@ const MultiColumnComparison = ({
   className,
   products,
   preselectAll = false,
-}: MultiColumnComparisonProps): React.ReactElement => {
-  const pathName = window.location.pathname;
+}: MultiColumnComparisonProps) => {
   const productOptions = products.map((product) => ({
     value: String(product.id),
     label: product.title,
@@ -106,7 +105,7 @@ const MultiColumnComparison = ({
   const { location: userLocation } = useContext(LocationContext);
   const { recommendation } = useContext(RecommendationContext);
   const allSpecKeys = getAllSpecKeys(products, selectedOptions);
-  const { bestSpecs } = useBestSpecs(products, selectedOptions);
+  const { bestSpecs } = useBestSpecs(products, Array.from(selectedOptions));
 
   /**
    * Handles changes in product selection from the multi-select dropdown
@@ -120,43 +119,11 @@ const MultiColumnComparison = ({
     actionMeta: ActionMeta<ProductOption>,
   ) => {
     setSelectedOptions(newValue);
-    const currentProductOption: Product | undefined = window?.currentProduct;
-    if (!currentProductOption) {
-      return console.error('"currentProductOption" is not defined');
-    }
-    const sessionId = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("_shopify_s="))
-      ?.split("=")[1];
-    console.log({ sessionId });
-    const collectionId = window?.collection;
-
-    try {
-      // TODO: Use GET instead and replace with navigator.sendBeacon()
-      await fetch(
-        `${import.meta.env.VITE_APP_BACKEND_URL}/api/product/comparison/track`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            collectionId,
-            originalProductId: currentProductOption?.id,
-            comparedProducts: newValue.map((option) => option.product.id),
-            sessionId,
-          }),
-          mode: "cors",
-        },
-      );
-    } catch (e) {
-      console.error(e);
-    }
   };
 
-  useEffect(() => {
-    const currentProductOption = productOptions.find((option) =>
-      pathName.includes(option.product.handle),
-    );
-    console.log({ pathName, productOptions, currentProductOption });
-  }, [pathName, productOptions, selectedOptions]);
+  useTrackComparison(
+    selectedOptions.map((option) => String(option.product.id)),
+  );
 
   useEffect(() => {
     if (!recommendation?.recommendedProductId) {
@@ -219,63 +186,16 @@ const MultiColumnComparison = ({
                       ) : (
                         <td>{specKey.replace("_", " ")}</td>
                       )}
-                      {selectedOptions.map((selectedProduct) => {
-                        const product = selectedProduct.product;
-                        const specValue = product?.specs[specKey];
-                        const isAvailableField =
-                          specKey === "available_regions";
-                        const isOrderedSpec = bestSpecs.find(
-                          (bestSpec) => bestSpec.key === specKey,
-                        );
-                        const isBestProduct =
-                          isOrderedSpec?.bestProduct &&
-                          isOrderedSpec.bestProduct.id ===
-                            selectedProduct.product.id;
-
-                        if (
-                          isAvailableField &&
-                          userLocation &&
-                          Array.isArray(specValue)
-                        ) {
-                          return (
-                            <td
-                              key={`${product.id}-${specKey}`}
-                              className={`text-center ${isBestProduct ? "bg-green-800/25" : "bg-inherit"}`}
-                            >
-                              <div className="flex flex-col items-center justify-center">
-                                {isAvailable(userLocation, specValue) ? (
-                                  <FontAwesomeIcon
-                                    icon={faCheck}
-                                    color={"rgba(31,255,0,0.5)"}
-                                    size={"2x"}
-                                    fixedWidth
-                                  />
-                                ) : (
-                                  <FontAwesomeIcon
-                                    icon={faX}
-                                    color={"#b02525"}
-                                    size={"2x"}
-                                    fixedWidth
-                                  />
-                                )}
-                                <div>{specValue.join(", ")}</div>
-                              </div>
-                            </td>
-                          );
-                        }
-                        return (
-                          <td
-                            key={`${product.id}-${specKey}`}
-                            className={`text-center ${isBestProduct ? "bg-green-800/25" : "bg-inherit"}`}
-                          >
-                            <div className="flex flex-col items-center justify-center">
-                              {Array.isArray(specValue)
-                                ? specValue.join(", ")
-                                : specValue?.toString() || "N/A"}
-                            </div>
-                          </td>
-                        );
-                      })}
+                      {selectedOptions.map((selectedProduct) => (
+                        <SpecData
+                          key={selectedProduct.product.id}
+                          productId={String(selectedProduct.product.id)}
+                          specValue={selectedProduct.product.specs?.[specKey]}
+                          specKey={specKey}
+                          userLocation={userLocation}
+                          bestSpecs={bestSpecs}
+                        />
+                      ))}
                     </tr>
                   ))}
                 </tbody>
