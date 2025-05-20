@@ -6,10 +6,10 @@
   "type": "module",
   "scripts": {
     "dev:frontend": "vite build --watch",
-    "build": "parcel build src/index.tsx --dist-dir ../extensions/product-comparison-block/assets --no-source-maps --no-content-hash --public-url ./",
+    "build": "cross-env VITE_APP_BACKEND_URL=https://product-comparison.fly.dev vite build",
+    "build:prod": "cross-env VITE_APP_BACKEND_URL=https://product-comparison.fly.dev vite build",
     "build:webpack": "webpack",
-    "build:vite": "vite build",
-    "postinstall": "patch-package"
+    "build:vite": "vite build"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
@@ -32,6 +32,7 @@
   "devDependencies": {
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "cross-env": "^7.0.3",
     "daisyui": "^5.0.35",
     "parcel": "^2.14.0",
     "vite": "^6.3.5",
