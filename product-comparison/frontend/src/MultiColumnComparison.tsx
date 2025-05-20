@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import type { ActionMeta, MultiValue, StylesConfig } from "react-select";
 import Select from "react-select";
-import { isAvailable, type Product } from "./product.ts";
+import { useBestSpecs } from "./hooks/useBestSpecs.ts";
+import { getAllSpecKeys, isAvailable, type Product } from "./product.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
 import { LocationContext } from "./LocationContext.ts";
 import makeAnimated from "react-select/animated";
 import { RecommendationContext } from "./RecommendationQuery/RecommendationContext.ts";
 import { getShortId } from "./utils.ts";
-import convert, { convertMany, Unit } from "convert";
 
 /**
  * Props for the MultiColumnComparison component
@@ -17,6 +17,7 @@ type MultiColumnComparisonProps = {
   className?: string;
   children?: React.ReactNode;
   products: Product[];
+  preselectAll: boolean;
 };
 
 /**
@@ -82,9 +83,9 @@ export type BestSpecDefinition = {
  */
 const MultiColumnComparison = ({
   className,
-  children,
   products,
-}: MultiColumnComparisonProps) => {
+  preselectAll = false,
+}: MultiColumnComparisonProps): React.ReactElement => {
   const pathName = window.location.pathname;
   const productOptions = products.map((product) => ({
     value: String(product.id),
@@ -96,102 +97,61 @@ const MultiColumnComparison = ({
   const [selectedOptions, setSelectedOptions] = useState<
     MultiValue<ProductOption>
   >(
-    productOptions.filter((option) =>
-      window.location.pathname.includes(option.product.handle),
-    ),
+    preselectAll
+      ? productOptions
+      : productOptions.filter((option) =>
+          window.location.pathname.includes(option.product.handle),
+        ),
   );
   const { location: userLocation } = useContext(LocationContext);
-  const { recommendation, setRecommendation } = useContext(
-    RecommendationContext,
-  );
+  const { recommendation } = useContext(RecommendationContext);
+  const allSpecKeys = getAllSpecKeys(products, selectedOptions);
+  const { bestSpecs } = useBestSpecs(products, selectedOptions);
 
   /**
-   * Gets all unique specification keys across the selected products
-   * @returns {string[]} Array of unique specification keys
+   * Handles changes in product selection from the multi-select dropdown
+   * Tracks the comparison event and updates the selected products state
+   *
+   * @param {MultiValue<ProductOption>} newValue - The newly selected product options
+   * @param {ActionMeta<ProductOption>} actionMeta - Metadata about the selection change action
    */
-  const getAllSpecKeys = () => {
-    const selectedProductData = products.filter((p) =>
-      selectedOptions.map((product) => product.value).includes(String(p.id)),
-    );
-    const allKeys = new Set<string>();
-
-    selectedProductData.forEach((product) => {
-      Object.keys(product.specs).forEach((key) => {
-        allKeys.add(key);
-      });
-    });
-
-    return Array.from(allKeys);
-  };
-
-  const [specOrdering, setSpecOrdering] = useState<SpecOrderingEntry[]>(
-    window?.metaobject || [],
-  );
-  const getBestSpecs = (specKey: string): BestSpecDefinition => {
-    const firstProductWithSpec = selectedOptions.find(
-      (selectedProduct) => specKey in selectedProduct.product?.specs,
-    );
-    if (selectedOptions.length === 0 || !firstProductWithSpec) {
-      return {
-        key: specKey,
-        bestProduct: null,
-      };
+  const handleProductChange = async (
+    newValue: MultiValue<ProductOption>,
+    actionMeta: ActionMeta<ProductOption>,
+  ) => {
+    setSelectedOptions(newValue);
+    const currentProductOption: Product | undefined = window?.currentProduct;
+    if (!currentProductOption) {
+      return console.error('"currentProductOption" is not defined');
     }
+    const sessionId = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("_shopify_s="))
+      ?.split("=")[1];
+    console.log({ sessionId });
+    const collectionId = window?.collection;
 
     try {
-      const getQuantity = (
-        option: ProductOption,
-        unit: Unit,
-      ): number | null => {
-        if (!(specKey in option.product?.specs)) {
-          return null;
-        }
-        return convertMany(String(option.product?.specs[specKey])).to(unit);
-      };
-
-      let bestProduct = firstProductWithSpec;
-      const unit = convertMany(String(bestProduct.product?.specs[specKey])).to(
-        "best",
-      ).unit;
-      for (const selectedProduct of selectedOptions) {
-        const quantity = getQuantity(selectedProduct, unit);
-        const bestQuantity = getQuantity(bestProduct, unit);
-        if (quantity === null || bestQuantity === null) {
-          continue;
-        }
-        if (quantity > bestQuantity) {
-          bestProduct = selectedProduct;
-        }
-      }
-
-      return {
-        key: specKey,
-        bestProduct: bestProduct.product,
-      };
+      // TODO: Use GET instead and replace with navigator.sendBeacon()
+      await fetch(
+        `${import.meta.env.VITE_APP_BACKEND_URL}/api/product/comparison/track`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            collectionId,
+            originalProductId: currentProductOption?.id,
+            comparedProducts: newValue.map((option) => option.product.id),
+            sessionId,
+          }),
+          mode: "cors",
+        },
+      );
     } catch (e) {
       console.error(e);
-      return {
-        key: specKey,
-        bestProduct: null,
-      };
     }
   };
 
-  const bestSpecs: BestSpecDefinition[] = getAllSpecKeys()
-    .filter((specKey) =>
-      specOrdering.some((entry) => entry.metafield_key === specKey),
-    )
-    .map(getBestSpecs);
-
-  /**
-   * Gets the currently viewed product based on the URL path
-   * @returns {ProductOption | undefined} The current product option or undefined if not found
-   */
-  const getCurrentProduct = () =>
-    productOptions.find((option) => pathName.includes(option.product.handle));
-
   useEffect(() => {
-    console.log({ selectedOptions });
     const currentProductOption = productOptions.find((option) =>
       pathName.includes(option.product.handle),
     );
@@ -218,49 +178,6 @@ const MultiColumnComparison = ({
     );
   }, [recommendation]);
 
-  useEffect(() => {
-    console.log("specOrdering", { specOrdering });
-  }, [specOrdering]);
-
-  /**
-   * Handles changes in product selection from the multi-select dropdown
-   * Tracks the comparison event and updates the selected products state
-   *
-   * @param {MultiValue<ProductOption>} newValue - The newly selected product options
-   * @param {ActionMeta<ProductOption>} actionMeta - Metadata about the selection change action
-   */
-  const handleProductChange = async (
-    newValue: MultiValue<ProductOption>,
-    actionMeta: ActionMeta<ProductOption>,
-  ) => {
-    setSelectedOptions(newValue);
-    // TODO: Track the comparison
-    const currentProductOption: Product = window?.currentProduct;
-    if (!currentProductOption) {
-      return console.error('"currentProductOption" is not defined');
-    }
-    const sessionId = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("_shopify_s="))
-      ?.split("=")[1];
-    console.log({ sessionId });
-    const collectionId = window?.collection;
-
-    const resp = await fetch(
-      `${import.meta.env.VITE_APP_BACKEND_URL}/api/product/comparison/track`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          collectionId,
-          originalProductId: currentProductOption?.id,
-          comparedProducts: newValue.map((option) => option.product.id),
-          sessionId,
-        }),
-        mode: "cors",
-      },
-    );
-  };
-
   return (
     <div className={className}>
       <Select
@@ -270,7 +187,6 @@ const MultiColumnComparison = ({
         components={animatedComponents}
         className="basic-multi-select"
         classNamePrefix="select-internal"
-        /* menuIsOpen={true} */
         onChange={handleProductChange}
         value={selectedOptions}
         styles={selectStyles}
@@ -296,7 +212,7 @@ const MultiColumnComparison = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {getAllSpecKeys().map((specKey) => (
+                  {allSpecKeys.map((specKey) => (
                     <tr key={specKey}>
                       {specKey === "available_regions" && userLocation ? (
                         <td>{`Available in ${userLocation?.country_name || "N/A"}?`}</td>

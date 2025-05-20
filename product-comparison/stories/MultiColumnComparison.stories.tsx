@@ -98,6 +98,9 @@ const MockMultiColumnComparison = (props: any) => {
 };
 
 const meta = {
+  args: {
+    preselectAll: true,
+  },
   title: "Product Comparison/MultiColumnComparison",
   component: MockMultiColumnComparison,
   parameters: {

@@ -26,5 +26,6 @@
     /* Completeness */
     "skipLibCheck": true
   },
-  "include": ["src/globals.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
+  "include": [
+    "src/globals.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
 }
