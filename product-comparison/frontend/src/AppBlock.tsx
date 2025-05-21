@@ -1,10 +1,15 @@
 import React, { useEffect } from "react";
 import ComparisonTable from "./ComparisonTable.tsx";
 import MultiColumnComparison from "./MultiColumnComparison.tsx";
+import MultiSessionComparison from "./MultiSessionComparison.tsx";
 import PredefinedComparison from "./PredefinedComparison.tsx";
 import type { Product } from "./product.ts";
 
-export type TableVariant = "multi-column" | "two-column" | "predefined";
+export type TableVariant =
+  | "multi-column"
+  | "two-column"
+  | "predefined"
+  | "multi-session";
 type AppBlockProps = {
   className?: string;
   children?: React.ReactNode;
@@ -33,6 +38,8 @@ const AppBlock = ({
         currentProduct={currentProduct}
       />
     );
+  } else if (tableVariant === "multi-session") {
+    return <MultiSessionComparison products={products} />;
   } else {
     return (
       <div>
