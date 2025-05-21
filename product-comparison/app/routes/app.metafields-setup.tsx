@@ -1,17 +1,8 @@
-import { useState } from "react";
-import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { Banner, BlockStack, Card, Layout, Page, Text } from "@shopify/polaris";
+import { useState } from "react";
 import { authenticate } from "../shopify.server";
-import {
-  Page,
-  Layout,
-  Card,
-  Button,
-  BlockStack,
-  Text,
-  InlineStack,
-  Banner,
-} from "@shopify/polaris";
 
 /**
  * Loader function for the metafields setup page

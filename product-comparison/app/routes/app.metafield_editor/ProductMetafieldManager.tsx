@@ -1,18 +1,3 @@
-import { useEffect, useState, useCallback } from "react";
-import {
-  Page,
-  Layout,
-  Card,
-  Button,
-  TextField,
-  Select,
-  Banner,
-  Modal,
-  Text,
-  LegacyStack,
-  ButtonGroup,
-  BlockStack,
-} from "@shopify/polaris";
 import {
   Form,
   useFetcher,
@@ -20,6 +5,21 @@ import {
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
+import {
+  Banner,
+  BlockStack,
+  Button,
+  ButtonGroup,
+  Card,
+  Layout,
+  LegacyStack,
+  Modal,
+  Page,
+  Select,
+  Text,
+  TextField,
+} from "@shopify/polaris";
+import { useEffect, useState } from "react";
 import MetafieldTextField from "./MetafieldTextField";
 
 /**
@@ -63,7 +63,7 @@ interface ProductMetafieldManagerProps {
 /**
  * A component that manages product metafields in the Shopify admin.
  * Allows adding, editing, and deleting metafields for a selected product.
- * 
+ *
  * @param {Object} props - Component props
  * @param {FetcherData} [props.actionData] - Data from the last action
  * @param {Product} [props.initialProduct] - Initially selected product

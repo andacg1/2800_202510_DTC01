@@ -1,11 +1,11 @@
-import { json } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import prisma from "../db.server";
 
 /**
  * Action function that tracks product comparison events
  * Records when users compare products by storing the comparison data in a database
- * 
+ *
  * @param {Object} params - Action function parameters
  * @param {Request} params.request - The incoming request object containing:
  *   - collectionId: The ID of the collection containing the products

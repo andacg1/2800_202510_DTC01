@@ -1,9 +1,9 @@
 import type { HeadersFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { Link, Outlet, useLoaderData, useRouteError } from "@remix-run/react";
-import { boundary } from "@shopify/shopify-app-remix/server";
-import { AppProvider } from "@shopify/shopify-app-remix/react";
 import { NavMenu } from "@shopify/app-bridge-react";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
+import { AppProvider } from "@shopify/shopify-app-remix/react";
+import { boundary } from "@shopify/shopify-app-remix/server";
 
 import { authenticate } from "../shopify.server";
 
@@ -16,7 +16,7 @@ export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 /**
  * Loader function for the app route
  * Authenticates admin requests and provides the Shopify API key
- * 
+ *
  * @param {LoaderFunctionArgs} args - Loader function arguments
  * @param {Request} args.request - The incoming request object
  * @returns {Promise<{apiKey: string}>} Object containing the Shopify API key
@@ -30,7 +30,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 /**
  * Main app component that provides the app layout and navigation
  * Wraps the app content in Shopify's AppProvider and includes navigation menu
- * 
+ *
  * @returns {JSX.Element} The rendered app component
  */
 export default function App() {
@@ -53,7 +53,7 @@ export default function App() {
 /**
  * Error boundary component for handling route errors
  * Uses Shopify's boundary helper to properly handle errors in the admin context
- * 
+ *
  * @returns {JSX.Element} The rendered error boundary
  */
 export function ErrorBoundary() {
@@ -63,7 +63,7 @@ export function ErrorBoundary() {
 /**
  * Headers function for the app route
  * Uses Shopify's boundary helper to add necessary headers for admin requests
- * 
+ *
  * @param {Object} headersArgs - Headers function arguments
  * @returns {Headers} Headers object with Shopify-specific headers
  */

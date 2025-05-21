@@ -1,13 +1,13 @@
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { useActionData, useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
 import { authenticate } from "../shopify.server";
 import ProductMetafieldManager from "./app.metafield_editor/ProductMetafieldManager";
-import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
-import { useActionData, useLoaderData } from "@remix-run/react";
 
 /**
  * Loader function that fetches product and metafield data
  * Retrieves a specific product and its metafields using the Shopify GraphQL API
- * 
+ *
  * @param {LoaderFunctionArgs} params - Loader function arguments
  * @param {Request} params.request - The incoming request object
  * @param {Object} params.params - URL parameters containing product ID
@@ -61,7 +61,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 /**
  * Action function that handles metafield operations
  * Supports fetching, adding, updating, and deleting metafields
- * 
+ *
  * @param {ActionFunctionArgs} params - Action function arguments
  * @param {Request} params.request - The incoming request object
  * @returns {Promise<Object>} Response object containing operation result
@@ -194,7 +194,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 /**
  * ProductMetafieldsPage component that renders the metafield management interface
  * Displays and allows editing of a product's metafields
- * 
+ *
  * @returns {JSX.Element} The rendered product metafields page component
  */
 export default function ProductMetafieldsPage() {

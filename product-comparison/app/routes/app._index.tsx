@@ -1,23 +1,20 @@
-import { useEffect, useState } from "react";
+import type { ProductComparison } from "@prisma/client";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
-import {
-  Page,
-  Layout,
-  Text,
-  Card,
-  Button,
-  BlockStack,
-  Box,
-  Grid,
-  LegacyCard,
-  InlineStack,
-} from "@shopify/polaris";
-import { Prisma, ProductComparison } from "@prisma/client";
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
-import { authenticate } from "../shopify.server";
-import prisma from "../db.server";
+import {
+  BlockStack,
+  Button,
+  Card,
+  InlineStack,
+  Layout,
+  Page,
+  Text,
+} from "@shopify/polaris";
+import { useEffect, useState } from "react";
 import ComparisonSummary from "../components/ComparisonSummary";
+import prisma from "../db.server";
+import { authenticate } from "../shopify.server";
 
 export interface Metafield {
   id?: string;
@@ -172,7 +169,7 @@ export default function ProductMetafieldManager({
 
     return (
       <Page>
-        <TitleBar title="Remix app template">
+        <TitleBar title="Comparify">
           <button variant="primary" onClick={generateProduct}>
             Generate a product
           </button>

@@ -1,7 +1,7 @@
-import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
-import { authenticate } from "../shopify.server";
+import { json } from "@remix-run/node";
 import { useState } from "react";
+import { authenticate } from "../shopify.server";
 
 /**
  * Loader function for the regions setup page
