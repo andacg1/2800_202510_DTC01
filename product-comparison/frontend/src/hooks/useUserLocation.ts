@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getMockLocation, type LocationData } from "../product.ts";
 
 export const useUserLocation = () => {
-  const [userLocation, setUserLocation] = useState<LocationData>();
+  const [userLocation, setUserLocation] = useState<LocationData | null>(null);
 
   useEffect(() => {
     (async () => {

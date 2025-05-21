@@ -1,31 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./App.css";
-import ComparisonTable from "./ComparisonTable.tsx";
-import type { LocationData } from "./product.ts";
-import { getMockLocation } from "./product.ts";
+import type { TableVariant } from "./AppBlock.tsx";
+import AppBlock from "./AppBlock.tsx";
+import { useUserLocation } from "./hooks/useUserLocation.ts";
 import type { Recommendation } from "./RecommendationQuery/RecommendationContext.ts";
 import { RecommendationContext } from "./RecommendationQuery/RecommendationContext.ts";
 import RecommendationQuery from "./RecommendationQuery/RecommendationQuery.tsx";
-import MultiColumnComparison from "./MultiColumnComparison.tsx";
 import { LocationContext } from "./LocationContext.ts";
 
 export function App() {
   const [recommendation, setRecommendation] = useState<Recommendation>();
   const [query, setQuery] = useState<string>();
-  const [userLocation, setUserLocation] = useState<LocationData | null>(null);
-  const tableVariant: string = window?.tableVariant || "multi-column";
+  const tableVariant: TableVariant = (window?.tableVariant ||
+    "multi-column") as TableVariant;
   const products = window?.productMetafieldData;
-
-  useEffect(() => {
-    (async () => {
-      //const location = await getLocation();
-      const location = await getMockLocation();
-      setUserLocation(location);
-    })();
-  }, []);
+  const currentProduct = window?.currentProduct;
+  const { userLocation } = useUserLocation();
 
   if (!products) {
-    return null;
+    return <pre>Products not found.</pre>;
   }
   return (
     <LocationContext value={{ location: userLocation }}>
@@ -34,14 +27,12 @@ export function App() {
       >
         <div className="product-comparison z-10">
           <h2>Product Comparison</h2>
-
           <RecommendationQuery products={products} />
-
-          {tableVariant && tableVariant === "multi-column" ? (
-            <MultiColumnComparison products={products} />
-          ) : (
-            <ComparisonTable products={products} />
-          )}
+          <AppBlock
+            tableVariant={tableVariant}
+            products={products}
+            currentProduct={currentProduct}
+          />
         </div>
       </RecommendationContext>
     </LocationContext>
