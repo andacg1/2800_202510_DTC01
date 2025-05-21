@@ -169,11 +169,7 @@ export default function ProductMetafieldManager({
 
     return (
       <Page>
-        <TitleBar title="Comparify">
-          <button variant="primary" onClick={generateProduct}>
-            Generate a product
-          </button>
-        </TitleBar>
+        <TitleBar title="Comparify"></TitleBar>
 
         <BlockStack gap="500">
           <Layout>

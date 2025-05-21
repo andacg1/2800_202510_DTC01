@@ -20,7 +20,7 @@ export const useBestSpecs = (
     const firstProductWithSpec = selectedOptions.find(
       (selectedProduct) => specKey in selectedProduct.product?.specs,
     );
-    if (selectedOptions.length === 0 || !firstProductWithSpec) {
+    if (selectedOptions.length <= 1 || !firstProductWithSpec) {
       return {
         key: specKey,
         bestProduct: null,
