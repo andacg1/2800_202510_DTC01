@@ -1,8 +1,6 @@
+import type { ActionFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import type { ActionFunction, TypedResponse } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
-import fs from "fs";
-import path from "path";
 
 interface Country {
   name: string;

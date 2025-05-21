@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import {
@@ -10,8 +9,9 @@ import {
   Text,
   TextField,
 } from "@shopify/polaris";
-import polarisTranslations from "@shopify/polaris/locales/en.json";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
+import polarisTranslations from "@shopify/polaris/locales/en.json";
+import { useState } from "react";
 
 import { login } from "../../shopify.server";
 
@@ -19,7 +19,7 @@ import { loginErrorMessage } from "./error.server";
 
 /**
  * Returns stylesheet links for the login page
- * 
+ *
  * @returns {Array<{rel: string, href: string}>} Array of stylesheet link objects
  */
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
@@ -27,7 +27,7 @@ export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 /**
  * Loader function for the login page
  * Attempts to log in and returns any error messages
- * 
+ *
  * @param {LoaderFunctionArgs} params - Loader function arguments
  * @param {Request} params.request - The incoming request object
  * @returns {Promise<{errors: Object, polarisTranslations: Object}>} Login errors and translations
@@ -41,7 +41,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 /**
  * Action function that handles login form submission
  * Processes the login attempt and returns any error messages
- * 
+ *
  * @param {ActionFunctionArgs} params - Action function arguments
  * @param {Request} params.request - The incoming request object
  * @returns {Promise<{errors: Object}>} Object containing any login errors
@@ -57,7 +57,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 /**
  * Auth component that renders the login page
  * Provides a form for shop owners to log in to their Shopify store
- * 
+ *
  * @returns {JSX.Element} The rendered login page component
  */
 export default function Auth() {

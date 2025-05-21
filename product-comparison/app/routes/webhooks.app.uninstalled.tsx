@@ -1,12 +1,12 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { authenticate } from "../shopify.server";
 import db from "../db.server";
+import { authenticate } from "../shopify.server";
 
 /**
  * Action function that handles app uninstallation webhooks
  * Cleans up session data when the app is uninstalled from a shop
  * Can be triggered multiple times, so checks if session exists before deletion
- * 
+ *
  * @param {ActionFunctionArgs} params - Action function arguments
  * @param {Request} params.request - The incoming webhook request containing:
  *   - shop: Shop domain

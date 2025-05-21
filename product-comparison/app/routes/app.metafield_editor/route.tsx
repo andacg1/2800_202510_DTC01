@@ -1,7 +1,7 @@
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { useActionData, useLoaderData } from "@remix-run/react";
 import { authenticate } from "../../shopify.server";
 import ProductMetafieldManager from "./ProductMetafieldManager";
-import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
-import { useActionData, useLoaderData } from "@remix-run/react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
