@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Bar,
   BarChart,
@@ -35,7 +35,7 @@ export const ComparisonSummary = ({
   comparisons,
   productTitles,
 }: ComparisonSummaryProps) => {
-  const getComparisonData = () => {
+  const getComparisonData = (): Record<string, number> => {
     const allComparisons = new Map();
     for (const comparison of comparisons) {
       if (!comparison?.comparedProducts) {
@@ -56,20 +56,22 @@ export const ComparisonSummary = ({
     }
     return Object.fromEntries(allComparisons.entries());
   };
+
   const productTitleMap = Object.fromEntries(
-    productTitles.map(({ id, title }) => [getShortId(id), title]),
+    productTitles
+      .filter((title) => !!title)
+      .map(({ id, title }) => [getShortId(id), title]),
   );
-  const allComparisons = Object.entries(getComparisonData()).map(
-    ([id, compared]) => {
+
+  const allComparisons = Object.entries(getComparisonData())
+    .map(([id, compared]) => {
       if (!(String(id) in productTitleMap)) {
         return { name: id, compared };
       }
       return { name: productTitleMap[id], compared };
-    },
-  );
-  useEffect(() => {
-    console.log({ productTitles });
-  }, [productTitles]);
+    })
+    .sort((a, b) => b.compared - a.compared)
+    .slice(0, 10);
 
   return (
     <ResponsiveContainer width="100%" height={400}>
@@ -85,7 +87,7 @@ export const ComparisonSummary = ({
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis type="number" />
-        <YAxis dataKey="name" type="category" />
+        <YAxis dataKey="name" type="category" width={100} />
         <Tooltip />
         <Legend />
         <Bar
