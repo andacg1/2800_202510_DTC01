@@ -9,6 +9,21 @@ import makeAnimated from "react-select/animated";
 import { RecommendationContext } from "./RecommendationQuery/RecommendationContext";
 import SpecData from "./ui/SpecData";
 import { getShortId } from "./utils";
+import type { DragEndEvent } from "@dnd-kit/core";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  horizontalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 /**
  * Props for the MultiColumnComparison component
@@ -30,6 +45,42 @@ export type ProductOption = {
 };
 
 const animatedComponents = makeAnimated();
+
+const SortableColumnHeader = ({
+  productId,
+  children,
+}: {
+  productId: string;
+  children: React.ReactNode;
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: productId });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 2 : 1,
+    cursor: "grab",
+    background: isDragging ? "#f0f0f0" : undefined,
+  };
+  return (
+    <th
+      ref={setNodeRef}
+      style={style}
+      className="text-center!"
+      {...attributes}
+      {...listeners}
+    >
+      {children}
+    </th>
+  );
+};
 
 /**
  * Custom styles configuration for the React-Select component
@@ -107,6 +158,23 @@ const MultiColumnComparison = ({
   const allSpecKeys = getAllSpecKeys(products, selectedOptions);
   const { bestSpecs } = useBestSpecs(products, Array.from(selectedOptions));
 
+  // Drag and drop sensors
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  // Drag and drop handler for columns
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setSelectedOptions((items) => {
+        // Cast to ProductOption[] to satisfy mutable type
+        const arr = [...items] as ProductOption[];
+        const oldIndex = arr.findIndex((item) => item.value === active.id);
+        const newIndex = arr.findIndex((item) => item.value === over.id);
+        return arrayMove(arr, oldIndex, newIndex);
+      });
+    }
+  };
+
   /**
    * Handles changes in product selection from the multi-select dropdown
    * Tracks the comparison event and updates the selected products state
@@ -162,44 +230,61 @@ const MultiColumnComparison = ({
       selectedOptions?.length === 0 ? null : (
         <div className="overflow-x-auto">
           {selectedOptions.length > 0 && (
-            <div className="comparison-table">
+            <div className="comparison-table overflow-hidden!">
               <h3>Comparison</h3>
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Specification</th>
-                    {selectedOptions.map((selectedProduct) => {
-                      const product = selectedProduct.product;
-                      return (
-                        <th key={product.id} className="text-center!">
-                          {product?.title}
-                        </th>
-                      );
-                    })}
-                  </tr>
-                </thead>
-                <tbody>
-                  {allSpecKeys.map((specKey) => (
-                    <tr key={specKey}>
-                      {specKey === "available_regions" && userLocation ? (
-                        <td>{`Available in ${userLocation?.country_name || "N/A"}?`}</td>
-                      ) : (
-                        <td>{specKey.replace("_", " ")}</td>
-                      )}
-                      {selectedOptions.map((selectedProduct) => (
-                        <SpecData
-                          key={selectedProduct.product.id}
-                          productId={String(selectedProduct.product.id)}
-                          specValue={selectedProduct.product.specs?.[specKey]}
-                          specKey={specKey}
-                          userLocation={userLocation}
-                          bestSpecs={bestSpecs}
-                        />
+
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={selectedOptions.map((opt) => opt.value)}
+                  strategy={horizontalListSortingStrategy}
+                >
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Specification</th>
+                        {selectedOptions.map((selectedProduct) => {
+                          const product = selectedProduct.product;
+                          return (
+                            <SortableColumnHeader
+                              key={selectedProduct.value}
+                              productId={selectedProduct.value}
+                            >
+                              {product?.title}
+                            </SortableColumnHeader>
+                          );
+                        })}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allSpecKeys.map((specKey) => (
+                        <tr key={specKey}>
+                          {specKey === "available_regions" && userLocation ? (
+                            <td>{`Available in ${userLocation?.country_name || "N/A"}?`}</td>
+                          ) : (
+                            <td>{specKey.replace("_", " ")}</td>
+                          )}
+                          {selectedOptions.map((selectedProduct) => (
+                            <SpecData
+                              key={selectedProduct.product.id}
+                              productId={String(selectedProduct.product.id)}
+                              specValue={
+                                selectedProduct.product.specs?.[specKey]
+                              }
+                              specKey={specKey}
+                              userLocation={userLocation}
+                              bestSpecs={bestSpecs}
+                            />
+                          ))}
+                        </tr>
                       ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                    </tbody>
+                  </table>
+                </SortableContext>
+              </DndContext>
             </div>
           )}
         </div>

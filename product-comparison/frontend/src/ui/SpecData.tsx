@@ -33,25 +33,27 @@ const SpecData = ({
   const isBestProduct =
     isOrderedSpec?.bestProduct &&
     String(isOrderedSpec.bestProduct.id) === productId;
+  const tdClassName = `text-center w-min ${isBestProduct ? "bg-green-800/25" : "bg-inherit"}`;
 
   if (isAvailableField && userLocation && Array.isArray(specValue)) {
     return (
-      <td
-        key={`${productId}-${specKey}`}
-        className={`text-center ${isBestProduct ? "bg-green-800/25" : "bg-inherit"}`}
-      >
+      <td key={`${productId}-${specKey}`} className={tdClassName}>
         <div className="flex flex-col items-center justify-center">
           {isAvailable(userLocation, specValue) ? <Check /> : <Times />}
-          <div>{specValue.join(", ")}</div>
+          <div className="flex flex-col items-center justify-center">
+            {specValue.map((spec) => (
+              <>
+                <span>{spec}</span>
+                <br />
+              </>
+            ))}
+          </div>
         </div>
       </td>
     );
   }
   return (
-    <td
-      key={`${productId}-${specKey}`}
-      className={`text-center ${isBestProduct ? "bg-green-800/25" : "bg-inherit"}`}
-    >
+    <td key={`${productId}-${specKey}`} className={tdClassName}>
       <div className="flex flex-col items-center justify-center">
         {Array.isArray(specValue)
           ? specValue.join(", ")
