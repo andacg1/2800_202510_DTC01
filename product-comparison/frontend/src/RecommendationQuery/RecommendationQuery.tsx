@@ -171,6 +171,7 @@ const RecommendationQuery = ({
           className="textarea w-full text-2xl placeholder:opacity-40"
           placeholder={"Tell us about your use case"}
           name="query"
+          autoComplete="off"
         />
         <button
           type="submit"

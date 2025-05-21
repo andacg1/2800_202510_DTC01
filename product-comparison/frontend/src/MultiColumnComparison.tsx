@@ -11,6 +11,7 @@ import SpecData from "./ui/SpecData";
 import { getShortId } from "./utils";
 import type { DragEndEvent } from "@dnd-kit/core";
 import {
+  DragOverlay,
   DndContext,
   closestCenter,
   PointerSensor,
@@ -24,6 +25,11 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import {
+  restrictToWindowEdges,
+  restrictToFirstScrollableAncestor,
+  restrictToParentElement,
+} from "@dnd-kit/modifiers";
 
 /**
  * Props for the MultiColumnComparison component
@@ -230,13 +236,17 @@ const MultiColumnComparison = ({
       selectedOptions?.length === 0 ? null : (
         <div className="overflow-x-auto">
           {selectedOptions.length > 0 && (
-            <div className="comparison-table overflow-hidden!">
+            <div className="comparison-table overflow-x-scroll">
               <h3>Comparison</h3>
 
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
+                modifiers={[
+                  restrictToWindowEdges,
+                  restrictToFirstScrollableAncestor,
+                ]}
               >
                 <SortableContext
                   items={selectedOptions.map((opt) => opt.value)}
