@@ -42,8 +42,9 @@ export default function App() {
         <Link to="/app" rel="home">
           Home
         </Link>
-        <Link to="/app/additional">Additional page</Link>
         <Link to="/app/metafield_editor">Product Specs</Link>
+        <Link to="/app/metafields-setup">Setup Metafields</Link>
+        <Link to="/app/regions-setup">Setup Available Regions</Link>
       </NavMenu>
       <Outlet />
     </AppProvider>
