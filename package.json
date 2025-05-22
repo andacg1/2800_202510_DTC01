@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "@faker-js/faker": "^9.7.0"
+    "@faker-js/faker": "^9.7.0",
+    "@lit-labs/react": "^2.1.3",
+    "apex-grid": "^1.0.1"
   },
   "devDependencies": {
     "@storybook/react": "^8.6.12",
