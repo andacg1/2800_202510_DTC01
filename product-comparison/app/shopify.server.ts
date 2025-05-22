@@ -37,7 +37,7 @@ const shopify = shopifyApp({
   webhooks: {
     APP_UNINSTALLED: {
       deliveryMethod: DeliveryMethod.Http,
-      callbackUrl: '/webhooks'
+      callbackUrl: "/webhooks",
     },
   },
 });

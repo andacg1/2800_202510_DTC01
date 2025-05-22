@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { TextField } from "@shopify/polaris";
 import { useFetcher } from "@remix-run/react";
+import { TextField } from "@shopify/polaris";
+import React, { useCallback, useRef, useState } from "react";
 import type {
   FetcherData,
   Metafield,
@@ -21,7 +21,7 @@ type MetafieldTextFieldProps = {
 /**
  * A component that renders an editable text field for a product metafield.
  * Automatically submits changes to update the metafield value.
- * 
+ *
  * @param {Object} props - Component props
  * @param {string} [props.className] - Additional CSS classes to apply to the component
  * @param {React.ReactNode} [props.children] - Child elements
@@ -45,7 +45,7 @@ const MetafieldTextField = ({
   /**
    * Handles changes to the text field value.
    * Automatically submits the form to update the metafield.
-   * 
+   *
    * @param {string} newValue - The new value entered in the text field
    */
   const handleChange = useCallback(

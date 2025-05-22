@@ -61,7 +61,7 @@ type RequestBody = {
 /**
  * Builds a formatted product description string for the AI prompt
  * Includes product details like title, price, specs, etc.
- * 
+ *
  * @param {Product[]} products - Array of products to format
  * @returns {string} Formatted product descriptions
  */
@@ -96,7 +96,7 @@ function buildQuery(products: Product[]) {
 
 /**
  * Generates instructions for the AI model about how to recommend products
- * 
+ *
  * @param {Product[]} products - Array of products to include in the instructions
  * @returns {string} Formatted instruction string for the AI
  */
@@ -124,7 +124,7 @@ ${buildQuery(products)}
 /**
  * Remix action function that handles product recommendation requests
  * Uses OpenAI to generate personalized product recommendations based on user query
- * 
+ *
  * @param {Object} params - Action function parameters
  * @param {Request} params.request - The incoming request object
  * @returns {Promise<Response>} JSON response containing the recommendation

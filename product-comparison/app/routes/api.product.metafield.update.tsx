@@ -6,7 +6,7 @@ import { authenticate } from "../shopify.server";
  * Action function that updates product metafields
  * Handles bulk updates of multiple metafields for a single product
  * Validates input parameters and executes the update through Shopify's GraphQL API
- * 
+ *
  * @param {Object} params - Action function parameters
  * @param {Request} params.request - The incoming request object containing:
  *   - productId: The ID of the product to update
@@ -84,6 +84,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     });
   } catch (error: any) {
     console.error("Error updating metafields:", error);
-    return json({ error: "Internal server error", details: error.message }, { status: 500 });
+    return json(
+      { error: "Internal server error", details: error.message },
+      { status: 500 },
+    );
   }
 };

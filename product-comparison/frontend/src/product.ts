@@ -1,10 +1,5 @@
-/**
- * Global type declarations for window object extensions
- */
-declare global {
-  var productMetafieldData: Product[];
-  var regions: RegionData[];
-}
+import type { MultiValue } from "react-select";
+import type { ProductOption } from "./MultiColumnComparison.tsx";
 
 /**
  * Represents a product with all its details and specifications
@@ -201,14 +196,13 @@ export const getMockLocation = async (): Promise<LocationData> => {
     asn: "AS6327",
     org: "SHAW",
   };
-  console.log({ mockResponse });
   return mockResponse;
 };
 
 /**
  * Checks if a product is available in the user's region
  * Compares the user's location against the product's available regions
- * 
+ *
  * @param {LocationData} locationData - The user's location data
  * @param {string[]} availableRegions - Array of regions where the product is available
  * @returns {boolean} True if the product is available in the user's region, false otherwise
@@ -216,24 +210,43 @@ export const getMockLocation = async (): Promise<LocationData> => {
 export function isAvailable(
   locationData: LocationData,
   availableRegions: string[],
-) {
+): boolean {
   if (!availableRegions) {
     return false;
   }
-  const regionData: RegionData[] = window?.regions;
+  const regionData: RegionData[] | undefined = window?.regions;
   if (!regionData) {
     console.warn("Could not find regionData.");
     return false;
   }
-  console.log({ availableRegions });
   const userRegionData = regionData.find(
     (data) => data["alpha-2"] === locationData.country,
   );
-  console.log({ userRegionData });
-  const isAvailableInUsersRegion = availableRegions.some(
+  return availableRegions.some(
     (region) =>
       region === userRegionData?.region ||
       region === userRegionData?.["sub-region"],
   );
-  return isAvailableInUsersRegion;
 }
+
+/**
+ * Gets all unique specification keys across the selected products
+ * @returns {string[]} Array of unique specification keys
+ */
+export const getAllSpecKeys = (
+  products: Product[],
+  selectedOptions: MultiValue<ProductOption>,
+): string[] => {
+  const selectedProductData = products.filter((p) =>
+    selectedOptions.map((product) => product.value).includes(String(p.id)),
+  );
+  const allKeys = new Set<string>();
+
+  selectedProductData.forEach((product) => {
+    Object.keys(product.specs).forEach((key) => {
+      allKeys.add(key);
+    });
+  });
+
+  return Array.from(allKeys);
+};

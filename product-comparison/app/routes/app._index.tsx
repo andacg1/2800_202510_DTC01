@@ -1,284 +1,217 @@
-import { useEffect } from "react";
+import type { ProductComparison } from "@prisma/client";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { useFetcher } from "@remix-run/react";
-import {
-  Page,
-  Layout,
-  Text,
-  Card,
-  Button,
-  BlockStack,
-  Box,
-  Grid,
-  LegacyCard,
-  InlineStack,
-} from "@shopify/polaris";
+import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
+import {
+  BlockStack,
+  Button,
+  Card,
+  InlineStack,
+  Layout,
+  Page,
+  Text,
+} from "@shopify/polaris";
+import { useEffect, useState } from "react";
+import ComparisonSummary from "../components/ComparisonSummary";
+import prisma from "../db.server";
 import { authenticate } from "../shopify.server";
 
-/**
- * Loader function for the index page
- * Authenticates admin requests before rendering the page
- * 
- * @param {LoaderFunctionArgs} params - Loader function arguments
- * @param {Request} params.request - The incoming request object
- * @returns {Promise<null>} Returns null after authentication
- */
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await authenticate.admin(request);
+export interface Metafield {
+  id?: string;
+  namespace: string;
+  key: string;
+  value: string;
+  type: string;
+}
 
-  return null;
+export interface Product {
+  id: string;
+  title: string;
+}
+
+export interface FetcherData {
+  metafields?: Metafield[];
+  metafield?: Metafield;
+  deletedId?: string;
+  error?: string;
+}
+
+interface ProductMetafieldManagerProps {
+  actionData: FetcherData | undefined;
+  initialProduct?: Product;
+  initialMetafields?: Metafield[];
+}
+
+/**
+ * Extracts the short product ID from a Shopify GID (Global ID) or number.
+ * Removes the "gid://shopify/Product/" prefix if present.
+ *
+ * @param {string | number} gid - The Shopify Global ID or numeric product ID
+ * @returns {string} The short product ID as a string
+ */
+export const getShortId = (gid: string | number): string => {
+  if (typeof gid === "number") {
+    return String(gid);
+  }
+  return gid.replace("gid://shopify/Product/", "");
 };
 
-/**
- * Action function that creates a new product with random color
- * Creates a snowboard product with a random color and sets its price
- * 
- * @param {ActionFunctionArgs} params - Action function arguments
- * @param {Request} params.request - The incoming request object
- * @returns {Promise<Object>} Object containing created product and variant data
- */
-export const action = async ({ request }: ActionFunctionArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
-  const color = ["Red", "Orange", "Yellow", "Green"][
-    Math.floor(Math.random() * 4)
-  ];
-  const response = await admin.graphql(
-    `#graphql
-      mutation populateProduct($product: ProductCreateInput!) {
-        productCreate(product: $product) {
-          product {
-            id
-            title
-            handle
-            status
-            variants(first: 10) {
-              edges {
-                node {
-                  id
-                  price
-                  barcode
-                  createdAt
-                }
-              }
-            }
-          }
-        }
-      }`,
-    {
-      variables: {
-        product: {
-          title: `${color} Snowboard`,
+  const comparedProductId = new URL(request.url).searchParams.get(
+    "comparedProductId",
+  );
+
+  let comparisons: ProductComparison[] = [];
+  if (comparedProductId) {
+    comparisons = await prisma.productComparison.findMany({
+      where: {
+        originalProductId: comparedProductId,
+      },
+    });
+  } else {
+    comparisons = [];
+  }
+  const allComparedProductIds = new Set(
+    comparisons.flatMap((comparison) => comparison.comparedProducts),
+  );
+
+  let productTitles = [];
+  try {
+    const response = await admin.graphql(
+      `
+query Products($ids: [ID!]!) {
+  nodes(ids: $ids) {
+    ... on Product {
+      id
+      title
+    }
+  }
+}
+    `,
+      {
+        variables: {
+          ids: Array.from(allComparedProductIds).map(
+            (id) => `gid://shopify/Product/${id}`,
+          ),
         },
       },
-    },
-  );
-  const responseJson = await response.json();
-
-  const product = responseJson.data!.productCreate!.product!;
-  const variantId = product.variants.edges[0]!.node!.id!;
-
-  const variantResponse = await admin.graphql(
-    `#graphql
-    mutation shopifyRemixTemplateUpdateVariant($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
-      productVariantsBulkUpdate(productId: $productId, variants: $variants) {
-        productVariants {
-          id
-          price
-          barcode
-          createdAt
-        }
-      }
-    }`,
-    {
-      variables: {
-        productId: product.id,
-        variants: [{ id: variantId, price: "100.00" }],
-      },
-    },
-  );
-
-  const variantResponseJson = await variantResponse.json();
+    );
+    const json = await response.json();
+    productTitles = json.data.nodes;
+  } catch (e) {
+    console.error(e);
+  }
 
   return {
-    product: responseJson!.data!.productCreate!.product,
-    variant:
-      variantResponseJson!.data!.productVariantsBulkUpdate!.productVariants,
+    comparisons,
+    productTitles,
   };
 };
 
-/**
- * Index component that renders the main admin dashboard
- * Displays product creation functionality and dashboard widgets
- * 
- * @returns {JSX.Element} The rendered index page component
- */
-export default function Index() {
-  const fetcher = useFetcher<typeof action>();
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const { admin } = await authenticate.admin(request);
 
-  const shopify = useAppBridge();
-  const isLoading =
-    ["loading", "submitting"].includes(fetcher.state) &&
-    fetcher.formMethod === "POST";
-  const productId = fetcher.data?.product?.id.replace(
-    "gid://shopify/Product/",
-    "",
+  return {
+    admin,
+  };
+};
+
+export default function ProductMetafieldManager({
+  initialProduct,
+}: ProductMetafieldManagerProps) {
+  const { comparisons, productTitles } = useLoaderData<typeof loader>();
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(
+    initialProduct || null,
   );
+  {
+    const fetcher = useFetcher<typeof action>();
 
-  useEffect(() => {
-    if (productId) {
-      shopify.toast.show("Product created");
-    }
-  }, [productId, shopify]);
+    const shopify = useAppBridge();
+    const isLoading =
+      ["loading", "submitting"].includes(fetcher.state) &&
+      fetcher.formMethod === "POST";
+    const [searchParams, setSearchParams] = useSearchParams();
+    const productId =
+      fetcher.data?.product?.id && getShortId(fetcher.data?.product?.id);
 
-  /**
-   * Generates a new product with random properties
-   * Helper function that triggers the product creation action
-   */
-  const generateProduct = () => fetcher.submit({}, { method: "POST" });
+    useEffect(() => {
+      if (productId) {
+        shopify.toast.show("Product created");
+      }
+    }, [productId, shopify]);
+    const generateProduct = () => fetcher.submit({}, { method: "POST" });
 
-  return (
-    <Page>
-      <TitleBar title="Remix app template">
-        <button variant="primary" onClick={generateProduct}>
-          Generate a product
-        </button>
-      </TitleBar>
+    const handleProductSelect = async () => {
+      try {
+        const products = await window.shopify.resourcePicker({
+          type: "product",
+          action: "select",
+        });
 
-      <BlockStack gap="500">
-        <Layout>
-          <Layout.Section>
-            <Card>
-              <BlockStack gap="500">
+        if (products && products.length > 0) {
+          const selected = products[0];
+          setSelectedProduct({
+            id: selected.id,
+            title: selected.title,
+          });
 
-                <BlockStack gap="200">
+          const params = new URLSearchParams();
+          params.set("comparedProductId", getShortId(selected.id));
+          setSearchParams(params, {
+            preventScrollReset: true,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to select product:", error);
+      }
+    };
 
-                  <Text as="h4" variant="headingMd">
-                    Admin Dashboard
-                  </Text>
+    return (
+      <Page>
+        <TitleBar title="Comparify"></TitleBar>
 
-                  <Page fullWidth>
-                    <Grid>
-                      <Grid.Cell columnSpan={{xs: 3, sm: 3, md: 3, lg: 3, xl: 3}}>
-                        <LegacyCard title="PlaceHolder" sectioned>
-                          <p>View a summary of your online store's sales.</p>
-                        </LegacyCard>
-                      </Grid.Cell>
+        <BlockStack gap="500">
+          <Layout>
+            <Layout.Section>
+              <Card>
+                <BlockStack gap="500">
+                  <BlockStack gap="200">
+                    <Text as="h4" variant="headingMd">
+                      Admin Dashboard
+                    </Text>
+                  </BlockStack>
 
-                      <Grid.Cell columnSpan={{xs: 3, sm: 3, md: 3, lg: 3, xl: 3}}>
-                        <LegacyCard title="PlaceHolder" sectioned>
-                          <p>View a summary of your online store's orders.</p>
-                        </LegacyCard>
-                      </Grid.Cell>
+                  <BlockStack gap="200">
+                    <InlineStack align="space-between" blockAlign="center">
+                      <Text as="h4" variant="headingMd">
+                        Comparison History
+                      </Text>
 
-                      <Grid.Cell columnSpan={{xs: 3, sm: 3, md: 3, lg: 3, xl: 3}}>
-                        <LegacyCard title="PlaceHolder" sectioned>
-                          <p>View a summary of your online store's orders.</p>
-                        </LegacyCard>
-                      </Grid.Cell>
+                      {selectedProduct && (
+                        <Text as="h2" variant="headingMd">
+                          Selected Product: {selectedProduct.title}
+                        </Text>
+                      )}
 
-                      <Grid.Cell columnSpan={{xs: 3, sm: 3, md: 3, lg: 3, xl: 3}}>
-                        <LegacyCard title="PlaceHolder" sectioned>
-                          <p>View a summary of your online store's orders.</p>
-                        </LegacyCard>
-                      </Grid.Cell>
-                    </Grid>
-                  </Page>
+                      <Button onClick={handleProductSelect}>
+                        Select Product
+                      </Button>
+                    </InlineStack>
 
+                    <Card roundedAbove="sm">
+                      <ComparisonSummary
+                        comparisons={comparisons}
+                        productTitles={productTitles}
+                      />
+                    </Card>
+                  </BlockStack>
                 </BlockStack>
-
-                <BlockStack gap="200">
-                  <Text as="h4" variant="headingMd">
-                    Comparison History
-                  </Text>
-
-                  <Card roundedAbove="sm">
-                    <Text as="h2" variant="headingSm">
-                      Online store dashboard
-                    </Text>
-                    <Box paddingBlock="200">
-                      <BlockStack gap="200">
-                        <Text as="h3" variant="headingSm" fontWeight="medium">
-                          Reports
-                        </Text>
-                        <Text as="p" variant="bodyMd">
-                          View a summary of your online store's performance.
-                        </Text>
-                      </BlockStack>
-                    </Box>
-                    <Box paddingBlockStart="200">
-                      <BlockStack gap="200">
-                        <Text as="h3" variant="headingSm" fontWeight="medium">
-                          Summary
-                        </Text>
-                        <Text as="p" variant="bodyMd">
-                          View a summary of your online store's performance, including sales,
-                          visitors, top products, and referrals.
-                        </Text>
-                      </BlockStack>
-                    </Box>
-                  </Card>
-
-                </BlockStack>
-                <InlineStack gap="300">
-                  <Button loading={isLoading} onClick={generateProduct}>
-                    Generate a product
-                  </Button>
-                  {fetcher.data?.product && (
-                    <Button
-                      url={`shopify:admin/products/${productId}`}
-                      target="_blank"
-                      variant="plain"
-                    >
-                      View product
-                    </Button>
-                  )}
-                </InlineStack>
-                {fetcher.data?.product && (
-                  <>
-                    <Text as="h3" variant="headingMd">
-                      {" "}
-                      productCreate mutation
-                    </Text>
-                    <Box
-                      padding="400"
-                      background="bg-surface-active"
-                      borderWidth="025"
-                      borderRadius="200"
-                      borderColor="border"
-                      overflowX="scroll"
-                    >
-                      <pre style={{ margin: 0 }}>
-                        <code>
-                          {JSON.stringify(fetcher.data.product, null, 2)}
-                        </code>
-                      </pre>
-                    </Box>
-                    <Text as="h3" variant="headingMd">
-                      {" "}
-                      productVariantsBulkUpdate mutation
-                    </Text>
-                    <Box
-                      padding="400"
-                      background="bg-surface-active"
-                      borderWidth="025"
-                      borderRadius="200"
-                      borderColor="border"
-                      overflowX="scroll"
-                    >
-                      <pre style={{ margin: 0 }}>
-                        <code>
-                          {JSON.stringify(fetcher.data.variant, null, 2)}
-                        </code>
-                      </pre>
-                    </Box>
-                  </>
-                )}
-              </BlockStack>
-            </Card>
-          </Layout.Section>
-        </Layout>
-      </BlockStack>
-    </Page>
-  );
+              </Card>
+            </Layout.Section>
+          </Layout>
+        </BlockStack>
+      </Page>
+    );
+  }
 }

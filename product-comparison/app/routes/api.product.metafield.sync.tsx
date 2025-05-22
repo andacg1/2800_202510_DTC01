@@ -1,13 +1,13 @@
-import { json } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
-import { authenticate } from "../shopify.server";
+import { json } from "@remix-run/node";
 import prisma from "../db.server";
+import { authenticate } from "../shopify.server";
 
 /**
  * Action function that synchronizes product metafields with a local database
  * Fetches all product metafields from Shopify and updates/creates corresponding records in the local database
  * Handles various metafield types and formats their values appropriately
- * 
+ *
  * @param {Object} params - Action function parameters
  * @param {Request} params.request - The incoming request object
  * @returns {Promise<Response>} JSON response indicating success/failure of the sync operation
@@ -42,7 +42,6 @@ export const action: ActionFunction = async ({ request }) => {
 
     for (const { node: product } of products) {
       const metafields = product.metafields.edges.map(({ node }: any) => {
-
         let parsedValue;
         try {
           parsedValue = JSON.parse(node.value);
@@ -50,17 +49,19 @@ export const action: ActionFunction = async ({ request }) => {
           parsedValue = node.value;
         }
 
-
         return {
           id: node.id,
-          type: node.type.toLowerCase() as 'boolean' | 'date' | 'color',
-          multi_line_text_field: typeof parsedValue === 'string' ? parsedValue : JSON.stringify(parsedValue),
-          money: node.type === 'money' ? parsedValue : {},
-          dimension: node.type === 'dimension' ? parsedValue : null,
-          rating: node.type === 'rating' ? parsedValue : {},
-          link: node.type === 'link' ? parsedValue : null,
-          volume: node.type === 'volume' ? parsedValue : null,
-          weight: node.type === 'weight' ? parsedValue : null,
+          type: node.type.toLowerCase() as "boolean" | "date" | "color",
+          multi_line_text_field:
+            typeof parsedValue === "string"
+              ? parsedValue
+              : JSON.stringify(parsedValue),
+          money: node.type === "money" ? parsedValue : {},
+          dimension: node.type === "dimension" ? parsedValue : null,
+          rating: node.type === "rating" ? parsedValue : {},
+          link: node.type === "link" ? parsedValue : null,
+          volume: node.type === "volume" ? parsedValue : null,
+          weight: node.type === "weight" ? parsedValue : null,
         };
       });
 
@@ -80,7 +81,7 @@ export const action: ActionFunction = async ({ request }) => {
     console.error("Error syncing metafields:", error);
     return json(
       { success: false, message: "Failed to sync metafields" },
-      { status: 500 }
+      { status: 500 },
     );
   }
-}; 
+};

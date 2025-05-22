@@ -3,7 +3,7 @@
 client_id = "17beda824d6dd54acf7acf4156a383ff"
 name = "Product Comparison Allen"
 handle = "product-comparison-allen-1"
-application_url = "https://localhost:57799"
+application_url = "https://localhost:56545"
 embedded = true
 
 [build]
@@ -19,9 +19,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://localhost:57799/auth/callback",
-  "https://localhost:57799/auth/shopify/callback",
-  "https://localhost:57799/api/auth/callback"
+  "https://localhost:56545/auth/callback",
+  "https://localhost:56545/auth/shopify/callback",
+  "https://localhost:56545/api/auth/callback"
 ]
 
 [pos]

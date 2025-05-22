@@ -1,6 +1,6 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import MultiColumnComparison from "../frontend/src/MultiColumnComparison";
+import PredefinedComparison from "../frontend/src/PredefinedComparison";
 
 // Define a minimal type that satisfies the component's requirements
 interface ProductLike {
@@ -85,24 +85,60 @@ const sampleProducts: ProductLike[] = [
   },
 ];
 
+const currentProduct = {
+  id: 5,
+  title: "Current Product",
+  handle: "product-D",
+  description: "Description for Product D",
+  published_at: "2023-01-01",
+  created_at: "2023-01-01",
+  type: "Type D",
+  vendor: "Vendor D",
+  tags: ["tag1", "tag4"],
+  variants: [],
+  images: [],
+  options: [],
+  shop: "shop.myshopify.com",
+  status: "active",
+  price: 80,
+  price_min: 80,
+  price_max: 80,
+  available: true,
+  compare_at_price: 100,
+  inventory_quantity: 15,
+  inventory_management: "shopify",
+  inventory_policy: "deny",
+  fulfillment_service: "manual",
+  requires_shipping: true,
+  taxable: true,
+  weight: 1.5,
+  weight_unit: "kg",
+  specs: {
+    color: "Green",
+    size: "Small",
+    weight: "1.5kg",
+    available_regions: ["US", "CA", "JP"],
+  },
+};
+
 // Mock component that wraps our actual component with the needed props
 // This avoids the context issues
-const MockMultiColumnComparison = (props: any) => {
+const MockPredefinedComparison = (props: any) => {
   // In a real component, we would use the context values
   // But for Storybook, we'll just render the component with mock props
   return (
     <div style={{ padding: "20px" }}>
-      <MultiColumnComparison {...props} />
+      <PredefinedComparison {...props} />
     </div>
   );
 };
 
 const meta = {
   args: {
-    preselectAll: true,
+    currentProduct,
   },
-  title: "Product Comparison/MultiColumnComparison",
-  component: MockMultiColumnComparison,
+  title: "Product Comparison/PredefinedComparison",
+  component: MockPredefinedComparison,
   parameters: {
     layout: "fullscreen",
   },
@@ -116,12 +152,19 @@ const meta = {
       );
     },
   ],
-} satisfies Meta<typeof MockMultiColumnComparison>;
+} satisfies Meta<typeof MockPredefinedComparison>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Empty: Story = {
+  args: {
+    products: [],
+    currentProduct: undefined,
+  },
+};
+
+export const EmptyWithCurrentProduct: Story = {
   args: {
     products: [],
   },

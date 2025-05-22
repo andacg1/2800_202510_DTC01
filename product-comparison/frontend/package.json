@@ -6,12 +6,16 @@
   "type": "module",
   "scripts": {
     "dev:frontend": "vite build --watch",
-    "build": "parcel build src/index.tsx --dist-dir ../extensions/product-comparison-block/assets --no-source-maps --no-content-hash --public-url ./",
+    "build": "cross-env VITE_APP_BACKEND_URL=https://product-comparison.fly.dev vite build",
+    "build:prod": "cross-env VITE_APP_BACKEND_URL=https://product-comparison.fly.dev vite build",
     "build:webpack": "webpack",
-    "build:vite": "vite build",
-    "postinstall": "patch-package"
+    "build:vite": "vite build"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/modifiers": "^9.0.0",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-regular-svg-icons": "^6.7.2",
@@ -21,6 +25,8 @@
     "@tailwindcss/vite": "^4.1.7",
     "autoprefixer": "^10.4.21",
     "chroma-js": "^3.1.2",
+    "convert": "^5.12.0",
+    "cross-env": "^7.0.3",
     "patch-package": "^8.0.0",
     "postcss": "^8.5.3",
     "react": "^19.1.0",
@@ -31,6 +37,7 @@
   "devDependencies": {
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "cross-env": "^7.0.3",
     "daisyui": "^5.0.35",
     "parcel": "^2.14.0",
     "vite": "^6.3.5",

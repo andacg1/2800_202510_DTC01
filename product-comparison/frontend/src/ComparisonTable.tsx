@@ -1,13 +1,11 @@
-import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect, useState } from "react";
-import {
-  getMockLocation,
-  isAvailable,
-  type LocationData,
-  type Product,
-} from "./product.ts";
+import { useBestSpecs } from "./hooks/useBestSpecs.ts";
+import { useTrackComparison } from "./hooks/useTrackComparison.ts";
+import { useUserLocation } from "./hooks/useUserLocation.ts";
+import { type Product } from "./product.ts";
 import { RecommendationContext } from "./RecommendationQuery/RecommendationContext.ts";
+import SpecData from "./ui/SpecData.tsx";
+import { getShortId } from "./utils.ts";
 
 type ComparisonTableProps = {
   className?: string;
@@ -18,30 +16,34 @@ type ComparisonTableProps = {
 /**
  * A component that renders a table comparing selected products and their specifications.
  * Allows users to select up to two products for comparison and displays their specifications side by side.
- * 
+ *
  * @param {Object} props - Component props
  * @param {string} [props.className] - Additional CSS classes to apply to the component
  * @param {React.ReactNode} [props.children] - Child elements
  * @param {Product[]} props.products - Array of products available for comparison
  * @returns {JSX.Element} The rendered comparison table component
  */
-const ComparisonTable = ({
-  className,
-  children,
-  products,
-}: ComparisonTableProps) => {
+const ComparisonTable = ({ className, products }: ComparisonTableProps) => {
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
-
-  const [userLocation, setUserLocation] = useState<LocationData>();
-
-  const { recommendation, setRecommendation } = useContext(
-    RecommendationContext,
+  const { recommendation } = useContext(RecommendationContext);
+  const { userLocation } = useUserLocation();
+  const { bestSpecs } = useBestSpecs(
+    products,
+    selectedProducts.map((id) => {
+      const product = products.find((product) => product.id === id) as Product;
+      return {
+        product,
+        label: product?.title || String(id),
+        value: String(id),
+      };
+    }),
   );
+  useTrackComparison(selectedProducts.map((id) => String(id)));
 
   /**
    * Toggles the selection state of a product in the comparison table.
    * Maintains a maximum of 2 products selected at any time.
-   * 
+   *
    * @param {number} productId - The ID of the product to toggle
    */
   const toggleProductSelection = (productId: number) => {
@@ -59,29 +61,8 @@ const ComparisonTable = ({
   };
 
   /**
-   * Ensures a product is selected for comparison.
-   * If the product isn't already selected, adds it to the selection,
-   * maintaining the maximum of 2 products rule.
-   * 
-   * @param {number} productId - The ID of the product to ensure is selected
-   */
-  const ensureProductSelection = (productId: number) => {
-    setSelectedProducts((prev) => {
-      if (prev.includes(productId)) {
-        return [...prev];
-      } else {
-        // Limit to comparing 2 products maximum
-        if (prev.length < 2) {
-          return [...prev, productId];
-        }
-        return [prev[1], productId]; // Replace oldest selection
-      }
-    });
-  };
-
-  /**
    * Retrieves all unique specification keys across the currently selected products.
-   * 
+   *
    * @returns {string[]} Array of unique specification keys
    */
   const getAllSpecKeys = () => {
@@ -100,55 +81,13 @@ const ComparisonTable = ({
   };
 
   useEffect(() => {
-    (async () => {
-      //const location = await getLocation();
-      const location = await getMockLocation();
-      setUserLocation(location);
-    })();
-  }, []);
-
-  useEffect(() => {
     if (!recommendation?.recommendedProductId) {
       console.log("No product ID", recommendation);
       return;
     }
-    const productId = recommendation.recommendedProductId.replace(
-      "gid://shopify/Product/",
-      "",
-    );
+    const productId = getShortId(recommendation.recommendedProductId);
     setSelectedProducts([Number(productId)]);
   }, [recommendation]);
-
-  // Track comparison when two products are selected
-  useEffect(() => {
-    const trackComparison = async () => {
-      // This would normally send data to your Shopify app backend
-      if (selectedProducts.length === 2) {
-        try {
-          console.log(
-            `Tracking comparison between ${selectedProducts[0]} and ${selectedProducts[1]}`,
-          );
-          // In a real implementation, you would call your API endpoint
-          // await fetch('/api.product.comparison.track', {
-          //   method: 'POST',
-          //   headers: { 'Content-Type': 'application/json' },
-          //   body: JSON.stringify({
-          //     productAId: selectedProducts[0],
-          //     productBId: selectedProducts[1],
-          //     userId: 'anonymous',
-          //     shop: window.location.hostname
-          //   })
-          // });
-        } catch (err) {
-          console.error("Failed to track comparison", err);
-        }
-      }
-    };
-
-    if (selectedProducts.length === 2) {
-      trackComparison();
-    }
-  }, [selectedProducts]);
 
   return (
     <div className={className}>
@@ -192,45 +131,16 @@ const ComparisonTable = ({
                   )}
                   {selectedProducts.map((productId) => {
                     const product = products.find((p) => p.id === productId);
-                    const specValue = product?.specs[specKey];
-                    const isAvailableField = specKey === "available_regions";
-                    if (
-                      isAvailableField &&
-                      userLocation &&
-                      Array.isArray(specValue)
-                    ) {
-                      return (
-                        <td
-                          key={`${productId}-${specKey}`}
-                          className="text-center"
-                        >
-                          {isAvailable(userLocation, specValue) ? (
-                            <FontAwesomeIcon
-                              icon={faCheck}
-                              color={"rgba(31,255,0,0.5)"}
-                              size={"2x"}
-                              fixedWidth
-                            />
-                          ) : (
-                            <FontAwesomeIcon
-                              icon={faX}
-                              color={"#b02525"}
-                              size={"2x"}
-                              fixedWidth
-                            />
-                          )}
-                        </td>
-                      );
-                    }
+                    const specValue = product?.specs?.[specKey];
                     return (
-                      <td
-                        key={`${productId}-${specKey}`}
-                        className="text-center"
-                      >
-                        {Array.isArray(specValue)
-                          ? specValue.join(", ")
-                          : specValue?.toString() || "N/A"}
-                      </td>
+                      <SpecData
+                        key={productId}
+                        productId={String(productId)}
+                        specValue={specValue}
+                        specKey={specKey}
+                        userLocation={userLocation}
+                        bestSpecs={bestSpecs}
+                      />
                     );
                   })}
                 </tr>
