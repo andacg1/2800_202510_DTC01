@@ -103,8 +103,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return { metafields: edges.map((edge: any) => edge.node) };
     } else if (action === "addMetafield" || action === "updateMetafield") {
       const productId = formData.get("productId") as string;
-      const fullProductId = `gid://shopify/Product/${productId}`;
-      const metafieldNamespace = formData.get("metafieldNamespace") as string;
       const metafieldKey = formData.get("metafieldKey") as string;
       const metafieldValue = formData.get("metafieldValue") as string;
       const metafieldType = formData.get("metafieldType") as string;
@@ -149,7 +147,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return { metafield: data.metafieldsSet.metafields[0] };
     } else if (action === "deleteMetafield") {
       const metafieldId = formData.get("metafieldId") as string;
-      const metafieldNamespace = formData.get("metafieldNamespace") as string;
       const metafieldKey = formData.get("metafieldKey") as string;
       const productId = formData.get("productId") as string;
       await admin.graphql(

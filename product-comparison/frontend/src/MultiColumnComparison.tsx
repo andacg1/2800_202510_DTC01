@@ -11,7 +11,6 @@ import SpecData from "./ui/SpecData";
 import { getShortId } from "./utils";
 import type { DragEndEvent } from "@dnd-kit/core";
 import {
-  DragOverlay,
   DndContext,
   closestCenter,
   PointerSensor,
@@ -28,7 +27,6 @@ import { CSS } from "@dnd-kit/utilities";
 import {
   restrictToWindowEdges,
   restrictToFirstScrollableAncestor,
-  restrictToParentElement,
 } from "@dnd-kit/modifiers";
 
 /**

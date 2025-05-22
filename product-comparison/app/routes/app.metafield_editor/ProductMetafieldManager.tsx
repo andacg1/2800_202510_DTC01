@@ -88,7 +88,7 @@ export default function ProductMetafieldManager({
     value: "",
     type: "string",
   });
-  const refreshFetcher = useFetcher<FetcherData>();
+  useFetcher<FetcherData>();
   const addMetafieldFetcher = useFetcher<FetcherData>();
 
   const navigation = useNavigation();
