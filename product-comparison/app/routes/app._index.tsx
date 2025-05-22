@@ -1,6 +1,6 @@
 import type { ProductComparison } from "@prisma/client";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
+import { useLoaderData, useSearchParams } from "@remix-run/react";
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import {
   BlockStack,
@@ -11,7 +11,8 @@ import {
   Page,
   Text,
 } from "@shopify/polaris";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import type { Comparison } from "../components/ComparisonSummary";
 import ComparisonSummary from "../components/ComparisonSummary";
 import prisma from "../db.server";
 import { authenticate } from "../shopify.server";
@@ -106,6 +107,9 @@ query Products($ids: [ID!]!) {
   return {
     comparisons,
     productTitles,
+  } as {
+    comparisons: Comparison[];
+    productTitles: typeof productTitles;
   };
 };
 
@@ -124,94 +128,79 @@ export default function ProductMetafieldManager({
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(
     initialProduct || null,
   );
-  {
-    const fetcher = useFetcher<typeof action>();
 
-    const shopify = useAppBridge();
-    const isLoading =
-      ["loading", "submitting"].includes(fetcher.state) &&
-      fetcher.formMethod === "POST";
-    const [searchParams, setSearchParams] = useSearchParams();
-    const productId =
-      fetcher.data?.product?.id && getShortId(fetcher.data?.product?.id);
+  useAppBridge();
+  const [, setSearchParams] = useSearchParams();
 
-    useEffect(() => {
-      if (productId) {
-        shopify.toast.show("Product created");
-      }
-    }, [productId, shopify]);
-    const generateProduct = () => fetcher.submit({}, { method: "POST" });
+  const handleProductSelect = async () => {
+    try {
+      const products = await window.shopify.resourcePicker({
+        type: "product",
+        action: "select",
+      });
 
-    const handleProductSelect = async () => {
-      try {
-        const products = await window.shopify.resourcePicker({
-          type: "product",
-          action: "select",
+      if (products && products.length > 0) {
+        const selected = products[0];
+        setSelectedProduct({
+          id: selected.id,
+          title: selected.title,
         });
 
-        if (products && products.length > 0) {
-          const selected = products[0];
-          setSelectedProduct({
-            id: selected.id,
-            title: selected.title,
-          });
-
-          const params = new URLSearchParams();
-          params.set("comparedProductId", getShortId(selected.id));
-          setSearchParams(params, {
-            preventScrollReset: true,
-          });
-        }
-      } catch (error) {
-        console.error("Failed to select product:", error);
+        const params = new URLSearchParams();
+        params.set("comparedProductId", getShortId(selected.id));
+        setSearchParams(params, {
+          preventScrollReset: true,
+        });
       }
-    };
+    } catch (error) {
+      console.error("Failed to select product:", error);
+    }
+  };
 
-    return (
-      <Page>
-        <TitleBar title="Comparify"></TitleBar>
+  return (
+    <Page>
+      <TitleBar title="Comparify"></TitleBar>
 
-        <BlockStack gap="500">
-          <Layout>
-            <Layout.Section>
-              <Card>
-                <BlockStack gap="500">
-                  <BlockStack gap="200">
-                    <Text as="h4" variant="headingMd">
-                      Admin Dashboard
-                    </Text>
-                  </BlockStack>
-
-                  <BlockStack gap="200">
-                    <InlineStack align="space-between" blockAlign="center">
-                      <Text as="h4" variant="headingMd">
-                        Comparison History
-                      </Text>
-
-                      {selectedProduct && (
-                        <Text as="h2" variant="headingMd">
-                          Selected Product: {selectedProduct.title}
-                        </Text>
-                      )}
-
-                      <Button onClick={handleProductSelect}>
-                        Select Product
-                      </Button>
-                    </InlineStack>
-
-                    <Card roundedAbove="sm">
-                      <ComparisonSummary
-                        comparisons={comparisons}
-                        productTitles={productTitles}
-                      />
-                    </Card>
-                  </BlockStack>
+      <BlockStack gap="500">
+        <Layout>
+          <Layout.Section>
+            <Card>
+              <BlockStack gap="500">
+                <BlockStack gap="200">
+                  <Text as="h4" variant="headingMd">
+                    Admin Dashboard
+                  </Text>
                 </BlockStack>
-              </Card>
-            </Layout.Section>
-          </Layout>
-        </BlockStack>
-      </Page>
-    );
-  }
+
+                <BlockStack gap="200">
+                  <InlineStack align="space-between" blockAlign="center">
+                    <Text as="h4" variant="headingMd">
+                      Comparison History
+                    </Text>
+
+                    {selectedProduct && (
+                      <Text as="h2" variant="headingMd">
+                        Selected Product: {selectedProduct.title}
+                      </Text>
+                    )}
+
+                    <Button onClick={handleProductSelect}>
+                      Select Product
+                    </Button>
+                  </InlineStack>
+
+                  <Card roundedAbove="sm">
+                    <ComparisonSummary
+                      comparisons={comparisons}
+                      productTitles={productTitles}
+                    />
+                  </Card>
+                </BlockStack>
+              </BlockStack>
+            </Card>
+          </Layout.Section>
+        </Layout>
+      </BlockStack>
+    </Page>
+  );
 }

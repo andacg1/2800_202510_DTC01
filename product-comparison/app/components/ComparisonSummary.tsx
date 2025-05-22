@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import type { ProductComparison } from "@prisma/client";
+import React from "react";
 import {
   Bar,
   BarChart,
@@ -12,20 +13,15 @@ import {
 } from "recharts";
 import { getShortId } from "../routes/app._index";
 
-export type ProductComparison = {
-  id: string;
-  collectionId: string;
-  originalProductId: string;
+export type Comparison = ProductComparison & {
   comparedProducts: string[];
-  comparedAt: Date;
-  sessionId: string | null;
-  shop: string | null;
+  comparedAt: string;
 };
 
 type ComparisonSummaryProps = {
   className?: string;
   children?: React.ReactNode;
-  comparisons: ProductComparison[];
+  comparisons: Comparison[];
   productTitles: { id: `gid://shopify/Product/${string}`; title: string }[];
 };
 

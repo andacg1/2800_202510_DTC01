@@ -10,7 +10,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const { admin } = await authenticate.admin(request);
+  await authenticate.admin(request);
   const formData = await request.formData();
   const action = formData.get("action");
   console.log({ action });
