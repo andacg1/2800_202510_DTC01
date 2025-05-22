@@ -1,4 +1,6 @@
-# Table of Contents
+# Comparify
+
+## Table of Contents
    1. Project Title
    2. Project Description
    3. Technologies used
@@ -9,17 +11,12 @@
    8. AI & API Usage
    9. Contact Information
 
-## PROJECT TITLE
-Comparify
 
-
-
-## PROJECT DESCRIPTION
+## Project Description
 A Shopify app that enables merchants to create and manage product comparison tables, helping customers make informed purchasing decisions by comparing product features, specifications, and prices side by side.
 
 
-
-## TECHNOLOGIES USED
+## Technologies Used
 
    ### Frontend:
    - React
@@ -44,7 +41,7 @@ A Shopify app that enables merchants to create and manage product comparison tab
 
 
 
-## PROJECT STRUCTURE
+## Project Structure
 ```
 product-comparison/
 ├── app/                # Main application code
@@ -58,7 +55,7 @@ product-comparison/
 
 
 
-## INSTALLATION AND SETUP
+## Installation and Setup
 
    ### Prerequisites:
    1. Node.js (v18.20 or v20.10+)
@@ -115,7 +112,7 @@ product-comparison/
 
 
 
-## FEATURES
+## Features
 - Create and manage product comparison tables
 - Customizable comparison attributes
 - Real-time price and inventory updates
@@ -126,7 +123,7 @@ product-comparison/
 
 
 
-## CREDITS, REFERENCES, LICENSE
+## Credits, References, License
 
    ### References:
    - Shopify App Bridge for integration
@@ -140,8 +137,8 @@ product-comparison/
 
 
 
-## AI & API USAGE
-- OpenAI API: Used for generating product descriptions and comparison summaries
+## AI & API Usage
+- OpenAI API: Used for generating product recommendations
 - Shopify Storefront API: Used for fetching product data and inventory
 - Shopify Admin API: Used for managing app settings and configurations
 
